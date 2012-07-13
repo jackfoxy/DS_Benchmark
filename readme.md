@@ -8,6 +8,8 @@ Each timing cycle executes 100 timings and takes the best 85 to calculate min, m
 
 Execute Console1.exe with no parameter for help.
 
+IMPORTANT NOTE: CD the bin folder from which you execute Console1 in the shell. Setting the environment path does not work for now because of temp file handling. Hope to fix this soon.
+
 ###Data Structure
 The following structures are currently available for timings:
 
