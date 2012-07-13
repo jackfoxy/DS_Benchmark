@@ -362,6 +362,12 @@ module Benchmark =
         | x when x = InitData.SeqIntDsc -> InitDataCol.seqIntDsc count
         | x when x = InitData.SeqIntRnd -> InitDataCol.seqIntRnd count
         | x when x = InitData.SeqIntRndDup -> InitDataCol.seqIntRndDup count
+
+        | x when x = InitData.NocalcSeqIntAsc -> InitDataCol.nocalcSeqIntAsc count
+        | x when x = InitData.NocalcSeqIntDsc -> InitDataCol.nocalcSeqIntDsc count
+        | x when x = InitData.NocalcSeqIntRnd -> InitDataCol.nocalcSeqIntRnd count
+        | x when x = InitData.NocalcSeqIntRndDup -> InitDataCol.nocalcSeqIntRndDup count
+
         | _ -> failwithf "InitData function %s not recognized" initData
 
     let getInitArrayInt (initData:string) count =

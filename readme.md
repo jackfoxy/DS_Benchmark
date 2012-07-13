@@ -160,6 +160,8 @@ Generate multiple sizes from one script template.
 
 Integrate FsCheck input generations. This was my original intention, but I dove into the project without learning FsCheck well enough.
 
+Use reflection to suppress unsupported actions in script generation.
+
 ##Contribute to the project
 Contact me if you are interested in contributing to the project. I will consider pull requests along the following guidelines:
 
@@ -185,7 +187,7 @@ Contact me if you are interested in contributing to the project. I will consider
 
 >1) In Infrastructure.fs add new action literal to type Action.
 
->2) Add new operators to Operator type in Infrastructure.fs
+>2) Add new operators to Operator type in Infrastructure.fs.
 
 >3) In the respective data structure library files (CoreCollections.fs, FSharpx.fs, etc.), for each data structure implementing the action in it's respective module add a match for the new action in each "getTime" function (some data structures have different functions for initialization from different kinds of collections).
 
