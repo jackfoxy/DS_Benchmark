@@ -2,7 +2,7 @@
 
 *DS\_Benchmark* is a system for benchmarking data structures in F#. It isolates actions to be benchmarked to the greatest extent possible during the timing process and produces tab-delimited timing information for import into Excel (see Future Direction below). 
 
-Each timing cycle executes 100 timings and takes the best 85 to calculate min, max, median, and deviation. In other words the timings are not amortized, but most frequent best case.
+Each timing cycle executes <del>100</del> 50 timings and takes the best <del>85</del> 40 to calculate min, max, median, and deviation. In other words the timings are not amortized, but most frequent best case.
 
 ##Usage
 

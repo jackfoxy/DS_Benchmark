@@ -304,7 +304,7 @@ type BenchmarkDsAction (dataStructure : string, size : int, initData : string, a
 
         if File.Exists Temp.tempFile then File.Delete Temp.tempFile
 
-        for i = 1 to 100 do
+        for i = 1 to 50 do
             if _exitCode = 0 then
                 let pi = ProcessStartInfo(@"..\..\..\Bench\bin\release\Bench.exe", x.BenchArgs.DataStructure + " " +
                                                                                     x.BenchArgs.Size.ToString()  + " " +
@@ -327,7 +327,7 @@ type BenchmarkDsAction (dataStructure : string, size : int, initData : string, a
                     |> Array.map mapFun 
                     |> Array.sortWith sortFun
                     |> Seq.ofArray 
-                    |> Seq.take 85
+                    |> Seq.take 40
         
             let max = fst (Seq.maxBy (fun x -> fst x) x)
             let min = fst (Seq.minBy (fun x -> fst x) x)
@@ -337,7 +337,7 @@ type BenchmarkDsAction (dataStructure : string, size : int, initData : string, a
             let operator = (snd (Seq.nth 0 x)).BenchOperator
 
             File.Delete Temp.tempFile
-
+            
             {ExitCode = 0; UtcDateTime = System.DateTime.UtcNow; Operator = operator; Max = max; Min = min; Median = median; Deviation = deviation; DeviationPct = deviationPct; Message = ""; InputArgs = _BenchArgs}
         else 
             let foldFun = (fun state x -> state + x)
