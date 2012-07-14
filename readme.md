@@ -154,8 +154,6 @@ Persist timing results. (high priority)
 
 Automate analysis. (high priority)
 
-Reduce number of timings in a batch from 100 to 50?
-
 Consume multiple script templates.
 
 Generate multiple sizes from one script template.
