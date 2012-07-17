@@ -18,6 +18,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DS_Benchmark.Tests", "DS_Be
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NaiveDataStructures", "NaiveDataStructures\NaiveDataStructures.fsproj", "{111C5F89-B2A5-4DC8-9F7B-76AACBA4CADA}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PurelyFunctionalDataStructures", "PurelyFunctionalDataStructures\PurelyFunctionalDataStructures.fsproj", "{642FE203-AD3A-4EBD-98C2-D7F4BE8E65B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{5B6130C8-AF0C-4DF5-8C99-BB19EEA2B062}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B6130C8-AF0C-4DF5-8C99-BB19EEA2B062}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B6130C8-AF0C-4DF5-8C99-BB19EEA2B062}.Release|Any CPU.Build.0 = Release|Any CPU
+		{642FE203-AD3A-4EBD-98C2-D7F4BE8E65B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{642FE203-AD3A-4EBD-98C2-D7F4BE8E65B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{642FE203-AD3A-4EBD-98C2-D7F4BE8E65B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{642FE203-AD3A-4EBD-98C2-D7F4BE8E65B8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E57144EE-9376-49D0-AD49-0CCF5EE0311C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E57144EE-9376-49D0-AD49-0CCF5EE0311C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E57144EE-9376-49D0-AD49-0CCF5EE0311C}.Release|Any CPU.ActiveCfg = Release|Any CPU

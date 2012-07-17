@@ -5,12 +5,12 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>0c6fe13a-320d-4bfe-abee-c8ade8065b37</ProjectGuid>
+    <ProjectGuid>642fe203-ad3a-4ebd-98c2-d7f4be8e65b8</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DS_Benchmark.Tests</RootNamespace>
-    <AssemblyName>DS_Benchmark.Tests</AssemblyName>
+    <RootNamespace>PurelyFunctionalDataStructures</RootNamespace>
+    <AssemblyName>PurelyFunctionalDataStructures</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <Name>DS_Benchmark.Tests</Name>
+    <Name>PurelyFunctionalDataStructures</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,7 +20,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\DS_Benchmark.Tests.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\PurelyFunctionalDataStructures.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,7 +29,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\DS_Benchmark.Tests.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\PurelyFunctionalDataStructures.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -37,56 +37,47 @@
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
   <ItemGroup>
     <None Include="packages.config" />
-    <Compile Include="TestUtil.fs" />
-    <Compile Include="BenchmarkTests.fs" />
-    <Compile Include="CoreCollectionsTests.fs" />
-    <Compile Include="FSharpxTests.fs" />
-    <Compile Include="PowerPackTests.fs" />
-    <Compile Include="NaiveDataStructuresTests.fs" />
-    <Compile Include="GeneratorsTests.fs" />
+    <Compile Include="Exceptions.fs" />
+    <Compile Include="LazyList.fs" />
+    <Compile Include="CustomStack.fs" />
+    <Compile Include="BinarySearchTree.fs" />
+    <Compile Include="FiniteMap.fs" />
+    <Compile Include="LeftistHeap.fs" />
+    <Compile Include="RedBlackSet.fs" />
+    <Compile Include="BinomialHeap.fs" />
+    <Compile Include="BatchedQueue.fs" />
+    <Compile Include="PairingHeap.fs" />
+    <Compile Include="Dequeue.fs" />
+    <Compile Include="SplayHeap.fs" />
+    <Compile Include="BankersQueue.fs" />
+    <Compile Include="LazyBinomialHeap.fs" />
+    <Compile Include="PhysicistQueue.fs" />
+    <Compile Include="LazyPairingHeap.fs" />
+    <Compile Include="RealTimeQueue.fs" />
+    <Compile Include="BottomUpMergeSort.fs" />
+    <Compile Include="ScheduledBinomialHeap.fs" />
+    <Compile Include="ScheduledBottomUpMergeSort.fs" />
+    <Compile Include="HoodMelvilleQueue.fs" />
+    <Compile Include="BinaryRandomAccessList.fs" />
+    <Compile Include="SkewBinaryRandomAccessList.fs" />
+    <Compile Include="RealTimeDequeue.fs" />
+    <Compile Include="SkewBinomialHeap.fs" />
+    <Compile Include="BankersDequeue.fs" />
+    <Compile Include="AltBinaryRandomAccessList.fs" />
+    <Compile Include="BootstrappedQueue.fs" />
+    <Compile Include="ImplicitQueue.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.PowerPack, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809">
       <Private>True</Private>
     </Reference>
-    <Reference Include="FSharpx.Core">
-      <HintPath>..\packages\FSharpx.Core.1.6.1\lib\40\Fsharpx.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FsUnit.CustomMatchers">
-      <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.0\Lib\Net40\FsUnit.CustomMatchers.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FsUnit.MsTest">
-      <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.0\Lib\Net40\FsUnit.MsTest.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio 11.0\Common7\IDE\PublicAssemblies\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
-    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NHamcrest">
-      <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.0\Lib\Net40\NHamcrest.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DS_Benchmark\DS_Benchmark.fsproj">
-      <Name>DS_Benchmark</Name>
-      <Project>{1f3ede6e-7d84-45bd-9b0c-00198760a714}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\NaiveDataStructures\NaiveDataStructures.fsproj">
-      <Name>NaiveDataStructures</Name>
-      <Project>{111c5f89-b2a5-4dc8-9f7b-76aacba4cada}</Project>
-      <Private>True</Private>
-    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

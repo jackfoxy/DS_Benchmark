@@ -36,6 +36,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
   <ItemGroup>
+    <None Include="packages.config" />
     <Compile Include="Infrastructure.fs" />
     <Compile Include="NaiveDataStructures.fs" />
     <Compile Include="CoreCollections.fs" />
@@ -43,7 +44,6 @@
     <Compile Include="PowerPack.fs" />
     <Compile Include="Benchmark.fs" />
     <Compile Include="Generators.fs" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.PowerPack, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809">
