@@ -14,7 +14,7 @@ type 'a Stack =
     member x.pop = 
         match x with
         | EmptyStack -> failwith "Empty stack"
-        | Stack(hd, tl) -> hd, tl
+        | Stack(hd, tl) -> tl
     member x.push hd = Stack(hd, x) 
 
 module Stack =

@@ -57,7 +57,6 @@ type ReadyScript =
                 ())
 
         List.toSeq x._script 
-        //|> SeedAlpha.shuffleMulti 7
         |> Seq.iteri (iterate x._outputPath x._lastItem x._progress)
         ()
     
