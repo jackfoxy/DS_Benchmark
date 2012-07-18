@@ -122,7 +122,7 @@ type SeedAlphaTest() =
      member x.``SeedAlpha.shuffleMulti returns full collection`` () =
         let count = 501
         InitDataCol.seqStringAsc count 15 SeedAlpha.alphaAsc
-        |> SeedAlpha.shuffleMulti 70 
+        |> SeedAlpha.shuffleMulti 9 
         |> Seq.length
         |> should equal count
 
@@ -130,7 +130,7 @@ type SeedAlphaTest() =
 type BenchmarkTest() = 
     let count = 501
     let minLen = 1
-    let alpha = [|'a'..'e'|]
+    let alpha = [|'a'..'e'|]   //results in predictable test results below
 
     let stateFun2Same = fun x (y : 'a * 'a)-> 
         let a, b = y

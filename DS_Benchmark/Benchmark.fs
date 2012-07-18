@@ -8,7 +8,8 @@ open Utility
     
 type internal Rand =
     static member  rnd = new System.Random()
-    static member rndShuffle = 70
+    static member rndShuffle (count:int) = 
+        int (System.Math.Log (double count) |> System.Math.Ceiling)
 
 type Temp =
     static member tempFile = "xxx.txt"
@@ -39,10 +40,10 @@ type SeedAlpha =
 
             | _ when alphaPointer = alphaStop && stack.isEmpty -> yield acc + (string alpha.[alphaPointer])
             | _ -> 
-                let popped, newStack = stack.pop
-                let newAcc = fst popped
+                let newAcc, aPointer = stack.peek
+                let newStack = stack.pop
                 yield acc + (string alpha.[alphaPointer])
-                yield! loop alpha (snd popped) alphaStop newAcc.Length newStack newAcc
+                yield! loop alpha aPointer alphaStop newAcc.Length newStack newAcc
             }
 
         seq {
@@ -98,15 +99,15 @@ type InitDataCol() =
     ///Integers from 1 to count randomized
     static member arrayIntRnd count = 
         InitDataCol.arrayIntAsc count 
-        |> SeedAlpha.shuffleMulti Rand.rndShuffle 
+        |> SeedAlpha.shuffleMulti (Rand.rndShuffle count)
         |> Array.ofSeq
     ///Integers from 1 to count randomized
     static member seqIntRnd count = 
-        InitDataCol.arrayIntAsc count |> SeedAlpha.shuffleMulti Rand.rndShuffle
+        InitDataCol.arrayIntAsc count |> SeedAlpha.shuffleMulti (Rand.rndShuffle count)
     ///Integers from 1 to count randomized
     static member listIntRnd count = 
         InitDataCol.arrayIntAsc count 
-        |> SeedAlpha.shuffleMulti Rand.rndShuffle
+        |> SeedAlpha.shuffleMulti (Rand.rndShuffle count)
         |> List.ofSeq
 
     ///Integers from 1 to (count/2 +1) duplicated, randomized, count returned
@@ -114,7 +115,7 @@ type InitDataCol() =
         let arrayIntAsc = InitDataCol.arrayIntAsc (count/2 + 1)
         (arrayIntAsc, arrayIntAsc) 
         |> SeedAlpha.shuffle 
-        |> SeedAlpha.shuffleMulti (Rand.rndShuffle - 1)
+        |> SeedAlpha.shuffleMulti ((Rand.rndShuffle count) - 1)
         |> Seq.take count
         |> Array.ofSeq
     ///Integers from 1 to (count/2 +1) duplicated, randomized, count returned
@@ -122,14 +123,14 @@ type InitDataCol() =
         let arrayIntAsc = InitDataCol.arrayIntAsc (count/2 + 1)
         (arrayIntAsc, arrayIntAsc)
         |> SeedAlpha.shuffle  
-        |> SeedAlpha.shuffleMulti (Rand.rndShuffle - 1)
+        |> SeedAlpha.shuffleMulti ((Rand.rndShuffle count) - 1)
         |> Seq.take count
     ///Integers from 1 to (count/2 +1) duplicated, randomized, count returned
     static member listIntRndDup count =
         let arrayIntAsc = InitDataCol.arrayIntAsc (count/2 + 1)
         (arrayIntAsc, arrayIntAsc)
         |> SeedAlpha.shuffle  
-        |> SeedAlpha.shuffleMulti (Rand.rndShuffle - 1)
+        |> SeedAlpha.shuffleMulti ((Rand.rndShuffle count) - 1)
         |> Seq.take count
         |> List.ofSeq
         
@@ -182,21 +183,21 @@ type InitDataCol() =
     ///alpha - generating alphabet 
     static member  arrayStringRnd count minLen alpha = 
         InitDataCol.seqStringAsc count minLen alpha 
-        |> SeedAlpha.shuffleMulti Rand.rndShuffle 
+        |> SeedAlpha.shuffleMulti (Rand.rndShuffle count) 
         |> Array.ofSeq
     ///Random strings up to length of alphabet, no duplicates
     ///count - count to generate
     ///minLen - minimum string length
     ///alpha - generating alphabet 
     static member  seqStringRnd count minLen alpha = 
-        InitDataCol.seqStringAsc count minLen alpha |> SeedAlpha.shuffleMulti Rand.rndShuffle
+        InitDataCol.seqStringAsc count minLen alpha |> SeedAlpha.shuffleMulti (Rand.rndShuffle count)
     ///Random strings up to length of alphabet, no duplicates
     ///count - count to generate
     ///minLen - minimum string length
     ///alpha - generating alphabet 
     static member  listStringRnd count minLen alpha = 
         InitDataCol.seqStringAsc count minLen alpha 
-        |> SeedAlpha.shuffleMulti Rand.rndShuffle
+        |> SeedAlpha.shuffleMulti (Rand.rndShuffle count)
         |> List.ofSeq
 
     ///Random strings up to length of alphabet, each unique string duplicated
@@ -207,7 +208,7 @@ type InitDataCol() =
         let arrayStringAsc = InitDataCol.arrayStringAsc (count / 2 + 1) minLen alpha
         (arrayStringAsc, arrayStringAsc)
         |> SeedAlpha.shuffle 
-        |> SeedAlpha.shuffleMulti (Rand.rndShuffle - 1)
+        |> SeedAlpha.shuffleMulti ((Rand.rndShuffle count) - 1)
         |> Seq.take count
         |> Array.ofSeq
     ///Random strings up to length of alphabet, each unique string duplicated
@@ -218,7 +219,7 @@ type InitDataCol() =
         let arrayStringAsc = InitDataCol.arrayStringAsc (count / 2 + 1) minLen alpha
         (arrayStringAsc, arrayStringAsc)
         |> SeedAlpha.shuffle 
-        |> SeedAlpha.shuffleMulti (Rand.rndShuffle - 1)
+        |> SeedAlpha.shuffleMulti ((Rand.rndShuffle count) - 1)
         |> Seq.take count
     ///Random strings up to length of alphabet, each unique string duplicated
     ///count - count to generate
@@ -228,7 +229,7 @@ type InitDataCol() =
         let arrayStringAsc = InitDataCol.arrayStringAsc (count / 2 + 1) minLen alpha
         (arrayStringAsc, arrayStringAsc)
         |> SeedAlpha.shuffle 
-        |> SeedAlpha.shuffleMulti (Rand.rndShuffle - 1)
+        |> SeedAlpha.shuffleMulti ((Rand.rndShuffle count) - 1)
         |> Seq.take count
         |> List.ofSeq
 
@@ -408,7 +409,7 @@ module Benchmark =
         Array.map setFun data
 
     let getAppendDataForSetArrayString data =
-        let setFun = (fun x -> ('\u27FF'.ToString() + x))
+        let setFun = (fun x -> ('\u27FF'.ToString() + x))  //just a char not in the original data
         Array.map setFun data
 
     let getAppendDataForSetListInt data =
@@ -657,8 +658,6 @@ module Benchmark =
             | _ when (inputArgs.InitData.ToLower().Contains("seqint") || inputArgs.InitData.ToLower().Contains("nocalcseqint")) -> 
                 let data = getInitSeqInt inputArgs.InitData inputArgs.Size
 
-                (*let dCount = Seq.length data //force generation*)
-
                 match inputArgs.DataStructure.ToLower() with
 
                 | x when x = DataStructure.CoreCollectionsArray -> 
@@ -707,19 +706,6 @@ module Benchmark =
             | _ when (inputArgs.InitData.ToLower().Contains("seqstring")  || inputArgs.InitData.ToLower().Contains("nocalcseqstring")) -> 
                 let data = getInitSeqString inputArgs.InitData inputArgs.Size 1 SeedAlpha.alphaAsc
                 
-                (*
-                let dCount = Seq.length data //force generation
-
-                let rec loop (d:string seq) dcount acc =
-                    match acc with
-                    | _ when acc = dcount -> ()
-                    | _ -> 
-                        let a = Seq.nth acc d
-                        loop d dcount (acc + 1)
-
-                loop data dCount 0
-                *)
-
                 match inputArgs.DataStructure.ToLower() with
                     
                 | x when x = DataStructure.CoreCollectionsArray -> 
