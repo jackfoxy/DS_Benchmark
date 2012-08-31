@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2009/12/31/physicist-queue
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2009/12/31/physicist-queue
 module PhysicistQueue =
 
   type t<'a> = {

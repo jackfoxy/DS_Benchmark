@@ -11,7 +11,7 @@ type GeneratorsTest() =
     [<TestMethod>]
     member x.``Generators get allDataStructures`` () =
         let y = Generators.allDataStructures
-        y.Length = 13 |> should be True
+        y.Length = 14 |> should be True
 
     [<TestMethod>]
      member x.``Generators get allActions`` () =

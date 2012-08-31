@@ -197,8 +197,24 @@ Contact me if you are interested in contributing to the project. I will consider
 
 ##Open Issues:
 
-Ugly and slow random and random duplicate logic. Need to create random stack data structure.
+>1) Ugly and slow random and random duplicate logic. Need to create random stack data structure.
 
-Despite over 200 unit tests, much code is still uncovered. Lookup and update actions not well-covered by unit testing.
+>2) Despite over 200 unit tests, much code is still uncovered. Some Action algorithms still not well-covered by unit testing due to architecture "defect".
 
-Create a build script (Fake?) to put the Bench.exe in the DS\_Benchmark and Console1 bins and have DS\_Benchmark look for it there first. That would be a little cleaner than the current implementation.
+>3) Create a build script (Fake?) to put the Bench.exe in the DS\_Benchmark and Console1 bins and have DS\_Benchmark look for it there first. That would be a little cleaner than the current implementation.
+
+>4) Since no structures now, or in the foreseeable future, perform differently depending on the type of structure carrying the orginal load data, make change for common execution of Actions which are not data load related.
+
+>5) Address near duplication of code between RemoveRand and RemoveWorst1 actions, for instance. 
+
+>6) Eliminate "for" loops in favor of recursion.
+
+##Release Notes
+
+###v1.1
+
+>1) New project added: PurelyFunctionalDataStructures is Julien's implementation of most of the structures in Okasaki, 1998. Known issue is Release build of this project does not work with Optimize Code. Apparently some of Julien's usages of Lazy do not work correctly under F# 3.0. I have not debugged further. No structures currently implemented for getTime.
+
+>2) AltBinaryRandomAccessList (under project NaiveDataStructures, not PurelyFunctionalDataStructures) implemented for getTime.
+
+>3) Several new Actions added to Core List and/or AltBinaryRandomAccessList, but only for load by arrayintasc data. Access console1 from command line with no parameters for current documentation.

@@ -35,7 +35,34 @@ type Action =
     static member Iterate = "iterate"
     static member LookUpRand = "lookuprand"
     static member NewInit = "new()"
+
+    static member RemoveRand = "removerand"
+    static member RemoveRandGC10 = "removerandgc10"
+    static member RemoveRandGC10NoWait = "removerandgc10nowait"
+    static member RemoveRandGC100 = "removerandgc100"
+    static member RemoveHybridRand = "removehybridrand"
+    static member RemoveHybridWorst1 = "removehybridworst1"
+    static member RemovePuntRand = "removepuntrand"
+    static member RemovePuntWorst1 = "removepuntworst1"
+    static member RemovePsdCanRand = "removepsdcanrand"
+    static member RemovePsdCanWorst1 = "removepsdcanworst1"
+    static member RemoveWorst1 = "removeworst1"
+    static member RemoveDescend = "removedescend"
+
+    static member UpdateHybridRand = "updatehybridrand"
+    static member UpdateHybridWorst1 = "updatehybridworst1"
     static member UpdateRand = "updaterand"
+    static member UpdatePuntRand = "updatepuntrand"
+    static member UpdatePuntWorst1 = "updatepuntworst1"
+    static member UpdatePsdCanRand = "updatepsdcanrand"
+    static member UpdatePsdCanWorst1 = "updatepsdcanworst1"
+    static member UpdateRandGC10 = "updaterandgc10"
+    static member UpdateRandGC10NoWait = "updaterandgc10nowait"
+    static member UpdateRandGC100 = "updaterandgc100"
+    static member UpdateWorst1 = "updateworst1"
+    static member Update2Rand = "update2rand"
+    static member Update2Worst1 = "update2worst1"
+    
 
 type InitData =
     val private y : unit
@@ -88,6 +115,7 @@ type DataStructure =
     static member FSharpxRtQueue = "fsharpxrtqueue"
     static member FSharpxTransientVector = "fsharpxtransientvector"
 
+    static member NaiveAltBinRndAccList = "naivealtbinrndacclist"
     static member NaiveStack = "naivestack"
 
     static member PowerPackHashMultiMap = "powerpackhashmultimap"
@@ -97,6 +125,7 @@ type Operator =
     static member Append = "append"
     static member AssocN = "assocn"
     static member ConjEnumerateData = "conj enumerate data"
+    static member Cons = "cons"
     static member Contains = "contains"
     static member EmptyRecAdd = "empty rec add"
     static member CreateRecCreate = "create rec create"
@@ -106,6 +135,7 @@ type Operator =
     static member ForEachAdd = "for each add"
     static member ItemByIndex = "item index"
     static member ItemByKey = "item key"
+    static member Lookup = "lookup"
     static member NewInit = "new()"
     static member NonEmptyBootstrappedQueueCreate = "NonEmptyBootstrappedQueue.create"
     static member OfArray = "ofArray"
@@ -118,10 +148,12 @@ type Operator =
     static member RecHead = "rec head"
     static member RecHeadSnoc = "rec head snoc"
     static member RecSnoc = "rec snoc"
+    static member Remove = "remove"
     static member RemoveAdd = "remove add"
     static member SplitConsAppend = "split cons append"
     static member SplitSnocAppend = "split snoc append"
     static member ToArrayItemOfArray = "toarray item ofarray"
+    static member Update = "update"
 
 module Utility =
         

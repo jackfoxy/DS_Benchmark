@@ -39,6 +39,8 @@ type TestObj =
     static member mapInt = Map TestObj.zipSeqInt
     static member mapString = Map TestObj.zipSeqString
 
+    static member naiveAltBinRndAccListInt = AltBinaryRandomAccessList.empty |> AltBinaryRandomAccessList.cons 0
+
     static member naiveStackInt = 
         let s = Stack.EmptyStack
         s.push 0

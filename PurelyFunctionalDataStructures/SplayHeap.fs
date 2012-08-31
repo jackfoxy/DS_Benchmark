@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2009/12/17/splay-heap
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2009/12/17/splay-heap
 module SplayHeap =
 
   type t<'a> =

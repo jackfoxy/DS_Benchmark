@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2010/01/07/bottom-up-merge-sort
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2010/01/07/bottom-up-merge-sort
 module BottomUpMergeSort =
 
   type Sortable<'a> = int * Lazy<list<list<'a>>>

@@ -72,7 +72,72 @@ module CoreCollectionsArray =
                     
         times, sw
 
-    let dUpdateRand (inputArgs:BenchArgs) (update:'a) (a:'a[])  =
+    let doRemoveRand (inputArgs:BenchArgs) (update:'a) (a:'a[])  =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let b = Array.create (a.Length - 1) update
+            let i' = rnd.Next a.Length
+
+            for k = 0 to (b.Length - 1) do 
+                match k with
+                | x when  x < i' -> b.[k] <- a.[k]
+                | x when x > i' -> b.[k - 1] <- a.[k]
+                | _ -> ()
+
+            ()
+                   
+        sw.Stop()
+                    
+        times, sw
+
+    let doRemoveRandGC (inputArgs:BenchArgs) (update:'a) (a:'a[]) gCmod =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let b = Array.create (a.Length - 1) update
+            let i' = rnd.Next a.Length
+
+            if ((i % gCmod) = 0) then 
+                sw.Stop()
+                System.GC.Collect()
+                sw.Start()
+
+            for k = 0 to (b.Length - 1) do 
+                match k with
+                | x when  x < i' -> b.[k] <- a.[k]
+                | x when x > i' -> b.[k - 1] <- a.[k]
+                | _ -> ()
+
+            ()
+                   
+        sw.Stop()
+                    
+        times, sw
+
+    let doRemoveWorst1 (inputArgs:BenchArgs) (update:'a) (a:'a[])  =
+                                
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let b = Array.create (a.Length - 1) update
+
+        for k = 0 to (b.Length - 1) do 
+            b.[k] <- a.[k]
+                
+        sw.Stop()
+                    
+        1, sw
+
+    let doUpdateRand (inputArgs:BenchArgs) (update:'a) (a:'a[])  =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -82,6 +147,19 @@ module CoreCollectionsArray =
         for i = 1 to times do
             a.[(rnd.Next a.Length)] <- update
             ()
+                   
+        sw.Stop()
+                    
+        times, sw
+
+    let doUpdateWorst1 (inputArgs:BenchArgs) (update:'a) (a:'a[])  =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        a.[a.Length - 1] <- update
                    
         sw.Stop()
                     
@@ -119,7 +197,7 @@ module CoreCollectionsArray =
                     Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
                     
                 | x when x = Action.UpdateRand ->
-                    let times, sw = Array.ofList data |> dUpdateRand inputArgs (Seq.nth 0 data)
+                    let times, sw = Array.ofList data |> doUpdateRand inputArgs (Seq.nth 0 data)
                     Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
                     
                 | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
@@ -157,8 +235,32 @@ module CoreCollectionsArray =
                     let times, sw = Array.ofSeq data |> doLookUpRand inputArgs
                     Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
 
+                | x when x = Action.RemoveRand ->
+                    let a = Array.ofSeq data 
+                    let times, sw = doRemoveRand inputArgs (Seq.nth 0 data) a 
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemoveRandGC10 ->
+                    let a = Array.ofSeq data 
+                    let times, sw = doRemoveRandGC inputArgs (Seq.nth 0 data) a 10
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemoveRandGC100 ->
+                    let a = Array.ofSeq data 
+                    let times, sw = doRemoveRandGC inputArgs (Seq.nth 0 data) a 100
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemoveWorst1 ->
+                    let a = Array.ofSeq data 
+                    let times, sw = doRemoveWorst1 inputArgs (Seq.nth 0 data) a
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
                 | x when x = Action.UpdateRand ->
-                    let times, sw = Array.ofSeq data |> dUpdateRand inputArgs (Seq.nth 0 data)
+                    let times, sw = Array.ofSeq data |> doUpdateRand inputArgs (Seq.nth 0 data)
+                    Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.UpdateWorst1 ->
+                    let times, sw = Array.ofSeq data |> doUpdateWorst1 inputArgs (Seq.nth 0 data)
                     Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
 
                 | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
@@ -221,7 +323,259 @@ module CoreCollectionsList =
 
         times, sw
 
-    let dUpdateRand (inputArgs:BenchArgs) (update:'a) (l:'a list) =
+    let doRemove (inputArgs:BenchArgs) (l:'a list) lcount =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let next = rnd.Next lcount
+
+            let rec loop i front back =
+                match i with
+                | x when x < 0 -> front, (List.tail back)
+                | x ->  loop (x-1) (List.Cons ((List.head back), front)) (List.tail back)
+           
+            let front', back' = loop (next-1) [] l
+
+            let l' = List.append (List.rev front') back'
+
+            ()
+
+        sw.Stop()
+                    
+        times, sw
+
+    let doRemoveHybrid (inputArgs:BenchArgs) (l:'a list) lcount =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let next = rnd.Next lcount
+
+            let rec loop i (front:'a array) back =
+                match i with
+                | x when x < 0 -> front, (List.tail back)
+                | x ->  
+                    Array.set front x (List.head back)
+                    loop (x-1) front (List.tail back)
+
+            let l' = 
+                if (next = 0) then List.tail l
+                else 
+                    let front', back' = loop (next-1) (Array.create next (List.head l)) l
+
+                    let rec loop2 i' frontLen (front'':'a array) back'' =
+                        match i' with
+                        | i'' when i'' > frontLen -> back''
+                        | i'' -> loop2 (i''+1) frontLen front'' (front''.[i'']::back'')
+                        
+                    loop2 0 ((Seq.length front') - 1) front' back'
+
+            ()
+
+        sw.Stop()
+              
+        times, sw      
+
+    let doRemoveHybridWorst1 (l:'a list) lcount =
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let l' = 
+
+            let rec loop i (front:'a array) back =
+                match i with
+                | x when x < 0 -> front, (List.tail back)
+                | x ->  
+                    Array.set front x (List.head back)
+                    loop (x-1) front (List.tail back)
+
+            let front', back' = loop (lcount - 2) (Array.create (lcount - 1) (List.head l)) l
+
+            let rec loop2 i' frontLen (front'':'a array) back'' =
+                match i' with
+                | i'' when i'' > frontLen -> back''
+                | i'' -> loop2 (i''+1) frontLen front'' (front''.[i'']::back'')
+                        
+            loop2 0 ((Seq.length front') - 1) front' back'
+
+        sw.Stop()
+              
+        1, sw
+
+    let doRemovePunt (inputArgs:BenchArgs) (l:'a list) =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+        let seed = List.head l
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let a = List.toArray l
+
+            let b = Array.create (a.Length - 1) seed
+            let i' = rnd.Next a.Length
+
+            for k = 0 to (b.Length - 1) do 
+                match k with
+                | x when  x < i' -> b.[k] <- a.[k]
+                | x when x > i' -> b.[k - 1] <- a.[k]
+                | _ -> ()
+            
+            let l2 = List.ofArray b
+
+            ()
+                   
+        sw.Stop()
+                    
+        times, sw
+
+    let doRemovePuntWorst1 (l:'a list) =
+                      
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let seed = List.head l
+
+        let a = List.toArray l
+        let b = Array.create (a.Length - 1) seed
+        let i' = a.Length - 1
+
+        for k = 0 to (b.Length - 1) do 
+            match k with
+            | x when  x < i' -> b.[k] <- a.[k]
+            | x when x > i' -> b.[k - 1] <- a.[k]
+            | _ -> ()
+            
+        let l2 = List.ofArray b
+    
+        sw.Stop()
+                    
+        1, sw
+
+    let doRemovePsdCan (inputArgs:BenchArgs) (l:'a list) lcount =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let rec loop i (l':'a list) = 
+                match (i,l') with
+                | i',[] -> raise (System.Exception("subscript"))
+                | 0,x::xs -> xs
+                | i',x::xs -> x::(loop (i'-1) xs) 
+                   
+            let l'' = loop (rnd.Next lcount) l
+            ()
+
+        sw.Stop()
+                    
+        times, sw
+
+    let doRemovePsdCanWorst1 (l:'a list) lcount =
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop i (l':'a list) = 
+            match (i,l') with
+            | i',[] -> raise (System.Exception("subscript"))
+            | 0,x::xs -> xs
+            | i',x::xs -> x::(loop (i'-1) xs) 
+                   
+        let l'' = loop (lcount - 1) l
+ 
+        sw.Stop()
+                    
+        1, sw
+
+    let doRemoveRandGC (inputArgs:BenchArgs) (l:'a list) lcount gCmod =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let next = rnd.Next lcount
+
+            if ((i % gCmod) = 0) then 
+                sw.Stop()
+                System.GC.Collect()
+                sw.Start()
+
+            let rec loop i front back =
+                match i with
+                | x when x < 0 -> front, (List.tail back)
+                | x ->  loop (x-1) (List.Cons ((List.head back), front)) (List.tail back)
+           
+            let front', back' = loop (next-1) [] l
+
+            let l' = List.append (List.rev front') back'
+
+            ()
+
+        sw.Stop()
+                    
+        times, sw
+
+    let doRemoveRandGCNoWait (inputArgs:BenchArgs) (l:'a list) lcount gCmod =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let next = rnd.Next lcount
+
+            if ((i % gCmod) = 0) then 
+                System.GC.Collect()
+
+            let rec loop i front back =
+                match i with
+                | x when x < 0 -> front, (List.tail back)
+                | x ->  loop (x-1) (List.Cons ((List.head back), front)) (List.tail back)
+           
+            let front', back' = loop (next-1) [] l
+
+            let l' = List.append (List.rev front') back'
+
+            ()
+
+        sw.Stop()
+                    
+        times, sw
+
+    let doRemoveWorst1 (l:'a list) lcount =
+                                
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop i front back =
+            match i with
+            | x when x < 0 -> front, (List.tail back)
+            | x ->  loop (x-1) (List.Cons ((List.head back), front)) (List.tail back)
+           
+        let front', back' = loop (lcount-2) [] l
+
+        let l' = List.append (List.rev front') back'
+
+        sw.Stop()
+                    
+        1, sw   
+
+    let doUpdatePuntRand (inputArgs:BenchArgs) (update:'a) (l:'a list) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -237,6 +591,163 @@ module CoreCollectionsList =
         sw.Stop()
                     
         times, sw
+
+    let doUpdateRand2 (inputArgs:BenchArgs) (update:'a) (l:'a list) lcount =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let next = rnd.Next lcount
+
+            let rec loop i front back =
+                match i with
+                | x when x < 0 -> front, (List.tail back)
+                | x ->  loop (x-1) (List.Cons ((List.head back), front)) (List.tail back)
+           
+            let front', back' = loop (next-1) [] l
+
+            let l' = List.append (List.rev front') (List.Cons (update, back'))
+
+            ()
+
+        sw.Stop()
+                    
+        times, sw
+
+    let doUpdateHybridRand (inputArgs:BenchArgs) (update:'a) (l:'a list) lcount =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let next = rnd.Next lcount
+
+            let rec loop i (front:'a array) back =
+                match i with
+                | x when x < 0 -> front, (List.tail back)
+                | x ->  
+                    Array.set front x (List.head back)
+                    loop (x-1) front (List.tail back)
+
+            let l' = 
+                if (next = 0) then List.Cons (update, (List.tail l))
+                else 
+                    let front', back' = loop (next-1) (Array.create next update) l
+
+                    let rec loop2 i' frontLen (front'':'a array) back'' =
+                        match i' with
+                        | x when x > frontLen -> back''
+                        | x -> loop2 (x + 1) frontLen front'' (front''.[x]::back'')
+                        
+                    loop2 0 ((Seq.length front') - 1) front' (update::back')
+
+            ()
+
+        sw.Stop()
+                    
+        times, sw
+
+    let doUpdatePsdCanRand (inputArgs:BenchArgs) (update:'a) (l:'a list) lcount =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let rec loop i y (l':'a list) = 
+                match (i,y,l') with
+                | i',y,[] -> raise (System.Exception("subscript"))
+                | 0,y',x::xs -> y::xs
+                | i',y,x::xs -> x::(loop (i'-1) y xs) 
+                   
+            let l'' = loop (rnd.Next lcount) update l
+            ()
+
+        sw.Stop()
+                    
+        times, sw
+
+    let doUpdate2Worst1 (update:'a) (l:'a list) lcount =
+                                
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop i front back =
+            match i with
+            | x when x < 0 -> front, (List.tail back)
+            | x ->  loop (x-1) (List.Cons ((List.head back), front)) (List.tail back)
+           
+        let front', back' = loop (lcount-2) [] l
+
+        let l' = List.append (List.rev front') (List.Cons (update, back'))
+
+        sw.Stop()
+                    
+        1, sw
+
+    let doUpdateHybridWorst1 (update:'a) (l:'a list) =
+       
+        let lcount = List.length l
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop i (front:'a array) back =
+            match i with
+            | x when x < 0 -> front, (List.tail back)
+            | x ->  
+                Array.set front x (List.head back)
+                loop (x-1) front (List.tail back)
+
+        let l' = 
+            let front', back' = loop (lcount-1) (Array.create lcount update) l
+
+            let rec loop2 i' frontLen (front'':'a array) back'' =
+                match i' with
+                | i'' when i'' > frontLen -> back''
+                | i'' -> loop2 (i''+1) frontLen front'' (front''.[i'']::back'')
+                        
+            loop2 0 ((Seq.length front') - 1) front' (update::back')
+
+        sw.Stop()
+                    
+        1, sw
+
+    let doUpdatePsdCanWorst1 (update:'a) (l:'a list) lcount =
+                                
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop i y (l':'a list) = 
+            match (i,y,l') with
+            | i',y,[] -> raise (System.Exception("subscript"))
+            | 0,y',x::xs -> y::xs
+            | i',y,x::xs -> x::(loop (i'-1) y xs) 
+                   
+        let l'' = loop (lcount - 1) update l
+
+        sw.Stop()
+                    
+        1, sw
+
+    let doUpdatePuntWorst1 (update:'a) (l:'a list) =
+                                
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let a = List.toArray l
+        a.[(a.Length - 1)] <- update
+        let l2 = List.ofArray a
+                   
+        sw.Stop()
+                    
+        1, sw
 
     let getTimeOfArray (inputArgs:BenchArgs) data = 
             
@@ -269,10 +780,106 @@ module CoreCollectionsList =
                     let times, sw = List.ofArray data |> doLookUpRand inputArgs
                     Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
 
-                | x when x = Action.UpdateRand ->
+                | x when x = Action.RemoveRand ->
                     let l = List.ofArray data 
-                    let times, sw = dUpdateRand inputArgs (l.Item 0) l
+                    let times, sw = doRemove inputArgs l (List.length l)
                     Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemoveHybridRand ->
+                    let l = List.ofArray data 
+                    let times, sw = doRemoveHybrid inputArgs l (List.length l)
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemoveHybridWorst1 ->
+                    let l = List.ofArray data 
+                    let times, sw = doRemoveHybridWorst1 l (List.length l)
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemovePuntRand ->
+                    let l = List.ofArray data 
+                    let times, sw = doRemovePunt inputArgs l 
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemovePuntWorst1 ->
+                    let l = List.ofArray data 
+                    let times, sw = doRemovePuntWorst1 l 
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemovePsdCanRand ->
+                    let l = List.ofArray data 
+                    let times, sw = doRemovePsdCan inputArgs l (List.length l)
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemovePsdCanWorst1 ->
+                    let l = List.ofArray data 
+                    let times, sw = doRemovePsdCanWorst1 l (List.length l)
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemoveRandGC10 ->
+                    let l = List.ofArray data 
+                    let times, sw = doRemoveRandGC inputArgs l (List.length l) 10
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemoveRandGC10NoWait ->
+                    let l = List.ofArray data 
+                    let times, sw = doRemoveRandGCNoWait inputArgs l (List.length l) 10
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemoveRandGC100 ->
+                    let l = List.ofArray data 
+                    let times, sw = doRemoveRandGC inputArgs l (List.length l) 100
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemoveWorst1 ->
+                    let l = List.ofArray data 
+                    let times, sw = doRemoveWorst1 l (List.length l) 
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.RemoveHybridWorst1 ->
+                    let l = List.ofArray data 
+                    let times, sw = doRemoveHybridWorst1 l (List.length l) 
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.UpdateRand || x = Action.UpdateHybridRand ->
+                    let l = List.ofArray data 
+                    let times, sw = doUpdateHybridRand inputArgs (l.Item 0) l (List.length l)
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.UpdatePsdCanRand ->
+                    let l = List.ofArray data 
+                    let times, sw = doUpdatePsdCanRand inputArgs (l.Item 0) l (List.length l)
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.UpdatePuntRand ->
+                    let l = List.ofArray data 
+                    let times, sw = doUpdatePuntRand inputArgs (l.Item 0) l
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.Update2Rand ->
+                    let l = List.ofArray data 
+                    let times, sw = doUpdateRand2 inputArgs (l.Item 0) l (List.length l)
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.UpdateWorst1 || x = Action.UpdateHybridWorst1 ->
+                    let l = List.ofArray data 
+                    let times, sw = doUpdateHybridWorst1 (l.Item 0) l
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.Update2Worst1 ->
+                    let l = List.ofArray data 
+                    let times, sw = doUpdate2Worst1 (l.Item 0) l (List.length l)
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.UpdatePuntWorst1 ->
+                    let l = List.ofArray data 
+                    let times, sw = doUpdatePuntWorst1 (l.Item 0) l 
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+                | x when x = Action.UpdatePsdCanWorst1 ->
+                    let l = List.ofArray data 
+                    let times, sw = doUpdatePsdCanWorst1 (l.Item 0) l (List.length l)
+                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
 
                 | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
@@ -311,7 +918,7 @@ module CoreCollectionsList =
 
                 | x when x = Action.UpdateRand ->
                     let l = List.ofSeq data //do not move data structure instantiations to higher level because some tests may create very large unneeded objects
-                    let times, sw = dUpdateRand inputArgs (l.Item 0) l
+                    let times, sw = doUpdateHybridRand inputArgs (l.Item 0) l (List.length l)
 
                     Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
 
@@ -397,7 +1004,7 @@ module CoreCollectionsMap =
                     
         times, sw
 
-    let dUpdateRand (inputArgs:BenchArgs) (lookUpData:'a[]) (m:Map<'a,'a>) =
+    let doUpdateRand (inputArgs:BenchArgs) (lookUpData:'a[]) (m:Map<'a,'a>) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
         let mCount = m.Count
@@ -458,7 +1065,7 @@ module CoreCollectionsMap =
                     Utility.getTimeResult m zipData Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
                 | x when x = Action.UpdateRand ->
-                    let times, sw = Map.ofArray zipData  |> dUpdateRand inputArgs lookUpData
+                    let times, sw = Map.ofArray zipData  |> doUpdateRand inputArgs lookUpData
                     Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
 
                 | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
@@ -506,7 +1113,7 @@ module CoreCollectionsMap =
                     Utility.getTimeResult m zipData Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
                 | x when x = Action.UpdateRand ->
-                    let times, sw = Map.ofList zipData |> dUpdateRand inputArgs lookUpData
+                    let times, sw = Map.ofList zipData |> doUpdateRand inputArgs lookUpData
                     Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
 
                 | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
@@ -554,7 +1161,7 @@ module CoreCollectionsMap =
                     Utility.getTimeResult m zipData Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
                 | x when x = Action.UpdateRand ->
-                    let times, sw = Map.ofSeq zipData |> dUpdateRand inputArgs lookUpData
+                    let times, sw = Map.ofSeq zipData |> doUpdateRand inputArgs lookUpData
                     Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
 
                 | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
@@ -640,7 +1247,7 @@ module CoreCollectionsSet =
 
         times, sw
 
-    let dUpdateRand (inputArgs:BenchArgs) (lookUpData:'a[]) s =
+    let doUpdateRand (inputArgs:BenchArgs) (lookUpData:'a[]) s =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
         let sCount = Set.count s
@@ -701,7 +1308,7 @@ module CoreCollectionsSet =
                 Utility.getTimeResult s data Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
             | x when x = Action.UpdateRand ->
-                let times, sw = Set.ofArray data |> dUpdateRand inputArgs lookUpData
+                let times, sw = Set.ofArray data |> doUpdateRand inputArgs lookUpData
                 Utility.getTimeResult times data Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
 
             | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
@@ -749,7 +1356,7 @@ module CoreCollectionsSet =
                     Utility.getTimeResult s data Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
                 | x when x = Action.UpdateRand ->
-                    let times, sw = Set.ofList data |> dUpdateRand inputArgs lookUpData
+                    let times, sw = Set.ofList data |> doUpdateRand inputArgs lookUpData
                     Utility.getTimeResult times data Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
 
                 | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
@@ -797,7 +1404,7 @@ module CoreCollectionsSet =
                     Utility.getTimeResult s data Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
                 | x when x = Action.UpdateRand ->
-                    let times, sw = Set.ofSeq data |> dUpdateRand inputArgs lookUpData
+                    let times, sw = Set.ofSeq data |> doUpdateRand inputArgs lookUpData
                     Utility.getTimeResult times data Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
 
                 | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")

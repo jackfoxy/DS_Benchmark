@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2009/12/03/finite-map
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2009/12/03/finite-map
 module FiniteMap =
 
   type t<'a, 'b> =

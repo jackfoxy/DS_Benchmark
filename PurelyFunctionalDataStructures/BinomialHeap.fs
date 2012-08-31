@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2009/12/10/binomial-heap
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2009/12/10/binomial-heap
 
 type BinomialTree<'a> = Node of (int * 'a * list<BinomialTree<'a>>)
 

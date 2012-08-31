@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2009/12/03/leftist-heap
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2009/12/03/leftist-heap
 module LeftistHeap =
 
   type t<'a> =

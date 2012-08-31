@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2010/01/07/real-time-queue
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2010/01/07/real-time-queue
 module RealTimeQueue =
 
   type t<'a> = LazyList<'a> * Lazy<list<'a>> * LazyList<'a>

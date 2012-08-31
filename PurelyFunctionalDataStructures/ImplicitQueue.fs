@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2010/02/18/implicit-queue
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2010/02/18/implicit-queue
 module ImplicitQueue =
 
   type Digit<'a> = Zero | One of 'a | Two of 'a * 'a

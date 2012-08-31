@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2010/01/21/scheduled-binomial-heap
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2010/01/21/scheduled-binomial-heap
 module ScheduledBinomialHeap =
 
   type Tree<'a> = Node of ('a * list<Tree<'a>>)

@@ -1,4 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2009/12/31/lazy-binomial-heap
 
 module LazyBinomialHeap =
 

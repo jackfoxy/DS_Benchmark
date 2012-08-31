@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2010/02/18/bootstrapped-queue
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2010/02/18/bootstrapped-queue
 module BootstrappedQueue =
 
   type nonempty_t<'a> = {

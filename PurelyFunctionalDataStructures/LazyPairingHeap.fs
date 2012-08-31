@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2010/01/07/lazy-pairing-heap
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2010/01/07/lazy-pairing-heap
 module LazyPairingHeap =
 
   type t<'a> =

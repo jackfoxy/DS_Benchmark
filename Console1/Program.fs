@@ -23,8 +23,19 @@ type Info =
         printfn "               %s" (List.fold (fun (s:string) t -> if s.Length > 0 then s + ", " + t else t ) "" Generators.allInitData)
         printfn "input arg 4 -- Action"
         printfn "               %s" (List.fold (fun (s:string) t -> if s.Length > 0 then s + ", " + t else t ) "" Generators.allActions)
+        printfn " "
+        printfn "                ...rand...     -- performs multiple random operations in timing. Defaults to 10,000."
+        printfn "                ...gc...       -- attempts garbage collection every nth iteration of perform multiple timing routine. Timing suspended during GC."
+        printfn "                ...gc...nowait -- attempts garbage collection every nth iteration of perform multiple timing routine. Timing not suspended during GC."
+        printfn "                ...punt...     -- corelist only. See http://jackfoxy.com/purely-functional-stepchildren"
+        printfn "                ...psdcan...   -- corelist only. See http://jackfoxy.com/purely-functional-stepchildren"
+        printfn "                ...hybrid...   -- corelist only. See http://jackfoxy.com/purely-functional-stepchildren"
+        printfn " "
+        printfn "                Not all 'non-data loading' Actions supported for every structure or every Initialization Data. Try arrayintasc."
+        printfn " "
         printfn "input arg 5 -- additional paramaters (optional)"
-        printfn "               used by lookuprand and updaterand Actions to control number of lookups/updates, defaults to 10,000"
+        printfn "               used by lookuprand and updaterand Actions to control number of lookups/updates/removes, defaults to 10,000"
+        printfn " "
         ()
     static member printOpt2 =
         printfn " "
@@ -120,6 +131,7 @@ module console1 =
 
             | _ -> Info.printAll
 
+        printfn "%i ticks in a millisecond" System.TimeSpan.TicksPerMillisecond
         printfn "Hit any key to exit."
         System.Console.ReadKey() |> ignore
         0 // return an integer exit code

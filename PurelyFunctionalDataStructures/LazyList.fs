@@ -1,7 +1,7 @@
 ﻿namespace PurelyFunctionalDataStructures
-
-//http://lepensemoi.free.fr/index.php/2009/11/24/purely-functional-data-structures-in-f-introduction
-
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2009/11/24/purely-functional-data-structures-in-f-introduction
+// does not play well with release optimize compile
 module LazyList =
   let rec private revAux r acc =
     match r with

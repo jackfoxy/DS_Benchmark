@@ -24,7 +24,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <Tailcalls>true</Tailcalls>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -39,33 +39,33 @@
     <None Include="packages.config" />
     <Compile Include="Exceptions.fs" />
     <Compile Include="LazyList.fs" />
-    <Compile Include="CustomStack.fs" />
-    <Compile Include="BinarySearchTree.fs" />
-    <Compile Include="FiniteMap.fs" />
-    <Compile Include="LeftistHeap.fs" />
-    <Compile Include="RedBlackSet.fs" />
-    <Compile Include="BinomialHeap.fs" />
-    <Compile Include="BatchedQueue.fs" />
-    <Compile Include="PairingHeap.fs" />
-    <Compile Include="Dequeue.fs" />
-    <Compile Include="SplayHeap.fs" />
+    <Compile Include="AltBinaryRandomAccessList.fs" />
+    <Compile Include="BankersDequeue.fs" />
     <Compile Include="BankersQueue.fs" />
-    <Compile Include="LazyBinomialHeap.fs" />
-    <Compile Include="PhysicistQueue.fs" />
-    <Compile Include="LazyPairingHeap.fs" />
-    <Compile Include="RealTimeQueue.fs" />
+    <Compile Include="BatchedQueue.fs" />
+    <Compile Include="BinaryRandomAccessList.fs" />
+    <Compile Include="BinarySearchTree.fs" />
+    <Compile Include="BinomialHeap.fs" />
+    <Compile Include="BootstrappedQueue.fs" />
     <Compile Include="BottomUpMergeSort.fs" />
+    <Compile Include="CustomStack.fs" />
+    <Compile Include="Dequeue.fs" />
+    <Compile Include="FiniteMap.fs" />
+    <Compile Include="HoodMelvilleQueue.fs" />
+    <Compile Include="ImplicitQueue.fs" />
+    <Compile Include="LazyBinomialHeap.fs" />
+    <Compile Include="LazyPairingHeap.fs" />
+    <Compile Include="LeftistHeap.fs" />
+    <Compile Include="PairingHeap.fs" />
+    <Compile Include="RedBlackSet.fs" />
+    <Compile Include="PhysicistQueue.fs" />
+    <Compile Include="RealTimeDequeue.fs" />
+    <Compile Include="RealTimeQueue.fs" />
     <Compile Include="ScheduledBinomialHeap.fs" />
     <Compile Include="ScheduledBottomUpMergeSort.fs" />
-    <Compile Include="HoodMelvilleQueue.fs" />
-    <Compile Include="BinaryRandomAccessList.fs" />
     <Compile Include="SkewBinaryRandomAccessList.fs" />
-    <Compile Include="RealTimeDequeue.fs" />
     <Compile Include="SkewBinomialHeap.fs" />
-    <Compile Include="BankersDequeue.fs" />
-    <Compile Include="AltBinaryRandomAccessList.fs" />
-    <Compile Include="BootstrappedQueue.fs" />
-    <Compile Include="ImplicitQueue.fs" />
+    <Compile Include="SplayHeap.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.PowerPack, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809">

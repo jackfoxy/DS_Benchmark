@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2009/11/27/custom-stack
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2009/11/27/custom-stack
 module CustomStack =
 
   type t<'a> =

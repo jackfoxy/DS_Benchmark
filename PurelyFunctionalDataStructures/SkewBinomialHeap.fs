@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2010/02/11/skew-binomial-heap
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2010/02/11/skew-binomial-heap
 module SkewBinomialHeap =
 
   type Tree<'a> = Node of int * 'a * list<'a> * list<Tree<'a>>

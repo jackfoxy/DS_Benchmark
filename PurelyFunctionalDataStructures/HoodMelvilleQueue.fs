@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2010/01/21/hood-melville-queue
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2010/01/21/hood-melville-queue
 module HoodMelvilleQueue =
 
   type RotationState<'a> =

@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2009/12/17/double-ended-queue
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2009/12/17/double-ended-queue
 module Dequeue =
 
   type t<'a> = list<'a> * list<'a>

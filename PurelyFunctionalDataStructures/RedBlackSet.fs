@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2009/12/10/red-black-set
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2009/12/10/red-black-set
 //- Empty nodes are considered to be black
 //- red nodes don't have any red child
 //- every path from the root to an empty node

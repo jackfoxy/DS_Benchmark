@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2010/02/05/real-time-double-ended-queue
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2010/02/05/real-time-double-ended-queue
 module RealTimeDequeue =
 
   type t<'a> = {

@@ -317,8 +317,8 @@ type BenchmarkDsAction (dataStructure : string, size : int, initData : string, a
                 _exitCode <- p.ExitCode
                 p.Dispose()
                 System.GC.Collect()
-                if i%20 = 0 then 
-                    _pctDone <- i
+                if i%10 = 0 then 
+                    _pctDone <- (i *2)
                     progress.Trigger()     
                 System.Threading.Thread.Sleep(10)  //superstitious precaution to ensure optimum resources available in next iteration with no science behind it
 
@@ -501,6 +501,9 @@ module Benchmark =
 
                 | x when x = DataStructure.FSharpxTransientVector -> 
                     FSharpxTransientVector.getTime inputArgs data
+
+                | x when x = DataStructure.NaiveAltBinRndAccList -> 
+                    AltBinaryRandomAccessList.getTimeOfArray inputArgs data
 
                 | x when x = DataStructure.NaiveStack -> 
                     NaiveStack.getTimeOfArray inputArgs data

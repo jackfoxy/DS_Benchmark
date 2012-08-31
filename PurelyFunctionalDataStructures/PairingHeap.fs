@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2009/12/17/pairing-heap
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2009/12/17/pairing-heap
 module PairingHeap =
 
   type t<'a> =

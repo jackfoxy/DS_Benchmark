@@ -1,5 +1,6 @@
 ﻿namespace PurelyFunctionalDataStructures
-//http://lepensemoi.free.fr/index.php/2010/02/11/alternative-binary-random-access-list
+//originally published by Julien
+// original implementation taken from http://lepensemoi.free.fr/index.php/2010/02/11/alternative-binary-random-access-list
 module AltBinaryRandomAccessList =
 
   type t<'a> =
