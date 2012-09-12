@@ -23,7 +23,8 @@ module LazyPairingHeap =
   and link t1 t2 =
     match t1, t2 with
     | T(x, E, m), a -> T(x, a, m)
-    | T(x, b, m), a -> T(x, E, lazy merge (merge a b) (Lazy.force m))
+//    | T(x, b, m), a -> T(x, E, lazy merge (merge a b) (Lazy.force m))
+    | T(x, b, m), a -> T(x, E, lazy merge (merge a b) m.Value)
     | _ -> failwith "should not get there"
 
   let insert x a = merge (singleton x) a
@@ -31,7 +32,8 @@ module LazyPairingHeap =
   let rec contains x = function
     | E -> false
     | T (y, a, b) ->
-        x = y || contains x a || contains x (Lazy.force b)
+//        x = y || contains x a || contains x (Lazy.force b)
+        x = y || contains x a || contains x b.Value
 
   let findMin = function
     | E -> raise Empty
@@ -39,11 +41,14 @@ module LazyPairingHeap =
 
   let deleteMin = function
     | E -> raise Empty
-    | T(x, a, b) -> merge a (Lazy.force b)
+//    | T(x, a, b) -> merge a (Lazy.force b)
+    | T(x, a, b) -> merge a b.Value
 
   let rec remove x = function
     | E -> E
     | T(y, a, b) as t ->
         if a = x
-        then merge a (Lazy.force b)
-        else T(y, remove x a, lazy remove x (Lazy.force b))
+//        then merge a (Lazy.force b)
+        then merge a b.Value
+//        else T(y, remove x a, lazy remove x (Lazy.force b))
+        else T(y, remove x a, lazy remove x b.Value)

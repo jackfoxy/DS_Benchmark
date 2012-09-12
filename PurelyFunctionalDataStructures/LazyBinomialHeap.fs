@@ -8,7 +8,8 @@ module LazyBinomialHeap =
 
   let empty() = lazy []
 
-  let isEmpty x = Lazy.force x = []
+//  let isEmpty x = Lazy.force x = []
+  let isEmpty (x:Lazy<'a list>) = x.Value = []
 
   let rank (Node(r, _, _)) = r
 
@@ -29,8 +30,10 @@ module LazyBinomialHeap =
 
   let singleton x = lazy [singletonTree x]
 
-  let insert x t =
-    lazy insertTree (singletonTree x) (Lazy.force t)
+//  let insert x t =
+  let insert x (t:Lazy<BinomialTree<'a> list>) =
+//    lazy insertTree (singletonTree x) (Lazy.force t)
+    lazy insertTree (singletonTree x) t.Value
 
   let rec mrg h1 h2 =
     match h1, h2 with
@@ -40,8 +43,10 @@ module LazyBinomialHeap =
         elif rank hd1 > rank hd2 then hd2 :: mrg h1 tl2
         else insertTree (link hd1 hd2) (mrg tl1 tl2)
 
-  let merge h1 h2 =
-    lazy mrg (Lazy.force h1) (Lazy.force h2)
+//  let merge h1 h2 =
+  let merge (h1:Lazy<BinomialTree<'a> list>) (h2:Lazy<BinomialTree<'a> list>) =
+//    lazy mrg (Lazy.force h1) (Lazy.force h2)
+    lazy mrg h1.Value h2.Value
 
   let rec private removeMinTree = function
     | [] -> raise Empty
@@ -54,6 +59,8 @@ module LazyBinomialHeap =
     let (t, _) = removeMinTree h
     root t
 
-  let removeMin h =
-    let Node(_, x, xs1), xs2 = removeMinTree (Lazy.force h)
+//  let removeMin h =
+  let removeMin (h:Lazy<BinomialTree<'a> list>) =
+//    let Node(_, x, xs1), xs2 = removeMinTree (Lazy.force h)
+    let Node(_, x, xs1), xs2 = removeMinTree h.Value
     lazy mrg (List.rev xs1) xs2

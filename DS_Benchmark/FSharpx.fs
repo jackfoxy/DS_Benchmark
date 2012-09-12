@@ -2,7 +2,662 @@
 
 open FSharpx.DataStructures
 open Utility
+
+module FSharpxAltBinaryRandomAccessList =
     
+    let buildList (data:#('a seq)) =
+        let rec loop (l: 'a AltBinaryRandomAccessList.AltBinRndAccList) (d:#('a seq)) len acc =
+            match acc with
+            | _ when acc = len -> l
+            | _ -> loop (AltBinaryRandomAccessList.cons (Seq.nth acc d) l) d len (acc + 1)
+                
+        loop AltBinaryRandomAccessList.empty data (Seq.length data) 0
+
+    let doIterate (l:'a AltBinaryRandomAccessList.AltBinRndAccList) f =
+        
+        let rec loop (l: 'a AltBinaryRandomAccessList.AltBinRndAccList) acc f' =
+            match (AltBinaryRandomAccessList.tryUncons l) with
+            | None -> acc
+            | Some(x, xs) -> loop xs (f' acc x) f'
+                           
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let times = loop l 0 f
+                   
+        sw.Stop()
+                    
+        times, sw
+
+    let doLookUpRand (inputArgs:BenchArgs) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs 
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let b = AltBinaryRandomAccessList.lookup (rnd.Next lCount) l
+            ()
+                    
+        sw.Stop()
+
+        times, sw
+
+    let doRemove (inputArgs:BenchArgs) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs 
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let b = AltBinaryRandomAccessList.remove (rnd.Next lCount) l
+            ()
+                    
+        sw.Stop()
+
+        times, sw
+
+    let doRemoveDescend (inputArgs:BenchArgs) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs 
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop l lCount' times' =
+            if ((lCount' = 0) || (times' = 0)) then ignore
+            else loop (AltBinaryRandomAccessList.remove (rnd.Next lCount') l) (lCount' - 1) (times' - 1)
+
+        (loop l lCount times)()
+              
+        sw.Stop()
+
+        times, sw
+
+    let doRemoveRandGC (inputArgs:BenchArgs) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount gCmod =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs 
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+
+            if ((i % gCmod) = 0) then 
+                sw.Stop()
+                System.GC.Collect()
+                sw.Start()
+
+            let b = AltBinaryRandomAccessList.remove (rnd.Next lCount) l
+            ()
+                    
+        sw.Stop()
+
+        times, sw
+
+    let doRemoveRandGCNoWait (inputArgs:BenchArgs) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount gCmod =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs 
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+
+            if ((i % gCmod) = 0) then 
+                System.GC.Collect()
+
+            let b = AltBinaryRandomAccessList.remove (rnd.Next lCount) l
+            ()
+                    
+        sw.Stop()
+
+        times, sw
+
+    let doRemoveWorst1 (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let b = AltBinaryRandomAccessList.remove (lCount - 1) l
+                    
+        sw.Stop()
+
+        1, sw
+
+    let doUpdateRand (inputArgs:BenchArgs) (update:'a) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let a = AltBinaryRandomAccessList.update (rnd.Next lCount) update l
+            ()
+                   
+        sw.Stop()
+                    
+        times, sw
+
+    let doUpdateRandGC (inputArgs:BenchArgs) (update:'a) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount gCmod =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            if ((i % gCmod) = 0) then 
+                sw.Stop()
+                System.GC.Collect()
+                sw.Start()
+
+            let a = AltBinaryRandomAccessList.update (rnd.Next lCount) update l
+            ()
+                   
+        sw.Stop()
+                    
+        times, sw
+
+    let doUpdateRandGCNoWait (inputArgs:BenchArgs) (update:'a) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount gCmod =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            if ((i % gCmod) = 0) then 
+                System.GC.Collect()
+
+            let a = AltBinaryRandomAccessList.update (rnd.Next lCount) update l
+            ()
+                   
+        sw.Stop()
+                    
+        times, sw
+
+    let doUpdateWorst1 (update:'a) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+                                
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let a = AltBinaryRandomAccessList.update (lCount - 1) update l
+                   
+        sw.Stop()
+                    
+        1, sw
+
+    let getTimeOfArray (inputArgs:BenchArgs) (data:'a[]) =
+
+        System.GC.Collect()
+            
+        match inputArgs.Action.ToLower() with
+
+            | x when x = Action.AddOne ->
+                
+                let rec loop (l: 'a AltBinaryRandomAccessList.AltBinRndAccList) (d: 'a[]) len acc =
+                    match acc with
+                    | _ when acc = len -> l
+                    | _ -> loop (AltBinaryRandomAccessList.cons d.[acc] l) d len (acc + 1)
+                
+                let sw = new System.Diagnostics.Stopwatch()
+                sw.Start()
+ 
+                let l1 = loop AltBinaryRandomAccessList.empty data (Seq.length data) 0
+                    
+                sw.Stop()
+                    
+                Utility.getTimeResult l1 data Operator.Cons sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.Append ->
+                let sw = new System.Diagnostics.Stopwatch()
+                let l = buildList data
+                
+                sw.Start()
+ 
+                let l2 = AltBinaryRandomAccessList.append l l 
+                    
+                sw.Stop()
+                    
+                Utility.getTimeResult l2 data Operator.Append sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.Iterate ->
+                let foldFun =
+                    (fun i b -> 
+                        let c = b
+                        i + 1)
+                        
+                let times, sw = doIterate (buildList data) foldFun
+
+                Utility.getTimeResult times data Operator.RecAccHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.LookUpRand ->
+                let times, sw = doLookUpRand inputArgs (buildList data) (Seq.length data)
+                Utility.getTimeResult times data Operator.Lookup sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.RemoveRand ->
+                let times, sw = doRemove inputArgs (buildList data) (Seq.length data)
+                Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.RemoveRandGC10 ->
+                let times, sw = doRemoveRandGC inputArgs (buildList data) (Seq.length data) 10
+                Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.RemoveRandGC10NoWait ->
+                let times, sw = doRemoveRandGCNoWait inputArgs (buildList data) (Seq.length data) 10
+                Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.RemoveRandGC100 ->
+                let times, sw = doRemoveRandGC inputArgs (buildList data) (Seq.length data) 100
+                Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.RemoveWorst1 ->
+                let times, sw = doRemoveWorst1 (buildList data) (Seq.length data)
+                Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.RemoveDescend ->
+                let times, sw = doRemoveDescend inputArgs (buildList data) (Seq.length data)
+                Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdateRand ->
+                let l = buildList data
+                let times, sw = doUpdateRand inputArgs (AltBinaryRandomAccessList.lookup 0 l) l (Seq.length data)
+                Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdateRandGC10 ->
+                let l = buildList data
+                let times, sw = doUpdateRandGC inputArgs (AltBinaryRandomAccessList.lookup 0 l) l (Seq.length data) 10
+                Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdateRandGC10NoWait ->
+                let l = buildList data
+                let times, sw = doUpdateRandGCNoWait inputArgs (AltBinaryRandomAccessList.lookup 0 l) l (Seq.length data) 10
+                Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdateRandGC100 ->
+                let l = buildList data
+                let times, sw = doUpdateRandGC inputArgs (AltBinaryRandomAccessList.lookup 0 l) l (Seq.length data) 10
+                Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdateWorst1 ->
+                let l = buildList data
+                let times, sw = doUpdateWorst1 (AltBinaryRandomAccessList.lookup 0 l) l (Seq.length data)
+                Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
+module FSharpxBankersDeque =
+
+    let doAddOne (data:'a seq) =
+        let rec loop (b:'a BankersDeque.BankersDeque) (d:'a seq)  dLength acc =
+            match acc  with
+            | _ when acc = dLength -> b
+            | _ -> loop (BankersDeque.snoc (Seq.nth acc d) b) d dLength (acc + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let b1 = loop (BankersDeque.empty 2) data (Seq.length data) 0
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult b1 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterate (data:'a seq) (b:'a BankersDeque.BankersDeque) = 
+
+        let iterateBsQueue (bsQueue:'a BankersDeque.BankersDeque) =
+            let rec loop (b:'a BankersDeque.BankersDeque) acc =
+                match b  with
+                | _ when BankersDeque.isEmpty b -> acc
+                | _ -> 
+                    let a = BankersDeque.head b
+                    loop (BankersDeque.tail b) (acc + 1)
+            loop bsQueue 0
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = iterateBsQueue b
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterateSeq (data:'a seq) (q:'a BankersDeque.BankersDeque) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 q
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doLookup inputArgs data dCount (b:'a BankersDeque.BankersDeque) = 
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop (b':'a BankersDeque.BankersDeque) (rnd': System.Random) = function
+            | 0 -> ()
+            | acc -> 
+                let b'' = BankersDeque.lookup (rnd'.Next dCount) b
+                loop b' rnd' (acc - 1)
+                
+        loop b rnd times
+         
+        sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.Lookup sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doLookupSeq inputArgs data dCount (b:'a BankersDeque.BankersDeque) = 
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop (b':'a BankersDeque.BankersDeque) (rnd': System.Random) = function
+            | 0 -> ()
+            | acc -> 
+                let a = Seq.nth (rnd'.Next dCount) b
+                loop b' rnd' (acc - 1)
+                
+        loop b rnd times
+         
+        sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.Lookup sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doRemove inputArgs data dCount (b:'a BankersDeque.BankersDeque) = 
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop (b':'a BankersDeque.BankersDeque) (rnd': System.Random) = function
+            | 0 -> ()
+            | acc -> 
+                let b'' = BankersDeque.remove (rnd'.Next dCount) b'
+                loop b' rnd' (acc - 1)
+                
+        loop b rnd times
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doRemoveWorst1 dCount (b:'a BankersDeque.BankersDeque) =
+                   
+        let mid = dCount / 2
+           
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let b' = BankersDeque.remove mid b
+    
+        sw.Stop()
+                    
+        1, sw
+
+    let doUpdateRand inputArgs data dCount (b:'a BankersDeque.BankersDeque) =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+
+        let update = BankersDeque.head b
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop (b':'a BankersDeque.BankersDeque) (rnd': System.Random) = function
+            | 0 -> ()
+            | acc -> 
+                let b'' = BankersDeque.update (rnd'.Next dCount) update b
+                loop b' rnd' (acc - 1)
+
+        loop b rnd times
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doUpdateWorst1 dCount (b:'a BankersDeque.BankersDeque) =
+                   
+        let mid = dCount / 2
+        let update = BankersDeque.head b
+           
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let b' = BankersDeque.update mid update b
+    
+        sw.Stop()
+                    
+        1, sw
+
+    let getTime (inputArgs:BenchArgs) data (b: 'a BankersDeque.BankersDeque) = 
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.AddOne ->
+            doAddOne data
+
+        | x when x = Action.Append ->
+
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b' = BankersDeque.append b b
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.Append sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.Iterate ->
+            b |> doIterate data
+
+        | x when x = Action.IterateSeq ->
+            b |> doIterate data
+
+        | x when x = Action.LookUpRand ->
+            b |> doLookup inputArgs data (Seq.length data) 
+
+        | x when x = Action.LookUpRandSeq ->
+            b |> doLookupSeq inputArgs data (Seq.length data) 
+
+        | x when x = Action.RemoveRand ->
+            b |> doRemove inputArgs data (Seq.length data)
+
+         | x when x = Action.RemoveWorst1 ->
+            let times, sw = b |> doRemoveWorst1 (Seq.length data)
+            Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdateRand ->
+            b |> doUpdateRand inputArgs data (Seq.length data)
+
+        | x when x = Action.UpdateWorst1 ->
+            let times, sw = b |> doUpdateWorst1 (Seq.length data)
+            Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
+
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
+    let getTimeOfList (inputArgs:BenchArgs) (data:'a list) =
+
+        System.GC.Collect()
+            
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.Init ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b = BankersDeque.ofSeq data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.InitOfCatLists ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b = BankersDeque.ofCatLists data data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.OfList sw.ElapsedTicks sw.ElapsedMilliseconds
+           
+        | _ -> getTime inputArgs data (BankersDeque.ofSeq data)
+
+    let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
+
+        System.GC.Collect()
+            
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.Init ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b = BankersDeque.ofSeq data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.InitOfCatSeqs ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b = BankersDeque.ofCatSeqs data data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | _ -> getTime inputArgs data (BankersDeque.ofSeq data)
+
+module FSharpxBatchedDeque =
+
+    let doAddOne (data:'a seq) =
+
+        let rec loop (b:'a BatchedDeque.BatchedDeque) (d:'a seq)  dLength acc =
+            match acc  with
+            | _ when acc = dLength -> b
+            | _ -> loop (BatchedDeque.snoc (Seq.nth acc d) b) d dLength (acc + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let b1 = loop (BatchedDeque.singleton (Seq.nth 0 data)) data (Seq.length data) 1
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult b1 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterate (data:'a seq) (b:'a BatchedDeque.BatchedDeque) = 
+
+        let iterateQueue (q:'a BatchedDeque.BatchedDeque) =
+            let rec loop (b:'a BatchedDeque.BatchedDeque) acc =
+                match b  with
+                | _ when BatchedDeque.isEmpty b -> acc
+                | _ -> 
+                    let a = BatchedDeque.head b
+                    loop (BatchedDeque.tail b) (acc + 1)
+            loop q 0
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = iterateQueue b
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterateSeq (data:'a seq) (b:'a BatchedDeque.BatchedDeque) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 b
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let ofBalanced (data:'a seq) =
+
+        let rec loop (b:'a BatchedDeque.BatchedDeque) (d:'a seq)  dLength acc =
+            match acc  with
+            | _ when acc = dLength -> b
+            | _ -> 
+                if ((acc % 2) = 0) then
+                    loop (BatchedDeque.cons (Seq.nth acc d) b) d dLength (acc + 1)
+                else
+                    loop (BatchedDeque.snoc (Seq.nth acc d) b) d dLength (acc + 1)
+ 
+        loop (BatchedDeque.singleton (Seq.nth 0 data)) data (Seq.length data) 1
+
+    let getTime (inputArgs:BenchArgs) data (b: 'a BatchedDeque.BatchedDeque) = 
+
+        System.GC.Collect()
+
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.AddOne ->
+            doAddOne data
+
+        | x when x = Action.Iterate ->
+            b |> doIterate data
+
+        | x when x = Action.IterateSeq ->
+            b |> doIterate data
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
+    let getTimeOfList (inputArgs:BenchArgs) (data:'a list) =
+
+        System.GC.Collect()
+            
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.InitOfCatLists ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b = BatchedDeque.ofCatLists data data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.OfList sw.ElapsedTicks sw.ElapsedMilliseconds
+           
+        | _ ->  getTime inputArgs data (ofBalanced(data))
+
+    let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
+
+        System.GC.Collect()
+            
+        getTime inputArgs data (ofBalanced(data))
+
 module FsharpxBootstrappedQueue =
         
     let doAddOneArray (data:'a[]) =
@@ -357,6 +1012,114 @@ module FSharpxDList =
 
             | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
     
+module FSharpxDeque =
+
+    let doAddOne (data:'a seq) =
+
+        let rec loop (b:'a Deque.Deque) (d:'a seq)  dLength acc =
+            match acc  with
+            | _ when acc = dLength -> b
+            | _ -> loop (Deque.snoc (Seq.nth acc d) b) d dLength (acc + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let b1 = loop (Deque.singleton (Seq.nth 0 data)) data (Seq.length data) 1
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult b1 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterate (data:'a seq) (b:'a Deque.Deque) = 
+
+        let iterateBsQueue (q:'a Deque.Deque) =
+            let rec loop (b:'a Deque.Deque) acc =
+                match b  with
+                | _ when Deque.isEmpty b -> acc
+                | _ -> 
+                    let a = Deque.head b
+                    loop (Deque.tail b) (acc + 1)
+            loop q 0
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = iterateBsQueue b
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterateSeq (data:'a seq) (b:'a Deque.Deque) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 b
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let ofBalanced (data:'a seq) =
+
+        let rec loop (q:'a Deque.Deque) (d:'a seq)  dLength acc =
+            match acc  with
+            | _ when acc = dLength -> q
+            | _ -> 
+                if ((acc % 2) = 0) then
+                    loop (Deque.cons (Seq.nth acc d) q) d dLength (acc + 1)
+                else
+                    loop (Deque.snoc (Seq.nth acc d) q) d dLength (acc + 1)
+ 
+        loop (Deque.singleton (Seq.nth 0 data)) data (Seq.length data) 1
+
+    let getTime (inputArgs:BenchArgs) data (b: 'a Deque.Deque) = 
+        
+        System.GC.Collect()
+        
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.AddOne ->
+            doAddOne data
+
+        | x when x = Action.Iterate ->
+            b |> doIterate data
+
+        | x when x = Action.IterateSeq ->
+            b |> doIterate data
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
+    let getTimeOfList (inputArgs:BenchArgs) (data:'a list) =
+
+        System.GC.Collect()
+            
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.InitOfCatLists ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b = Deque.ofCatLists data data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.OfList sw.ElapsedTicks sw.ElapsedMilliseconds
+           
+        | _ -> getTime inputArgs data (ofBalanced(data))
+
+    let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
+
+        System.GC.Collect()
+            
+        getTime inputArgs data (ofBalanced(data))
+
 module FsharpxImplicitQueue =
         
     let appendBsQueue (bsQueue:'a ImplicitQueue.ImplicitQueue) (bsQueue2:'a ImplicitQueue.ImplicitQueue) =
@@ -660,6 +1423,266 @@ module FSharpxPersistentVector =
 
             | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
+module FSharpxRealTimeDeque =
+
+    let doAddOne (data:'a seq) =
+        let rec loop (b:'a RealTimeDeque.RealTimeDeque) (d:'a seq)  dLength acc =
+            match acc  with
+            | _ when acc = dLength -> b
+            | _ -> loop (RealTimeDeque.snoc (Seq.nth acc d) b) d dLength (acc + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let b1 = loop (RealTimeDeque.empty 2) data (Seq.length data) 0
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult b1 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterate (data:'a seq) (b:'a RealTimeDeque.RealTimeDeque) = 
+
+        let iterateBsQueue (bsQueue:'a RealTimeDeque.RealTimeDeque) =
+            let rec loop (b:'a RealTimeDeque.RealTimeDeque) acc =
+                match b  with
+                | _ when RealTimeDeque.isEmpty b -> acc
+                | _ -> 
+                    let a = RealTimeDeque.head b
+                    loop (RealTimeDeque.tail b) (acc + 1)
+            loop bsQueue 0
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = iterateBsQueue b
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterateSeq (data:'a seq) (b:'a RealTimeDeque.RealTimeDeque) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 b
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doLookup inputArgs data dCount (b:'a RealTimeDeque.RealTimeDeque) = 
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop (b':'a RealTimeDeque.RealTimeDeque) (rnd': System.Random) = function
+            | 0 -> ()
+            | acc -> 
+                let b'' = RealTimeDeque.lookup (rnd'.Next dCount) b
+                loop b' rnd' (acc - 1)
+                
+        loop b rnd times
+         
+        sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.Lookup sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doLookupSeq inputArgs data dCount (b:'a RealTimeDeque.RealTimeDeque) = 
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop (b':'a RealTimeDeque.RealTimeDeque) (rnd': System.Random) = function
+            | 0 -> ()
+            | acc -> 
+                let a = Seq.nth (rnd'.Next dCount) b
+                loop b' rnd' (acc - 1)
+                
+        loop b rnd times
+         
+        sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.Lookup sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doRemove inputArgs data dCount (b:'a RealTimeDeque.RealTimeDeque) = 
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop (b':'a RealTimeDeque.RealTimeDeque) (rnd': System.Random) = function
+            | 0 -> ()
+            | acc -> 
+                let b'' = RealTimeDeque.remove (rnd'.Next dCount) b'
+                loop b' rnd' (acc - 1)
+                
+        loop b rnd times
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doRemoveWorst1 dCount (b:'a RealTimeDeque.RealTimeDeque) =
+                   
+        let mid = dCount / 2
+           
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let b' = RealTimeDeque.remove mid b
+    
+        sw.Stop()
+                    
+        1, sw
+
+    let doUpdateRand inputArgs data dCount (b:'a RealTimeDeque.RealTimeDeque) =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+
+        let update = RealTimeDeque.head b
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop (b':'a RealTimeDeque.RealTimeDeque) (rnd': System.Random) = function
+            | 0 -> ()
+            | acc -> 
+                let b'' = RealTimeDeque.update (rnd'.Next dCount) update b
+                loop b' rnd' (acc - 1)
+
+        loop b rnd times
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doUpdateWorst1 dCount (b:'a RealTimeDeque.RealTimeDeque) =
+                   
+        let mid = dCount / 2
+        let update = RealTimeDeque.head b
+           
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let b' = RealTimeDeque.update mid update b
+    
+        sw.Stop()
+                    
+        1, sw
+
+    let getTime (inputArgs:BenchArgs) data (b: 'a RealTimeDeque.RealTimeDeque) = 
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.AddOne ->
+            doAddOne data
+
+        | x when x = Action.Append ->
+
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b' = RealTimeDeque.append b b
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.Append sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.Iterate ->
+            b |> doIterate data
+
+        | x when x = Action.IterateSeq ->
+            b |> doIterate data
+
+        | x when x = Action.LookUpRand ->
+            b |> doLookup inputArgs data (Seq.length data) 
+
+        | x when x = Action.LookUpRandSeq ->
+            b |> doLookupSeq inputArgs data (Seq.length data) 
+
+        | x when x = Action.RemoveRand ->
+            b |> doRemove inputArgs data (Seq.length data)
+
+         | x when x = Action.RemoveWorst1 ->
+            let times, sw = b |> doRemoveWorst1 (Seq.length data)
+            Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdateRand ->
+            b |> doUpdateRand inputArgs data (Seq.length data)
+
+        | x when x = Action.UpdateWorst1 ->
+            let times, sw = b |> doUpdateWorst1 (Seq.length data)
+            Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
+
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
+    let getTimeOfList (inputArgs:BenchArgs) (data:'a list) =
+
+        System.GC.Collect()
+            
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.Init ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b = RealTimeDeque.ofSeq data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.InitOfCatLists ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b = RealTimeDeque.ofCatLists data data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.OfList sw.ElapsedTicks sw.ElapsedMilliseconds
+           
+        | _ -> getTime inputArgs data (RealTimeDeque.ofSeq data)
+
+    let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
+
+        System.GC.Collect()
+            
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.Init ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b = RealTimeDeque.ofSeq data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.InitOfCatSeqs ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let b = RealTimeDeque.ofCatSeqs data data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult b data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | _ -> getTime inputArgs data (RealTimeDeque.ofSeq data)
+
 module FSharpxRealTimeQueue =
         
     let appendrtQueue (rtQueue:'a RealTimeQueue.RealTimeQueue) (rtQueue2:'a RealTimeQueue.RealTimeQueue) =
@@ -904,9 +1927,3 @@ module FSharpxTransientVector =
                 createTransVector data |> iVector.doUpdateRand inputArgs data
 
             | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
-        
-
-                
-
-

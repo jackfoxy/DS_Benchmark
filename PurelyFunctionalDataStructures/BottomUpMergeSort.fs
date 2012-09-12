@@ -27,13 +27,16 @@ module BottomUpMergeSort =
     else
       addSeg (merge seg (List.head segs)) (List.tail segs) (size / 2)
 
-  let add x (size, segs) =
-    size + 1, lazy addSeg [x] (Lazy.force segs) size
+  let add x (size, (segs:Lazy<'a list list>)) =
+//    size + 1, lazy addSeg [x] (Lazy.force segs) size
+    size + 1, lazy addSeg [x] segs.Value size     
 
   let rec mergeAll xs ys =
     match xs, ys with
     | xs, [] -> xs
     | xs, seg::segs -> mergeAll (merge xs seg) segs
 
-  let sort (size, segs) =
-    mergeAll [] (Lazy.force segs)
+//  let sort (size, segs) =
+  let sort (size, (segs:Lazy<'a list list>)) =
+//    mergeAll [] (Lazy.force segs)
+    mergeAll [] segs.Value

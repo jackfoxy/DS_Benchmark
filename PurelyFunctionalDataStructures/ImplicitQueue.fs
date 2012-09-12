@@ -18,7 +18,8 @@ module ImplicitQueue =
       | Shallow Zero -> Shallow (One x)
       | Shallow (One y) -> Deep (Two (y, x), lazy empty, Zero)
       | Deep(f, m, Zero) -> Deep(f, m, One x)
-      | Deep(f, m, One y) -> Deep(f, lazy t.snoc (y, x) (Lazy.force m), Zero)
+//      | Deep(f, m, One y) -> Deep(f, lazy t.snoc (y, x) (Lazy.force m), Zero)
+        | Deep(f, m, One y) -> Deep(f, lazy t.snoc (y, x) m.Value, Zero)
       | _ -> failwith "should not get there"
 
     static member head : t<'a> -> 'a = function
@@ -33,7 +34,8 @@ module ImplicitQueue =
       | Shallow (One x) -> empty
       | Deep(Two(x, y), m, r) -> Deep(One y, m, r)
       | Deep(One x, q, r) ->
-          let q' = Lazy.force q
+//          let q' = Lazy.force q
+          let q' = q.Value  
           if isEmpty q' then
             Shallow r
           else

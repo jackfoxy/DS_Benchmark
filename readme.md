@@ -211,6 +211,14 @@ Contact me if you are interested in contributing to the project. I will consider
 
 ##Release Notes
 
+###v1.2
+
+>1) Removing structures from PurelyFunctionalDataStructures as they are added to FSharpx.Core.DataStructures.
+
+>2) Several new actions.
+
+>3) Added Dequeus from FSharpx
+
 ###v1.1
 
 >1) New project added: PurelyFunctionalDataStructures is Julien's implementation of most of the structures in Okasaki, 1998. Known issue is Release build of this project does not work with Optimize Code. Apparently some of Julien's usages of Lazy do not work correctly under F# 3.0. I have not debugged further. No structures currently implemented for getTime.

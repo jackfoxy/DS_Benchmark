@@ -490,11 +490,17 @@ module Benchmark =
                 | x when x = DataStructure.FSharpxDList -> 
                     FSharpxDList.getTime inputArgs data
 
+                | x when x = DataStructure.FSharpxDeque -> 
+                    FSharpxDeque.getTimeOfSeq inputArgs data
+
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
                     FsharpxImplicitQueue.getTimeOfArray inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data
+
+                | x when x = DataStructure.FSharpxRtDeque -> 
+                    FSharpxRealTimeDeque.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.FSharpxRtQueue -> 
                     FSharpxRealTimeQueue.getTimeOfArray inputArgs data
@@ -502,8 +508,14 @@ module Benchmark =
                 | x when x = DataStructure.FSharpxTransientVector -> 
                     FSharpxTransientVector.getTime inputArgs data
 
-                | x when x = DataStructure.NaiveAltBinRndAccList -> 
-                    AltBinaryRandomAccessList.getTimeOfArray inputArgs data
+                | x when x = DataStructure.FSharpxAltBinRndAccList -> 
+                    FSharpxAltBinaryRandomAccessList.getTimeOfArray inputArgs data
+
+                | x when x = DataStructure.FSharpxBankersDeque -> 
+                    FSharpxBankersDeque.getTimeOfSeq inputArgs data
+
+                | x when x = DataStructure.FSharpxBatchedDeque -> 
+                    FSharpxBatchedDeque.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.NaiveStack -> 
                     NaiveStack.getTimeOfArray inputArgs data
@@ -540,17 +552,29 @@ module Benchmark =
                 | x when x = DataStructure.FSharpxDList -> 
                     FSharpxDList.getTime inputArgs data
 
+                | x when x = DataStructure.FSharpxDeque -> 
+                    FSharpxDeque.getTimeOfSeq inputArgs data
+
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
                     FsharpxImplicitQueue.getTimeOfArray inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data
 
+                | x when x = DataStructure.FSharpxRtDeque -> 
+                    FSharpxRealTimeDeque.getTimeOfSeq inputArgs data
+
                 | x when x = DataStructure.FSharpxRtQueue -> 
                     FSharpxRealTimeQueue.getTimeOfArray inputArgs data
 
                 | x when x = DataStructure.FSharpxTransientVector -> 
                     FSharpxTransientVector.getTime inputArgs data
+
+                | x when x = DataStructure.FSharpxBankersDeque -> 
+                    FSharpxBankersDeque.getTimeOfSeq inputArgs data
+
+                | x when x = DataStructure.FSharpxBatchedDeque -> 
+                    FSharpxBatchedDeque.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.NaiveStack -> 
                     NaiveStack.getTimeOfArray inputArgs data
@@ -587,17 +611,29 @@ module Benchmark =
                 | x when x = DataStructure.FSharpxDList -> 
                     FSharpxDList.getTime inputArgs data
 
+                | x when x = DataStructure.FSharpxDeque -> 
+                    FSharpxDeque.getTimeOfList inputArgs data
+
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
                     FsharpxImplicitQueue.getTimeOfList inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data
 
+                | x when x = DataStructure.FSharpxRtDeque -> 
+                    FSharpxRealTimeDeque.getTimeOfList inputArgs data
+
                 | x when x = DataStructure.FSharpxRtQueue -> 
                     FSharpxRealTimeQueue.getTimeOfList inputArgs data
 
                 | x when x = DataStructure.FSharpxTransientVector -> 
                     FSharpxTransientVector.getTime inputArgs data
+
+                | x when x = DataStructure.FSharpxBankersDeque -> 
+                    FSharpxBankersDeque.getTimeOfList inputArgs data
+
+                | x when x = DataStructure.FSharpxBatchedDeque -> 
+                    FSharpxBatchedDeque.getTimeOfList inputArgs data
 
                 | x when x = DataStructure.NaiveStack -> 
                     NaiveStack.getTimeOfList inputArgs data
@@ -634,17 +670,29 @@ module Benchmark =
                 | x when x = DataStructure.FSharpxDList -> 
                     FSharpxDList.getTime inputArgs data
 
+                | x when x = DataStructure.FSharpxDeque -> 
+                    FSharpxDeque.getTimeOfList inputArgs data
+
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
                     FsharpxImplicitQueue.getTimeOfList inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data
 
+                | x when x = DataStructure.FSharpxRtDeque -> 
+                    FSharpxRealTimeDeque.getTimeOfList inputArgs data
+
                 | x when x = DataStructure.FSharpxRtQueue -> 
                     FSharpxRealTimeQueue.getTimeOfList inputArgs data
 
                 | x when x = DataStructure.FSharpxTransientVector -> 
                     FSharpxTransientVector.getTime inputArgs data
+
+                | x when x = DataStructure.FSharpxBankersDeque -> 
+                    FSharpxBankersDeque.getTimeOfList inputArgs data
+
+                | x when x = DataStructure.FSharpxBatchedDeque -> 
+                    FSharpxBatchedDeque.getTimeOfList inputArgs data
 
                 | x when x = DataStructure.NaiveStack -> 
                     NaiveStack.getTimeOfList inputArgs data
@@ -682,17 +730,29 @@ module Benchmark =
                 | x when x = DataStructure.FSharpxDList -> 
                     FSharpxDList.getTime inputArgs data
 
+                | x when x = DataStructure.FSharpxDeque -> 
+                    FSharpxDeque.getTimeOfSeq inputArgs data
+
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
                     FsharpxImplicitQueue.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data
 
+                | x when x = DataStructure.FSharpxRtDeque -> 
+                    FSharpxRealTimeDeque.getTimeOfSeq inputArgs data
+
                 | x when x = DataStructure.FSharpxRtQueue -> 
                     FSharpxRealTimeQueue.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.FSharpxTransientVector -> 
                     FSharpxTransientVector.getTime inputArgs data
+
+                | x when x = DataStructure.FSharpxBankersDeque -> 
+                    FSharpxBankersDeque.getTimeOfSeq inputArgs data
+
+                | x when x = DataStructure.FSharpxBatchedDeque -> 
+                    FSharpxBatchedDeque.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.NaiveStack -> 
                     NaiveStack.getTimeOfSeq inputArgs data
@@ -730,17 +790,29 @@ module Benchmark =
                 | x when x = DataStructure.FSharpxDList -> 
                     FSharpxDList.getTime inputArgs data
 
+                | x when x = DataStructure.FSharpxDeque -> 
+                    FSharpxDeque.getTimeOfSeq inputArgs data
+
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
                     FsharpxImplicitQueue.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data
 
+                | x when x = DataStructure.FSharpxRtDeque -> 
+                    FSharpxRealTimeDeque.getTimeOfSeq inputArgs data
+
                 | x when x = DataStructure.FSharpxRtQueue -> 
                     FSharpxRealTimeQueue.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.FSharpxTransientVector -> 
                     FSharpxTransientVector.getTime inputArgs data
+
+                | x when x = DataStructure.FSharpxBankersDeque -> 
+                    FSharpxBankersDeque.getTimeOfSeq inputArgs data
+
+                | x when x = DataStructure.FSharpxBatchedDeque -> 
+                    FSharpxBatchedDeque.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.NaiveStack -> 
                     NaiveStack.getTimeOfSeq inputArgs data

@@ -44,21 +44,23 @@
     <Compile Include="PowerPackTests.fs" />
     <Compile Include="NaiveDataStructuresTests.fs" />
     <Compile Include="GeneratorsTests.fs" />
+    <None Include="app.config" />
+    <Compile Include="FsUnitSample.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.PowerPack, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809">
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharpx.Core">
-      <HintPath>..\packages\FSharpx.Core.1.6.1\lib\40\Fsharpx.Core.dll</HintPath>
+      <HintPath>..\packages\FSharpx.Core.1.6.30\lib\40\Fsharpx.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FsUnit.CustomMatchers">
-      <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.0\Lib\Net40\FsUnit.CustomMatchers.dll</HintPath>
+      <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.1\Lib\Net40\FsUnit.CustomMatchers.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FsUnit.MsTest">
-      <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.0\Lib\Net40\FsUnit.MsTest.dll</HintPath>
+      <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.1\Lib\Net40\FsUnit.MsTest.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
@@ -69,7 +71,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="NHamcrest">
-      <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.0\Lib\Net40\NHamcrest.dll</HintPath>
+      <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.1\Lib\Net40\NHamcrest.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

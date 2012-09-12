@@ -6,28 +6,6 @@ open Benchmark
 open NaiveDataStructures
 
 [<TestClass>]
-type NaiveAltBinRndAccListTest() = 
-
-    let dsGetTimeResult initData action typeDs typeData =
-        TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.NaiveAltBinRndAccList initData action typeDs typeData
-
-    let toList (l:AltBinaryRandomAccessList.AltBinRndAccList<'a>) =
-        let rec loop (l':AltBinaryRandomAccessList.AltBinRndAccList<'a>) (acc:List<'a>) =
-            match (AltBinaryRandomAccessList.tryUncons l') with
-            | None -> acc
-            | Some(x, xs) -> loop xs (x::acc)
-
-        loop l List.empty
-
-    [<TestMethod>]
-    member x.``NaiveAltBinRndAccList array int AddOne`` () =
-        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne (TestObj.naiveAltBinRndAccListInt.GetType()) (TestObj.arrInt.GetType()) 
-        let data = result.Data:?>int[]
-        let output =  (result.Result:?>AltBinaryRandomAccessList.AltBinRndAccList<int>) |> toList |> Array.ofList
-        TestUtil.compArr data output -1 |> should be True
-
-
-[<TestClass>]
 type NaiveStackTest() = 
     
     let dsGetTime initData action typeDs typeData =

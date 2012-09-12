@@ -23,14 +23,16 @@ module PhysicistQueue =
 
   let private checkw q =
     match q.Prefix with
-    | [] -> {q with Prefix = Lazy.force q.Front}
+//    | [] -> {q with Prefix = Lazy.force q.Front}
+    | [] -> {q with Prefix = q.Front.Value}
     | _ -> q
 
   let private check q =
     if q.RBackLength < q.FrontLength then
       checkw q
     else
-      let Prefix = Lazy.force q.Front
+//      let Prefix = Lazy.force q.Front
+      let Prefix = q.Front.Value
       { Prefix = Prefix
         FrontLength = q.RBackLength + q.FrontLength
         Front = lazy (q.RBack |> List.rev |> List.append q.Prefix)
@@ -56,6 +58,7 @@ module PhysicistQueue =
     | hd::_ ->
         {q with
           FrontLength = q.FrontLength - 1
-          Front = lazy (Lazy.force q.Front |> List.tail)
+//          Front = lazy (Lazy.force q.Front |> List.tail)
+          Front = lazy (q.Front.Value |> List.tail)
         } |> check
     | _ -> raise Empty

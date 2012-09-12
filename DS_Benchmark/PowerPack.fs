@@ -99,7 +99,7 @@ module PowerPackHashMultiMap =
 
             | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
-(*  module PowerPackHashSet = --hashset from PP is deprecated in favor of ystem.Collections.Generic.HashSet<_>  *)
+(*  module PowerPackHashSet = --hashset from PP is deprecated in favor of System.Collections.Generic.HashSet<_>  *)
 
 module PowerPackLazyList = 
     
@@ -196,7 +196,7 @@ module PowerPackLazyList =
         let split (ll2:LazyList<'a>) n  =
             let rec loop (ll3:LazyList<'a>) z (leftL:'a List) = 
                 match z with
-                | 0 -> leftL, ll3
+                | 0 -> leftL,  (LazyList.tail ll3)
                 | _ -> loop (LazyList.tail ll3) (z - 1)  ((LazyList.head ll3)::leftL)
             loop ll2 n List.empty
                         
@@ -214,6 +214,252 @@ module PowerPackLazyList =
 
         times, sw
 
+    let doUpdatePuntRand (inputArgs:BenchArgs) update lCount ll =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop ll' (rnd': System.Random) = function
+            | 0 -> ()
+            | acc -> 
+
+                let split (ll2:LazyList<'a>) n  =
+                    let rec loop (ll3:LazyList<'a>) z (leftL:'a List) = 
+                        match z with
+                        | 0 -> leftL,  (LazyList.tail ll3)
+                        | _ -> loop (LazyList.tail ll3) (z - 1)  ((LazyList.head ll3)::leftL)
+                    loop ll2 n List.empty
+
+                let left, right = split ll (rnd'.Next  lCount)
+
+                let rec loop2 (left':'a List) right' =
+                    match left' with
+                    | [] -> right'
+                    | x::xs -> loop2 xs (LazyList.cons x right)
+
+                let newLL = loop2 left (LazyList.cons update right)
+
+                loop ll' rnd' (acc - 1)
+
+        loop ll rnd times
+                    
+        sw.Stop()
+
+        times, sw
+
+    let doUpdatePuntWorst1 update lCount ll =
+
+        let rec revAux r acc =
+            match r with
+            | LazyList.Nil -> acc
+            | LazyList.Cons(hd, tl) -> revAux tl (LazyList.cons hd acc)
+
+        let lLrev r =
+            revAux r LazyList.empty
+
+        let split (ll2:LazyList<'a>) n  =
+            let rec loop (ll3:LazyList<'a>) z (leftL:LazyList<'a>) = 
+                match z with
+                | 0 -> leftL, ll3
+                | _ -> loop (LazyList.tail ll3) (z - 1)  (LazyList.cons (LazyList.head ll3) leftL)
+            loop ll2 n LazyList.empty
+
+        let next = lCount - 1
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let left, right = split ll next
+        let right1 = LazyList.cons update right
+        let newLeft = lLrev left 
+        let newDList = LazyList.append newLeft right1
+
+        sw.Stop()
+                    
+        1, sw
+
+    let doUpdateWorst1 update lCount ll =
+        
+        let split (ll2:LazyList<'a>) n  =
+            let rec loop (ll3:LazyList<'a>) z (leftL:'a List) = 
+                match z with
+                | 0 -> leftL, ll3
+                | _ -> loop (LazyList.tail ll3) (z - 1)  ((LazyList.head ll3)::leftL)
+            loop ll2 n List.empty
+
+        let next = lCount - 1
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let left, right = split ll next
+        let right1 = LazyList.cons update right
+        let newLeft = List.rev left |> LazyList.ofList
+        let newDList = LazyList.append newLeft right1
+
+        sw.Stop()
+                    
+        1, sw
+
+    let doUpdateHybridRand (inputArgs:BenchArgs) (update:'a) lCount ll =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop ll' (rnd': System.Random) = function
+        | 0 -> ()
+        | acc -> 
+            
+            let next = rnd'.Next lCount
+
+            let l' = 
+                if (next = 0) then LazyList.cons update (LazyList.tail ll)
+                else
+                    let split (ll2:LazyList<'a>) n  =
+                        let rec loop (leftL:'a array) (ll3:LazyList<'a>) z  = 
+                            match z with
+                            | -1 -> leftL,  (LazyList.tail ll3)
+                            | i -> 
+                                leftL.[i] <- (LazyList.head ll3)
+                                loop leftL (LazyList.tail ll3) (z - 1)  
+                        loop (Array.create n update) ll2 (n-1)
+
+                    let left, right = split ll next
+
+                    let rec loop2 (left':'a array) right' i' stop =
+                        match i' with
+                        | x when x > stop -> right'
+                        | x -> loop2 left' (LazyList.cons left'.[x] right') (x + 1) stop
+
+                    loop2 left (LazyList.cons update right) 0 ((Array.length left) - 1)
+
+            loop ll' rnd' (acc - 1)
+
+        loop ll rnd times
+
+        sw.Stop()
+                    
+        times, sw
+
+    let doUpdateHybridWorst1 (update:'a) lcount ll =
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let next = lcount - 1
+
+        let l' = 
+            if (next = 0) then LazyList.cons update (LazyList.tail ll)
+            else 
+
+                let split (ll2:LazyList<'a>) n  =
+                    let rec loop (leftL:'a array) (ll3:LazyList<'a>) z  = 
+                        match z with
+                        | -1 -> leftL,  (LazyList.tail ll3)
+                        | i -> 
+                            leftL.[i] <- (LazyList.head ll3)
+                            loop leftL (LazyList.tail ll3) (z - 1)  
+                    loop (Array.create n update) ll2 (n-1)
+
+                let left, right = split ll next
+
+                let rec loop2 (left':'a array) right' i' stop =
+                    match i' with
+                    | x when x > stop -> right'
+                    | x -> loop2 left' (LazyList.cons left'.[x] right') (x + 1) stop
+
+                loop2 left (LazyList.cons update right) 0 ((Array.length left) - 1)
+
+        sw.Stop()
+                    
+        1, sw
+
+    let doUpdatePsdCanRand (inputArgs:BenchArgs) (update:'a) lcount ll =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let rec loop i y l' = 
+                match (i, y, l') with
+                | i', y, LazyList.Nil -> raise (System.Exception("subscript"))
+                | 0, y', LazyList.Cons(x, xs) -> LazyList.cons y xs
+                | i', y, LazyList.Cons(x, xs) -> LazyList.cons x (loop (i'-1) y xs) 
+                   
+            let l'' = loop (rnd.Next lcount) update ll
+            ()
+
+        sw.Stop()
+                    
+        times, sw
+
+    let doUpdatePsdCanWorst1  (update:'a) lcount ll =
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let rec loop i y l' = 
+            match (i, y, l') with
+            | i', y, LazyList.Nil -> raise (System.Exception("subscript"))
+            | 0, y', LazyList.Cons(x, xs) -> LazyList.cons y xs
+            | i', y, LazyList.Cons(x, xs) -> LazyList.cons x (loop (i'-1) y xs) 
+                   
+        let l'' = loop ( lcount - 1) update ll
+
+        sw.Stop()
+                    
+        1, sw
+
+    let getTime (inputArgs:BenchArgs) data (ll: LazyList<'a>) = 
+        match inputArgs.Action.ToLower() with
+            | x when x = Action.Append ->
+                ll|> doAppend data
+
+            | x when x = Action.Iterate ->
+                ll |> Utility.getTime iterate Operator.RecAcc data
+                
+            | x when x = Action.LookUpRand ->
+                let times, sw = ll |> doLookUpRand inputArgs (Seq.length data)
+                Utility.getTimeResult times data Operator.RecAccHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdateRand ->
+                let times, sw = ll |> doUpdateRand inputArgs (Seq.nth 0 data) (Seq.length data)
+                Utility.getTimeResult times data Operator.SplitConsAppend sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdateWorst1 ->
+                let times, sw = ll |> doUpdateWorst1 (Seq.nth 0 data) (Seq.length data)
+                Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdatePuntRand ->
+                let times, sw = ll |> doUpdatePuntRand inputArgs (Seq.nth 0 data) (Seq.length data)
+                Utility.getTimeResult times data Operator.SplitConsAppend sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdatePuntWorst1 ->
+                let times, sw = ll |> doUpdatePuntWorst1 (Seq.nth 0 data) (Seq.length data)
+                Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdateHybridRand ->
+                let times, sw = ll |> doUpdateHybridRand inputArgs (Seq.nth 0 data) (Seq.length data)
+                Utility.getTimeResult times data Operator.SplitConsAppend sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdateHybridWorst1 ->
+                let times, sw = ll |> doUpdateHybridWorst1 (Seq.nth 0 data) (Seq.length data)
+                Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdatePsdCanRand ->
+                let times, sw = ll |> doUpdatePsdCanRand inputArgs (Seq.nth 0 data) (Seq.length data)
+                Utility.getTimeResult times data Operator.SplitConsAppend sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.UpdatePsdCanWorst1 ->
+                let times, sw = ll |> doUpdatePsdCanWorst1 (Seq.nth 0 data) (Seq.length data)
+                Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
     let getTimeOfArray (inputArgs:BenchArgs) data = 
             
         if not (inputArgs.InitData.ToLower().Contains("array")) then
@@ -226,25 +472,10 @@ module PowerPackLazyList =
                 | x when x = Action.AddOne ->
                     doAddOneArray data
 
-                | x when x = Action.Append ->
-                    LazyList.ofArray data |> doAppend data
-
                 | x when x = Action.Init ->
                     Utility.getTime LazyList.ofArray Operator.OfArray data data
 
-                | x when x = Action.Iterate ->
-                    let l =  LazyList.ofArray data
-                    Utility.getTime iterate Operator.RecAcc data l
-
-                | x when x = Action.LookUpRand ->
-                    let times, sw = LazyList.ofArray data |> doLookUpRand inputArgs data.Length
-                    Utility.getTimeResult times data Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdateRand ->
-                    let times, sw = LazyList.ofArray data |> doUpdateRand inputArgs data.[0] data.Length
-                    Utility.getTimeResult times data Operator.SplitConsAppend sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+                | _ -> getTime inputArgs data (LazyList.ofArray data)
 
     let getTimeOfList (inputArgs:BenchArgs) data = //(data:#('a seq)) =
 
@@ -258,24 +489,10 @@ module PowerPackLazyList =
                 | x when x = Action.AddOne ->
                     doAddOneList data
 
-                | x when x = Action.Append ->
-                    LazyList.ofList data |> doAppend data
-
                 | x when x = Action.Init ->
                     Utility.getTime LazyList.ofList Operator.OfList data data
 
-                | x when x = Action.Iterate ->
-                    LazyList.ofList data |> Utility.getTime iterate Operator.RecAcc data
-                
-                | x when x = Action.LookUpRand ->
-                    let times, sw = LazyList.ofList data |> doLookUpRand inputArgs data.Length
-                    Utility.getTimeResult times data Operator.RecAccHead sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdateRand ->
-                    let times, sw = LazyList.ofList data |> doUpdateRand inputArgs data.[0] data.Length
-                    Utility.getTimeResult times data Operator.SplitConsAppend sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+                | _ -> getTime inputArgs data (LazyList.ofList data)
 
     let getTimeOfSeq (inputArgs:BenchArgs) (data:#('a seq)) =
 
@@ -289,22 +506,7 @@ module PowerPackLazyList =
                 | x when x = Action.AddOne ->
                     doAddOneSeq data
 
-                | x when x = Action.Append ->
-                    LazyList.ofSeq data |> doAppend data
-
                 | x when x = Action.Init ->
                     Utility.getTime LazyList.ofSeq Operator.OfSeq data data
 
-                | x when x = Action.Iterate ->
-                    LazyList.ofSeq data |> Utility.getTime iterate Operator.RecAcc data
-                
-                | x when x = Action.LookUpRand ->
-                    let times, sw = LazyList.ofSeq data |> doLookUpRand inputArgs (Seq.length data)
-                    Utility.getTimeResult times data Operator.RecAccHead sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdateRand ->
-                    let times, sw = LazyList.ofSeq data |> doUpdateRand inputArgs (Seq.nth 0 data) (Seq.length data)
-                    Utility.getTimeResult times data Operator.SplitConsAppend sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
+                | _ -> getTime inputArgs data (LazyList.ofSeq data)
