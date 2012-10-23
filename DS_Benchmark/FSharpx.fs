@@ -6,16 +6,16 @@ open Utility
 module FSharpxAltBinaryRandomAccessList =
     
     let buildList (data:#('a seq)) =
-        let rec loop (l: 'a AltBinaryRandomAccessList.AltBinRndAccList) (d:#('a seq)) len acc =
+        let rec loop (l: 'a AltBinRndAccList) (d:#('a seq)) len acc =
             match acc with
             | _ when acc = len -> l
             | _ -> loop (AltBinaryRandomAccessList.cons (Seq.nth acc d) l) d len (acc + 1)
                 
         loop AltBinaryRandomAccessList.empty data (Seq.length data) 0
 
-    let doIterate (l:'a AltBinaryRandomAccessList.AltBinRndAccList) f =
+    let doIterate (l:'a AltBinRndAccList) f =
         
-        let rec loop (l: 'a AltBinaryRandomAccessList.AltBinRndAccList) acc f' =
+        let rec loop (l: 'a AltBinRndAccList) acc f' =
             match (AltBinaryRandomAccessList.tryUncons l) with
             | None -> acc
             | Some(x, xs) -> loop xs (f' acc x) f'
@@ -29,7 +29,7 @@ module FSharpxAltBinaryRandomAccessList =
                     
         times, sw
 
-    let doLookUpRand (inputArgs:BenchArgs) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+    let doLookUpRand (inputArgs:BenchArgs) (l:'a AltBinRndAccList) lCount =
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs 
 
@@ -44,7 +44,7 @@ module FSharpxAltBinaryRandomAccessList =
 
         times, sw
 
-    let doRemove (inputArgs:BenchArgs) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+    let doRemove (inputArgs:BenchArgs) (l:'a AltBinRndAccList) lCount =
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs 
 
@@ -59,7 +59,7 @@ module FSharpxAltBinaryRandomAccessList =
 
         times, sw
 
-    let doRemoveDescend (inputArgs:BenchArgs) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+    let doRemoveDescend (inputArgs:BenchArgs) (l:'a AltBinRndAccList) lCount =
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs 
 
@@ -76,7 +76,7 @@ module FSharpxAltBinaryRandomAccessList =
 
         times, sw
 
-    let doRemoveRandGC (inputArgs:BenchArgs) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount gCmod =
+    let doRemoveRandGC (inputArgs:BenchArgs) (l:'a AltBinRndAccList) lCount gCmod =
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs 
 
@@ -97,7 +97,7 @@ module FSharpxAltBinaryRandomAccessList =
 
         times, sw
 
-    let doRemoveRandGCNoWait (inputArgs:BenchArgs) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount gCmod =
+    let doRemoveRandGCNoWait (inputArgs:BenchArgs) (l:'a AltBinRndAccList) lCount gCmod =
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs 
 
@@ -116,7 +116,7 @@ module FSharpxAltBinaryRandomAccessList =
 
         times, sw
 
-    let doRemoveWorst1 (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+    let doRemoveWorst1 (l:'a AltBinRndAccList) lCount =
         
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -127,7 +127,7 @@ module FSharpxAltBinaryRandomAccessList =
 
         1, sw
 
-    let doUpdateRand (inputArgs:BenchArgs) (update:'a) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+    let doUpdateRand (inputArgs:BenchArgs) (update:'a) (l:'a AltBinRndAccList) lCount =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -142,7 +142,7 @@ module FSharpxAltBinaryRandomAccessList =
                     
         times, sw
 
-    let doUpdateRandGC (inputArgs:BenchArgs) (update:'a) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount gCmod =
+    let doUpdateRandGC (inputArgs:BenchArgs) (update:'a) (l:'a AltBinRndAccList) lCount gCmod =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -162,7 +162,7 @@ module FSharpxAltBinaryRandomAccessList =
                     
         times, sw
 
-    let doUpdateRandGCNoWait (inputArgs:BenchArgs) (update:'a) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount gCmod =
+    let doUpdateRandGCNoWait (inputArgs:BenchArgs) (update:'a) (l:'a AltBinRndAccList) lCount gCmod =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -180,7 +180,7 @@ module FSharpxAltBinaryRandomAccessList =
                     
         times, sw
 
-    let doUpdateWorst1 (update:'a) (l:'a AltBinaryRandomAccessList.AltBinRndAccList) lCount =
+    let doUpdateWorst1 (update:'a) (l:'a AltBinRndAccList) lCount =
                                 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -199,7 +199,7 @@ module FSharpxAltBinaryRandomAccessList =
 
             | x when x = Action.AddOne ->
                 
-                let rec loop (l: 'a AltBinaryRandomAccessList.AltBinRndAccList) (d: 'a[]) len acc =
+                let rec loop (l: 'a AltBinRndAccList) (d: 'a[]) len acc =
                     match acc with
                     | _ when acc = len -> l
                     | _ -> loop (AltBinaryRandomAccessList.cons d.[acc] l) d len (acc + 1)
@@ -293,7 +293,7 @@ module FSharpxAltBinaryRandomAccessList =
 module FSharpxBankersDeque =
 
     let doAddOne (data:'a seq) =
-        let rec loop (b:'a BankersDeque.BankersDeque) (d:'a seq)  dLength acc =
+        let rec loop (b:'a BankersDeque) (d:'a seq)  dLength acc =
             match acc  with
             | _ when acc = dLength -> b
             | _ -> loop (BankersDeque.snoc (Seq.nth acc d) b) d dLength (acc + 1)
@@ -307,10 +307,10 @@ module FSharpxBankersDeque =
                     
         Utility.getTimeResult b1 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doIterate (data:'a seq) (b:'a BankersDeque.BankersDeque) = 
+    let doIterate (data:'a seq) (b:'a BankersDeque) = 
 
-        let iterateBsQueue (bsQueue:'a BankersDeque.BankersDeque) =
-            let rec loop (b:'a BankersDeque.BankersDeque) acc =
+        let iterateBsQueue (bsQueue:'a BankersDeque) =
+            let rec loop (b:'a BankersDeque) acc =
                 match b  with
                 | _ when BankersDeque.isEmpty b -> acc
                 | _ -> 
@@ -327,7 +327,7 @@ module FSharpxBankersDeque =
                     
         Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doIterateSeq (data:'a seq) (q:'a BankersDeque.BankersDeque) = 
+    let doIterateSeq (data:'a seq) (q:'a BankersDeque) = 
 
         let foldFun =
             (fun i b -> 
@@ -343,14 +343,14 @@ module FSharpxBankersDeque =
                     
         Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doLookup inputArgs data dCount (b:'a BankersDeque.BankersDeque) = 
+    let doLookup inputArgs data dCount (b:'a BankersDeque) = 
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs
                         
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        let rec loop (b':'a BankersDeque.BankersDeque) (rnd': System.Random) = function
+        let rec loop (b':'a BankersDeque) (rnd': System.Random) = function
             | 0 -> ()
             | acc -> 
                 let b'' = BankersDeque.lookup (rnd'.Next dCount) b
@@ -362,14 +362,14 @@ module FSharpxBankersDeque =
                     
         Utility.getTimeResult times data Operator.Lookup sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doLookupSeq inputArgs data dCount (b:'a BankersDeque.BankersDeque) = 
+    let doLookupSeq inputArgs data dCount (b:'a BankersDeque) = 
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs
                         
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        let rec loop (b':'a BankersDeque.BankersDeque) (rnd': System.Random) = function
+        let rec loop (b':'a BankersDeque) (rnd': System.Random) = function
             | 0 -> ()
             | acc -> 
                 let a = Seq.nth (rnd'.Next dCount) b
@@ -381,14 +381,14 @@ module FSharpxBankersDeque =
                     
         Utility.getTimeResult times data Operator.Lookup sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doRemove inputArgs data dCount (b:'a BankersDeque.BankersDeque) = 
+    let doRemove inputArgs data dCount (b:'a BankersDeque) = 
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs
                         
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        let rec loop (b':'a BankersDeque.BankersDeque) (rnd': System.Random) = function
+        let rec loop (b':'a BankersDeque) (rnd': System.Random) = function
             | 0 -> ()
             | acc -> 
                 let b'' = BankersDeque.remove (rnd'.Next dCount) b'
@@ -400,7 +400,7 @@ module FSharpxBankersDeque =
                     
         Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doRemoveWorst1 dCount (b:'a BankersDeque.BankersDeque) =
+    let doRemoveWorst1 dCount (b:'a BankersDeque) =
                    
         let mid = dCount / 2
            
@@ -413,7 +413,7 @@ module FSharpxBankersDeque =
                     
         1, sw
 
-    let doUpdateRand inputArgs data dCount (b:'a BankersDeque.BankersDeque) =
+    let doUpdateRand inputArgs data dCount (b:'a BankersDeque) =
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs
 
@@ -422,7 +422,7 @@ module FSharpxBankersDeque =
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        let rec loop (b':'a BankersDeque.BankersDeque) (rnd': System.Random) = function
+        let rec loop (b':'a BankersDeque) (rnd': System.Random) = function
             | 0 -> ()
             | acc -> 
                 let b'' = BankersDeque.update (rnd'.Next dCount) update b
@@ -434,7 +434,7 @@ module FSharpxBankersDeque =
                     
         Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doUpdateWorst1 dCount (b:'a BankersDeque.BankersDeque) =
+    let doUpdateWorst1 dCount (b:'a BankersDeque) =
                    
         let mid = dCount / 2
         let update = BankersDeque.head b
@@ -448,7 +448,7 @@ module FSharpxBankersDeque =
                     
         1, sw
 
-    let getTime (inputArgs:BenchArgs) data (b: 'a BankersDeque.BankersDeque) = 
+    let getTime (inputArgs:BenchArgs) data (b: 'a BankersDeque) = 
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.AddOne ->
@@ -554,7 +554,7 @@ module FSharpxBatchedDeque =
 
     let doAddOne (data:'a seq) =
 
-        let rec loop (b:'a BatchedDeque.BatchedDeque) (d:'a seq)  dLength acc =
+        let rec loop (b:'a BatchedDeque) (d:'a seq)  dLength acc =
             match acc  with
             | _ when acc = dLength -> b
             | _ -> loop (BatchedDeque.snoc (Seq.nth acc d) b) d dLength (acc + 1)
@@ -568,10 +568,10 @@ module FSharpxBatchedDeque =
                     
         Utility.getTimeResult b1 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doIterate (data:'a seq) (b:'a BatchedDeque.BatchedDeque) = 
+    let doIterate (data:'a seq) (b:'a BatchedDeque) = 
 
-        let iterateQueue (q:'a BatchedDeque.BatchedDeque) =
-            let rec loop (b:'a BatchedDeque.BatchedDeque) acc =
+        let iterateQueue (q:'a BatchedDeque) =
+            let rec loop (b:'a BatchedDeque) acc =
                 match b  with
                 | _ when BatchedDeque.isEmpty b -> acc
                 | _ -> 
@@ -588,7 +588,7 @@ module FSharpxBatchedDeque =
                     
         Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doIterateSeq (data:'a seq) (b:'a BatchedDeque.BatchedDeque) = 
+    let doIterateSeq (data:'a seq) (b:'a BatchedDeque) = 
 
         let foldFun =
             (fun i b -> 
@@ -606,7 +606,7 @@ module FSharpxBatchedDeque =
 
     let ofBalanced (data:'a seq) =
 
-        let rec loop (b:'a BatchedDeque.BatchedDeque) (d:'a seq)  dLength acc =
+        let rec loop (b:'a BatchedDeque) (d:'a seq)  dLength acc =
             match acc  with
             | _ when acc = dLength -> b
             | _ -> 
@@ -617,7 +617,7 @@ module FSharpxBatchedDeque =
  
         loop (BatchedDeque.singleton (Seq.nth 0 data)) data (Seq.length data) 1
 
-    let getTime (inputArgs:BenchArgs) data (b: 'a BatchedDeque.BatchedDeque) = 
+    let getTime (inputArgs:BenchArgs) data (b: 'a BatchedDeque) = 
 
         System.GC.Collect()
 
@@ -1016,7 +1016,7 @@ module FSharpxDeque =
 
     let doAddOne (data:'a seq) =
 
-        let rec loop (b:'a Deque.Deque) (d:'a seq)  dLength acc =
+        let rec loop (b:'a Deque) (d:'a seq)  dLength acc =
             match acc  with
             | _ when acc = dLength -> b
             | _ -> loop (Deque.snoc (Seq.nth acc d) b) d dLength (acc + 1)
@@ -1030,10 +1030,10 @@ module FSharpxDeque =
                     
         Utility.getTimeResult b1 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doIterate (data:'a seq) (b:'a Deque.Deque) = 
+    let doIterate (data:'a seq) (b:'a Deque) = 
 
-        let iterateBsQueue (q:'a Deque.Deque) =
-            let rec loop (b:'a Deque.Deque) acc =
+        let iterateBsQueue (q:'a Deque) =
+            let rec loop (b:'a Deque) acc =
                 match b  with
                 | _ when Deque.isEmpty b -> acc
                 | _ -> 
@@ -1050,7 +1050,7 @@ module FSharpxDeque =
                     
         Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doIterateSeq (data:'a seq) (b:'a Deque.Deque) = 
+    let doIterateSeq (data:'a seq) (b:'a Deque) = 
 
         let foldFun =
             (fun i b -> 
@@ -1068,7 +1068,7 @@ module FSharpxDeque =
 
     let ofBalanced (data:'a seq) =
 
-        let rec loop (q:'a Deque.Deque) (d:'a seq)  dLength acc =
+        let rec loop (q:'a Deque) (d:'a seq)  dLength acc =
             match acc  with
             | _ when acc = dLength -> q
             | _ -> 
@@ -1079,7 +1079,7 @@ module FSharpxDeque =
  
         loop (Deque.singleton (Seq.nth 0 data)) data (Seq.length data) 1
 
-    let getTime (inputArgs:BenchArgs) data (b: 'a Deque.Deque) = 
+    let getTime (inputArgs:BenchArgs) data (b: 'a Deque) = 
         
         System.GC.Collect()
         
@@ -1120,7 +1120,7 @@ module FSharpxDeque =
             
         getTime inputArgs data (ofBalanced(data))
 
-module FsharpxImplicitQueue =
+module FSharpxImplicitQueue =
         
     let appendBsQueue (bsQueue:'a ImplicitQueue.ImplicitQueue) (bsQueue2:'a ImplicitQueue.ImplicitQueue) =
         let rec loop (iQ:'a ImplicitQueue.ImplicitQueue) (iQ2:'a ImplicitQueue.ImplicitQueue) =
@@ -1382,6 +1382,56 @@ module iVector =
                     
         Utility.getTimeResult times data Operator.AssocN sw.ElapsedTicks sw.ElapsedMilliseconds
 
+module FSharpxLeftistHeap =
+
+    let doAddOne (data: seq<'a>) =
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let h1 = Seq.fold (fun (h : 'a LeftistHeap) t -> (h.Insert t)) (LeftistHeap.empty false) data
+                            
+        sw.Stop()
+                    
+        Utility.getTimeResult h1 data Operator.Insert sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterate (data:'a seq) (b:'a LeftistHeap) = 
+
+        let iterateHeap (q:'a LeftistHeap) =
+            let rec loop (b:'a LeftistHeap) acc =
+                match b  with
+                | _ when LeftistHeap.isEmpty b -> acc
+                | _ -> 
+                    let a = LeftistHeap.head b
+                    loop (LeftistHeap.tail b) (acc + 1)
+            loop q 0
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = iterateHeap b
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let getTime (inputArgs:BenchArgs) (data:'a seq) = 
+        
+        System.GC.Collect()
+        
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.AddOne ->
+            doAddOne data
+
+        | x when x = Action.Iterate ->
+            LeftistHeap.empty true |> doIterate data
+
+        | x when x = Action.Init ->
+            Utility.getTime (LeftistHeap.ofSeq true) Operator.OfSeq data data
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
 module FSharpxPersistentVector =
 
     let getTime (inputArgs:BenchArgs) data =
@@ -1426,7 +1476,7 @@ module FSharpxPersistentVector =
 module FSharpxRealTimeDeque =
 
     let doAddOne (data:'a seq) =
-        let rec loop (b:'a RealTimeDeque.RealTimeDeque) (d:'a seq)  dLength acc =
+        let rec loop (b:'a RealTimeDeque) (d:'a seq)  dLength acc =
             match acc  with
             | _ when acc = dLength -> b
             | _ -> loop (RealTimeDeque.snoc (Seq.nth acc d) b) d dLength (acc + 1)
@@ -1440,10 +1490,10 @@ module FSharpxRealTimeDeque =
                     
         Utility.getTimeResult b1 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doIterate (data:'a seq) (b:'a RealTimeDeque.RealTimeDeque) = 
+    let doIterate (data:'a seq) (b:'a RealTimeDeque) = 
 
-        let iterateBsQueue (bsQueue:'a RealTimeDeque.RealTimeDeque) =
-            let rec loop (b:'a RealTimeDeque.RealTimeDeque) acc =
+        let iterateBsQueue (bsQueue:'a RealTimeDeque) =
+            let rec loop (b:'a RealTimeDeque) acc =
                 match b  with
                 | _ when RealTimeDeque.isEmpty b -> acc
                 | _ -> 
@@ -1460,7 +1510,7 @@ module FSharpxRealTimeDeque =
                     
         Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doIterateSeq (data:'a seq) (b:'a RealTimeDeque.RealTimeDeque) = 
+    let doIterateSeq (data:'a seq) (b:'a RealTimeDeque) = 
 
         let foldFun =
             (fun i b -> 
@@ -1476,14 +1526,14 @@ module FSharpxRealTimeDeque =
                     
         Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doLookup inputArgs data dCount (b:'a RealTimeDeque.RealTimeDeque) = 
+    let doLookup inputArgs data dCount (b:'a RealTimeDeque) = 
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs
                         
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        let rec loop (b':'a RealTimeDeque.RealTimeDeque) (rnd': System.Random) = function
+        let rec loop (b':'a RealTimeDeque) (rnd': System.Random) = function
             | 0 -> ()
             | acc -> 
                 let b'' = RealTimeDeque.lookup (rnd'.Next dCount) b
@@ -1495,14 +1545,14 @@ module FSharpxRealTimeDeque =
                     
         Utility.getTimeResult times data Operator.Lookup sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doLookupSeq inputArgs data dCount (b:'a RealTimeDeque.RealTimeDeque) = 
+    let doLookupSeq inputArgs data dCount (b:'a RealTimeDeque) = 
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs
                         
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        let rec loop (b':'a RealTimeDeque.RealTimeDeque) (rnd': System.Random) = function
+        let rec loop (b':'a RealTimeDeque) (rnd': System.Random) = function
             | 0 -> ()
             | acc -> 
                 let a = Seq.nth (rnd'.Next dCount) b
@@ -1514,14 +1564,14 @@ module FSharpxRealTimeDeque =
                     
         Utility.getTimeResult times data Operator.Lookup sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doRemove inputArgs data dCount (b:'a RealTimeDeque.RealTimeDeque) = 
+    let doRemove inputArgs data dCount (b:'a RealTimeDeque) = 
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs
                         
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        let rec loop (b':'a RealTimeDeque.RealTimeDeque) (rnd': System.Random) = function
+        let rec loop (b':'a RealTimeDeque) (rnd': System.Random) = function
             | 0 -> ()
             | acc -> 
                 let b'' = RealTimeDeque.remove (rnd'.Next dCount) b'
@@ -1533,7 +1583,7 @@ module FSharpxRealTimeDeque =
                     
         Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doRemoveWorst1 dCount (b:'a RealTimeDeque.RealTimeDeque) =
+    let doRemoveWorst1 dCount (b:'a RealTimeDeque) =
                    
         let mid = dCount / 2
            
@@ -1546,7 +1596,7 @@ module FSharpxRealTimeDeque =
                     
         1, sw
 
-    let doUpdateRand inputArgs data dCount (b:'a RealTimeDeque.RealTimeDeque) =
+    let doUpdateRand inputArgs data dCount (b:'a RealTimeDeque) =
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs
 
@@ -1555,7 +1605,7 @@ module FSharpxRealTimeDeque =
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        let rec loop (b':'a RealTimeDeque.RealTimeDeque) (rnd': System.Random) = function
+        let rec loop (b':'a RealTimeDeque) (rnd': System.Random) = function
             | 0 -> ()
             | acc -> 
                 let b'' = RealTimeDeque.update (rnd'.Next dCount) update b
@@ -1567,7 +1617,7 @@ module FSharpxRealTimeDeque =
                     
         Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doUpdateWorst1 dCount (b:'a RealTimeDeque.RealTimeDeque) =
+    let doUpdateWorst1 dCount (b:'a RealTimeDeque) =
                    
         let mid = dCount / 2
         let update = RealTimeDeque.head b
@@ -1581,7 +1631,7 @@ module FSharpxRealTimeDeque =
                     
         1, sw
 
-    let getTime (inputArgs:BenchArgs) data (b: 'a RealTimeDeque.RealTimeDeque) = 
+    let getTime (inputArgs:BenchArgs) data (b: 'a RealTimeDeque) = 
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.AddOne ->

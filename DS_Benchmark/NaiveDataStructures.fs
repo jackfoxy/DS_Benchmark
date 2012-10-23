@@ -3,6 +3,55 @@
 open NaiveDataStructures
 open Utility
 
+module NaiveLeftistHeap =
+
+    let doAddOne (data: seq<'a>) =
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let h1 = Seq.fold (fun (h : 'a LeftistHeap) t -> (h.Insert t)) (LeftistHeap.empty false) data
+                            
+        sw.Stop()
+                    
+        Utility.getTimeResult h1 data Operator.Insert sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterate (data:'a seq) (b:'a LeftistHeap) = 
+
+        let iterateHeap (q:'a LeftistHeap) =
+            let rec loop (b:'a LeftistHeap) acc =
+                match b  with
+                | _ when LeftistHeap.isEmpty b -> acc
+                | _ -> 
+                    let a = LeftistHeap.head b
+                    loop (LeftistHeap.tail b) (acc + 1)
+            loop q 0
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = iterateHeap b
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let getTime (inputArgs:BenchArgs) (data:'a seq) = 
+        
+        System.GC.Collect()
+        
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.AddOne ->
+            doAddOne data
+
+        | x when x = Action.Iterate ->
+            LeftistHeap.empty true |> doIterate data
+
+        | x when x = Action.Init ->
+            Utility.getTime (LeftistHeap.ofSeq true) Operator.OfSeq data data
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
 module NaiveStack =
 

@@ -119,12 +119,14 @@ type DataStructure =
     static member FSharpxDList = "fsharpxdlist"
     static member FSharpxDeque = "fsharpxdeque"
     static member FSharpxImplicitQueue = "fsharpximplicitqueue"
+    static member FSharpxLeftistHeap = "fsharpxleftistheap"
     static member FSharpxPersistentVector = "fsharpxpersistentvector"
     static member FSharpxRtDeque = "fsharpxrtdeque"
     static member FSharpxRtQueue = "fsharpxrtqueue"
     static member FSharpxTransientVector = "fsharpxtransientvector"
 
     static member NaiveStack = "naivestack"
+    static member NaiveLeftistHeap = "naiveleftistheap"
 
     static member PowerPackHashMultiMap = "powerpackhashmultimap"
     static member PowerPackLazyList = "powerpacklazylist"
@@ -141,6 +143,7 @@ type Operator =
     static member Fold = "fold"
     static member ForCountItem = "for count item"
     static member ForEachAdd = "for each add"
+    static member Insert = "insert"
     static member ItemByIndex = "item index"
     static member ItemByKey = "item key"
     static member Lookup = "lookup"

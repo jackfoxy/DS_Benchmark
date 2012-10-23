@@ -114,7 +114,7 @@ module console1 =
                     printfn " "
                     if x.ExitCode = 0 then
                         printfn "%s\t%s\t%s\t%s\t%i" x.InputArgs.DataStructure x.InputArgs.Action x.Operator x.InputArgs.InitData x.InputArgs.Size
-                        printfn "max:\t%i\tmin:\t%i\tmedian:\t%i\t±\t%i\t%.1f%%" x.Max x.Min x.Median x.Deviation x.DeviationPct
+                        printfn "max:\t%s\t\tmin:\t%s\t\tmedian:\t%s\t± %s\t%.1f%% (max deviation)" (x.Max.ToString "#,##0") (x.Min.ToString "#,##0") (x.Median.ToString "#,##0") (x.Deviation.ToString "#,##0") x.DeviationPct
                     else
                         printfn "Benchmark execution failed"
                         printfn "%s" x.Message

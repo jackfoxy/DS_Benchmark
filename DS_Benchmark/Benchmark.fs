@@ -494,7 +494,13 @@ module Benchmark =
                     FSharpxDeque.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FsharpxImplicitQueue.getTimeOfArray inputArgs data
+                    FSharpxImplicitQueue.getTimeOfArray inputArgs data
+
+                | x when x = DataStructure.FSharpxLeftistHeap -> 
+                    FSharpxLeftistHeap.getTime inputArgs data
+
+                | x when x = DataStructure.NaiveLeftistHeap -> 
+                    NaiveLeftistHeap.getTime inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data
@@ -556,7 +562,13 @@ module Benchmark =
                     FSharpxDeque.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FsharpxImplicitQueue.getTimeOfArray inputArgs data
+                    FSharpxImplicitQueue.getTimeOfArray inputArgs data
+
+                | x when x = DataStructure.FSharpxLeftistHeap -> 
+                    FSharpxLeftistHeap.getTime inputArgs data
+
+                | x when x = DataStructure.NaiveLeftistHeap -> 
+                    NaiveLeftistHeap.getTime inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data
@@ -615,7 +627,13 @@ module Benchmark =
                     FSharpxDeque.getTimeOfList inputArgs data
 
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FsharpxImplicitQueue.getTimeOfList inputArgs data
+                    FSharpxImplicitQueue.getTimeOfList inputArgs data
+
+                | x when x = DataStructure.FSharpxLeftistHeap -> 
+                    FSharpxLeftistHeap.getTime inputArgs data
+
+                | x when x = DataStructure.NaiveLeftistHeap -> 
+                    NaiveLeftistHeap.getTime inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data
@@ -674,7 +692,13 @@ module Benchmark =
                     FSharpxDeque.getTimeOfList inputArgs data
 
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FsharpxImplicitQueue.getTimeOfList inputArgs data
+                    FSharpxImplicitQueue.getTimeOfList inputArgs data
+
+                | x when x = DataStructure.FSharpxLeftistHeap -> 
+                    FSharpxLeftistHeap.getTime inputArgs data
+
+                | x when x = DataStructure.NaiveLeftistHeap -> 
+                    NaiveLeftistHeap.getTime inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data
@@ -734,7 +758,13 @@ module Benchmark =
                     FSharpxDeque.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FsharpxImplicitQueue.getTimeOfSeq inputArgs data
+                    FSharpxImplicitQueue.getTimeOfSeq inputArgs data
+
+                | x when x = DataStructure.FSharpxLeftistHeap -> 
+                    FSharpxLeftistHeap.getTime inputArgs data
+
+                | x when x = DataStructure.NaiveLeftistHeap -> 
+                    NaiveLeftistHeap.getTime inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data
@@ -794,7 +824,13 @@ module Benchmark =
                     FSharpxDeque.getTimeOfSeq inputArgs data
 
                 | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FsharpxImplicitQueue.getTimeOfSeq inputArgs data
+                    FSharpxImplicitQueue.getTimeOfSeq inputArgs data
+
+                | x when x = DataStructure.FSharpxLeftistHeap -> 
+                    FSharpxLeftistHeap.getTime inputArgs data
+
+                | x when x = DataStructure.NaiveLeftistHeap -> 
+                    NaiveLeftistHeap.getTime inputArgs data
 
                 | x when x = DataStructure.FSharpxPersistentVector -> 
                     FSharpxPersistentVector.getTime inputArgs data

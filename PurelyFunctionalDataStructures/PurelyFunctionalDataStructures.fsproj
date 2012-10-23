@@ -41,23 +41,19 @@
     <Compile Include="LazyList.fs" />
     <Compile Include="BankersQueue.fs" />
     <Compile Include="BatchedQueue.fs" />
-    <Compile Include="BinaryRandomAccessList.fs" />
     <Compile Include="BinarySearchTree.fs" />
     <Compile Include="BinomialHeap.fs" />
     <Compile Include="BottomUpMergeSort.fs" />
     <Compile Include="CustomStack.fs" />
     <Compile Include="FiniteMap.fs" />
     <Compile Include="HoodMelvilleQueue.fs" />
-    <Compile Include="ImplicitQueue.fs" />
     <Compile Include="LazyBinomialHeap.fs" />
     <Compile Include="LazyPairingHeap.fs" />
-    <Compile Include="LeftistHeap.fs" />
     <Compile Include="PairingHeap.fs" />
     <Compile Include="RedBlackSet.fs" />
     <Compile Include="PhysicistQueue.fs" />
     <Compile Include="ScheduledBinomialHeap.fs" />
     <Compile Include="ScheduledBottomUpMergeSort.fs" />
-    <Compile Include="SkewBinaryRandomAccessList.fs" />
     <Compile Include="SkewBinomialHeap.fs" />
     <Compile Include="SplayHeap.fs" />
   </ItemGroup>
