@@ -147,6 +147,7 @@ type Operator =
     static member ItemByIndex = "item index"
     static member ItemByKey = "item key"
     static member Lookup = "lookup"
+    static member Merge ="merge"
     static member NewInit = "new()"
     static member NonEmptyBootstrappedQueueCreate = "NonEmptyBootstrappedQueue.create"
     static member OfArray = "ofArray"

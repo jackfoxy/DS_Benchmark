@@ -39,8 +39,6 @@
     <None Include="packages.config" />
     <Compile Include="Exceptions.fs" />
     <Compile Include="LazyList.fs" />
-    <Compile Include="BankersQueue.fs" />
-    <Compile Include="BatchedQueue.fs" />
     <Compile Include="BinarySearchTree.fs" />
     <Compile Include="BinomialHeap.fs" />
     <Compile Include="BottomUpMergeSort.fs" />
@@ -51,7 +49,6 @@
     <Compile Include="LazyPairingHeap.fs" />
     <Compile Include="PairingHeap.fs" />
     <Compile Include="RedBlackSet.fs" />
-    <Compile Include="PhysicistQueue.fs" />
     <Compile Include="ScheduledBinomialHeap.fs" />
     <Compile Include="ScheduledBottomUpMergeSort.fs" />
     <Compile Include="SkewBinomialHeap.fs" />

@@ -52,8 +52,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharpx.Core">
-      <HintPath>..\packages\FSharpx.Core.1.6.83\lib\40\Fsharpx.Core.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\FSharpx.Core.1.6.93\lib\40\Fsharpx.Core.dll</HintPath>
     </Reference>
     <Reference Include="FsUnit.CustomMatchers">
       <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.1\Lib\Net40\FsUnit.CustomMatchers.dll</HintPath>
