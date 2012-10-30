@@ -311,6 +311,6 @@ type BenchmarkTest() =
 
     [<TestMethod>]
     member x.``Benchmark.BenchmarkDsAction.create functions correctly`` () =
-        let benchmarkDsAction = new BenchmarkDsAction (DataStructure.FSharpxPersistentVector, 10, InitData.SeqIntAsc, Action.Init, (Array.create 5 ""))
+        let benchmarkDsAction = new BenchmarkDsAction (DataStructure.FSharpxVectorPersistent, 10, InitData.SeqIntAsc, Action.Init, (Array.create 5 ""))
         let x = benchmarkDsAction.Create
         ((x.ExitCode = 0) && (x.Operator.Length > 0) && (x.Max > 0L) && (x.Min > 0L) && (x.Median > 0L) && (x.Deviation > 0L) && (x.DeviationPct > 0.0)) |> should be True

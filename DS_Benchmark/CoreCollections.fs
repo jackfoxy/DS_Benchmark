@@ -19,7 +19,7 @@ module CoreCollectionsArray =
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let a1 =loop (Array.create 1 (List.nth data 0)) data (List.length data) 1
+        let a1 = loop (Array.create 1 (List.nth data 0)) data (List.length data) 1
                     
         sw.Stop()
                     
@@ -95,7 +95,7 @@ module CoreCollectionsArray =
                     
         times, sw
 
-    let doRemoveRandGC (inputArgs:BenchArgs) (update:'a) (a:'a[]) gCmod =
+    let doRemoveRandGC (inputArgs:BenchArgs) (update:'a) gCmod (a:'a[]) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -165,6 +165,59 @@ module CoreCollectionsArray =
                     
         times, sw
 
+    let doIterateSeq (data:'a seq) (a: 'a[]) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 a
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let getTime (inputArgs:BenchArgs) data (a: 'a[]) = 
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.IterateSeq ->
+            a |> doIterateSeq data
+
+        | x when x = Action.LookUpRand ->
+            let times, sw = a |> doLookUpRand inputArgs
+            Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveRand ->
+            let times, sw = a |> doRemoveRand inputArgs (Seq.nth 0 data)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveRandGC10 ->
+            let times, sw = a |> doRemoveRandGC inputArgs (Seq.nth 0 data) 10
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveRandGC100 ->
+            let times, sw = a |> doRemoveRandGC inputArgs (Seq.nth 0 data) 100
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveWorst1 ->
+            let times, sw = a |> doRemoveWorst1 inputArgs (Seq.nth 0 data)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdateRand ->
+            let times, sw = a |> doUpdateRand inputArgs (Seq.nth 0 data)
+            Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdateWorst1 ->
+            let times, sw = a |> doUpdateWorst1 inputArgs (Seq.nth 0 data)
+            Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
+
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
     let getTimeOfList (inputArgs:BenchArgs) data =
             
         if not (inputArgs.InitData.ToLower().Contains("list")) then
@@ -174,33 +227,25 @@ module CoreCollectionsArray =
 
             match inputArgs.Action.ToLower() with
 
-                | x when x = Action.AddOne ->
-                   doAddOneList data
+            | x when x = Action.AddOne ->
+                doAddOneList data
 
-                | x when x = Action.Append ->
-                    Array.ofList data |> doAppend data
+            | x when x = Action.Append ->
+                Array.ofList data |> doAppend data
 
-                | x when x = Action.Init ->
-                    Utility.getTime Array.ofList Operator.OfList data data
+            | x when x = Action.Init ->
+                Utility.getTime Array.ofList Operator.OfList data data
 
-                | x when x = Action.Iterate ->
-                    let foldFun =
-                        (fun i b -> 
-                            let c = b
-                            i + 1)
+            | x when x = Action.Iterate ->
+                let foldFun =
+                    (fun i b -> 
+                        let c = b
+                        i + 1)
                         
-                    let aFold = Array.fold foldFun 0
-                    Array.ofList data |> Utility.getTime aFold Operator.Fold data
+                let aFold = Array.fold foldFun 0
+                Array.ofList data |> Utility.getTime aFold Operator.Fold data
 
-                | x when x = Action.LookUpRand ->
-                    let times, sw = Array.ofList data |> doLookUpRand inputArgs
-                    Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
-                    
-                | x when x = Action.UpdateRand ->
-                    let times, sw = Array.ofList data |> doUpdateRand inputArgs (Seq.nth 0 data)
-                    Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
-                    
-                | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+            | _ -> getTime inputArgs data (Array.ofList data)
 
     let getTimeOfSeq (inputArgs:BenchArgs) (data:#('a seq)) =
             
@@ -213,89 +258,49 @@ module CoreCollectionsArray =
 
             match inputArgs.Action.ToLower() with
 
-                | x when x = Action.AddOne ->
-                    doAddOneSeq data
+            | x when x = Action.AddOne ->
+                doAddOneSeq data
 
-                | x when x = Action.Append ->
-                    Array.ofSeq data |> doAppend data 
+            | x when x = Action.Append ->
+                Array.ofSeq data |> doAppend data 
 
-                | x when x = Action.Init ->
-                    Utility.getTime Array.ofSeq Operator.OfSeq data data
+            | x when x = Action.Init ->
+                Utility.getTime Array.ofSeq Operator.OfSeq data data
 
-                | x when x = Action.Iterate ->
-                    let foldFun =
-                        (fun i b -> 
-                            let c = b
-                            i + 1)
+            | x when x = Action.Iterate ->
+                let foldFun =
+                    (fun i b -> 
+                        let c = b
+                        i + 1)
                         
-                    let aFold = Array.fold foldFun 0
-                    Array.ofSeq data |> Utility.getTime aFold Operator.Fold data
+                let aFold = Array.fold foldFun 0
+                Array.ofSeq data |> Utility.getTime aFold Operator.Fold data
 
-                | x when x = Action.LookUpRand ->
-                    let times, sw = Array.ofSeq data |> doLookUpRand inputArgs
-                    Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveRand ->
-                    let a = Array.ofSeq data 
-                    let times, sw = doRemoveRand inputArgs (Seq.nth 0 data) a 
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveRandGC10 ->
-                    let a = Array.ofSeq data 
-                    let times, sw = doRemoveRandGC inputArgs (Seq.nth 0 data) a 10
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveRandGC100 ->
-                    let a = Array.ofSeq data 
-                    let times, sw = doRemoveRandGC inputArgs (Seq.nth 0 data) a 100
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveWorst1 ->
-                    let a = Array.ofSeq data 
-                    let times, sw = doRemoveWorst1 inputArgs (Seq.nth 0 data) a
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdateRand ->
-                    let times, sw = Array.ofSeq data |> doUpdateRand inputArgs (Seq.nth 0 data)
-                    Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdateWorst1 ->
-                    let times, sw = Array.ofSeq data |> doUpdateWorst1 inputArgs (Seq.nth 0 data)
-                    Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+            | _ -> getTime inputArgs data (Array.ofSeq data)
 
 module CoreCollectionsList = 
     
     let doAddOneArray (data: 'a[]) = 
-        let rec loop (l: 'a list) (d: 'a[]) len acc =
-            match acc with
-            | _ when acc = len -> l
-            | _ -> loop (List.Cons (d.[acc], l)) d len (acc + 1)
-                
+        
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
- 
-        let l1 = loop List.empty data (Seq.length data) 0
+
+        let l1 = Array.fold (fun (l:'a list) t ->t::l) [] data
                     
         sw.Stop()
                     
-        Utility.getTimeResult l1 data Operator.EmptyRecCons sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult l1 data Operator.Cons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doAddOneSeq (data: 'a seq) = 
-        let rec loop (l: 'a list) (d: 'a seq) len acc =
-            match acc with
-            | _ when acc = len -> l
-            | _ -> loop (List.Cons (Seq.nth acc d, l)) d len (acc + 1)
  
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
- 
-        let l1 = loop List.empty data (Seq.length data) 0
+
+        let l1 = Seq.fold (fun (l:'a list) t ->t::l) [] data
                     
         sw.Stop()
                     
-        Utility.getTimeResult l1 data Operator.EmptyRecCons sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult l1 data Operator.Cons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doAppend data l = 
         let sw = new System.Diagnostics.Stopwatch()
@@ -305,7 +310,23 @@ module CoreCollectionsList =
                     
         sw.Stop()
                     
-        Utility.getTimeResult l2 data Operator.EmptyRecCons sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult l2 data Operator.Append sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterateSeq (data:'a seq) (l :'a list) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 l
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doLookUpRand (inputArgs:BenchArgs) (l:'a list) =
         let rnd = new System.Random()
@@ -323,7 +344,7 @@ module CoreCollectionsList =
 
         times, sw
 
-    let doRemove (inputArgs:BenchArgs) (l:'a list) lcount =
+    let doRemove (inputArgs:BenchArgs) lcount (l:'a list) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -348,7 +369,7 @@ module CoreCollectionsList =
                     
         times, sw
 
-    let doRemoveHybrid (inputArgs:BenchArgs) (l:'a list) lcount =
+    let doRemoveHybrid (inputArgs:BenchArgs) lcount (l:'a list) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -383,7 +404,7 @@ module CoreCollectionsList =
               
         times, sw      
 
-    let doRemoveHybridWorst1 (l:'a list) lcount =
+    let doRemoveHybridWorst1 lcount (l:'a list) =
                         
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -461,7 +482,7 @@ module CoreCollectionsList =
                     
         1, sw
 
-    let doRemovePsdCan (inputArgs:BenchArgs) (l:'a list) lcount =
+    let doRemovePsdCan (inputArgs:BenchArgs) lcount (l:'a list) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -482,7 +503,7 @@ module CoreCollectionsList =
                     
         times, sw
 
-    let doRemovePsdCanWorst1 (l:'a list) lcount =
+    let doRemovePsdCanWorst1 lcount (l:'a list) =
                         
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -499,7 +520,7 @@ module CoreCollectionsList =
                     
         1, sw
 
-    let doRemoveRandGC (inputArgs:BenchArgs) (l:'a list) lcount gCmod =
+    let doRemoveRandGC (inputArgs:BenchArgs) lcount gCmod (l:'a list) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -529,7 +550,7 @@ module CoreCollectionsList =
                     
         times, sw
 
-    let doRemoveRandGCNoWait (inputArgs:BenchArgs) (l:'a list) lcount gCmod =
+    let doRemoveRandGCNoWait (inputArgs:BenchArgs) lcount gCmod (l:'a list) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -557,7 +578,7 @@ module CoreCollectionsList =
                     
         times, sw
 
-    let doRemoveWorst1 (l:'a list) lcount =
+    let doRemoveWorst1 lcount (l:'a list) =
                                 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -574,6 +595,21 @@ module CoreCollectionsList =
         sw.Stop()
                     
         1, sw   
+
+    let doTailToEmpty data (l:'a list) =
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let rec loop : 'a list-> unit =  function
+            | hd::tl -> loop tl
+            | [] -> ()
+
+        loop l
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult l data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doUpdatePuntRand (inputArgs:BenchArgs) (update:'a) (l:'a list) =
         let rnd = new System.Random()       
@@ -592,7 +628,7 @@ module CoreCollectionsList =
                     
         times, sw
 
-    let doUpdateRand2 (inputArgs:BenchArgs) (update:'a) (l:'a list) lcount =
+    let doUpdateRand2 (inputArgs:BenchArgs) (update:'a) lcount (l:'a list) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -617,7 +653,7 @@ module CoreCollectionsList =
                     
         times, sw
 
-    let doUpdateHybridRand (inputArgs:BenchArgs) (update:'a) (l:'a list) lcount =
+    let doUpdateHybridRand (inputArgs:BenchArgs) (update:'a) lcount (l:'a list) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -652,7 +688,7 @@ module CoreCollectionsList =
                     
         times, sw
 
-    let doUpdatePsdCanRand (inputArgs:BenchArgs) (update:'a) (l:'a list) lcount =
+    let doUpdatePsdCanRand (inputArgs:BenchArgs) (update:'a) lcount (l:'a list) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
                         
@@ -673,7 +709,7 @@ module CoreCollectionsList =
                     
         times, sw
 
-    let doUpdate2Worst1 (update:'a) (l:'a list) lcount =
+    let doUpdate2Worst1 (update:'a) lcount (l:'a list) =
                                 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -719,7 +755,7 @@ module CoreCollectionsList =
                     
         1, sw
 
-    let doUpdatePsdCanWorst1 (update:'a) (l:'a list) lcount =
+    let doUpdatePsdCanWorst1 (update:'a) lcount (l:'a list) =
                                 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -749,6 +785,101 @@ module CoreCollectionsList =
                     
         1, sw
 
+    let getTime (inputArgs:BenchArgs) data (l: list<'a>) = 
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.IterateSeq ->
+            l |> doIterateSeq data
+
+        | x when x = Action.LookUpRand ->
+            let times, sw = l |> doLookUpRand inputArgs
+            Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveRand ->
+            let times, sw = l |> doRemove inputArgs (List.length l)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveHybridRand ->
+            let times, sw = l |> doRemoveHybrid inputArgs (List.length l)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveHybridWorst1 ->
+            let times, sw = l |> doRemoveHybridWorst1 (List.length l)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemovePuntRand ->
+            let times, sw = l |> doRemovePunt inputArgs
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemovePuntWorst1 ->
+            let times, sw = l |> doRemovePuntWorst1
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemovePsdCanRand ->
+            let times, sw = l |> doRemovePsdCan inputArgs (List.length l)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemovePsdCanWorst1 ->
+            let times, sw = l |> doRemovePsdCanWorst1 (List.length l)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveRandGC10 ->
+            let times, sw = l |> doRemoveRandGC inputArgs (List.length l) 10
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveRandGC10NoWait ->
+            let times, sw = l |> doRemoveRandGCNoWait inputArgs (List.length l) 10
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveRandGC100 ->
+            let times, sw = l |> doRemoveRandGC inputArgs (List.length l) 100
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveWorst1 ->
+            let times, sw = l |> doRemoveWorst1 (List.length l) 
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.RemoveHybridWorst1 ->
+            let times, sw = l |> doRemoveHybridWorst1 (List.length l) 
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.TailToEmpty ->
+            l |> doTailToEmpty data
+
+        | x when x = Action.UpdateRand || x = Action.UpdateHybridRand ->
+            let times, sw = l |> doUpdateHybridRand inputArgs (l.Item 0) (List.length l)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdatePsdCanRand ->
+            let times, sw = l |> doUpdatePsdCanRand inputArgs (l.Item 0) (List.length l)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdatePuntRand ->
+            let times, sw = l |> doUpdatePuntRand inputArgs (l.Item 0)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.Update2Rand ->
+            let times, sw = l |> doUpdateRand2 inputArgs (l.Item 0) (List.length l)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdateWorst1 || x = Action.UpdateHybridWorst1 ->
+            let times, sw = l |> doUpdateHybridWorst1 (l.Item 0)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.Update2Worst1 ->
+            let times, sw = l |> doUpdate2Worst1 (l.Item 0) (List.length l)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdatePuntWorst1 ->
+            let times, sw = l |> doUpdatePuntWorst1 (l.Item 0) 
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdatePsdCanWorst1 ->
+            let times, sw = l |> doUpdatePsdCanWorst1 (l.Item 0) (List.length l)
+            Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
     let getTimeOfArray (inputArgs:BenchArgs) data = 
             
         if not (inputArgs.InitData.ToLower().Contains("array")) then
@@ -758,130 +889,25 @@ module CoreCollectionsList =
 
             match inputArgs.Action.ToLower() with
 
-                | x when x = Action.AddOne ->
-                    doAddOneArray data
+            | x when x = Action.AddOne ->
+                doAddOneArray data
 
-                | x when x = Action.Append ->
-                    List.ofArray data |> doAppend data
+            | x when x = Action.Append ->
+                List.ofArray data |> doAppend data
                     
-                | x when x = Action.Init ->
-                    Utility.getTime List.ofArray Operator.OfArray data data
+            | x when x = Action.Init ->
+                Utility.getTime List.ofArray Operator.OfArray data data
 
-                | x when x = Action.Iterate ->
-                    let foldFun =
-                        (fun i b -> 
-                            let c = b
-                            i + 1)
+            | x when x = Action.Iterate ->
+                let foldFun =
+                    (fun i b -> 
+                        let c = b
+                        i + 1)
                         
-                    let lFold = List.fold foldFun 0
-                    List.ofArray data |> Utility.getTime lFold Operator.Fold data
+                let lFold = List.fold foldFun 0
+                List.ofArray data |> Utility.getTime lFold Operator.Fold data
 
-                | x when x = Action.LookUpRand ->
-                    let times, sw = List.ofArray data |> doLookUpRand inputArgs
-                    Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveRand ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemove inputArgs l (List.length l)
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveHybridRand ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemoveHybrid inputArgs l (List.length l)
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveHybridWorst1 ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemoveHybridWorst1 l (List.length l)
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemovePuntRand ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemovePunt inputArgs l 
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemovePuntWorst1 ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemovePuntWorst1 l 
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemovePsdCanRand ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemovePsdCan inputArgs l (List.length l)
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemovePsdCanWorst1 ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemovePsdCanWorst1 l (List.length l)
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveRandGC10 ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemoveRandGC inputArgs l (List.length l) 10
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveRandGC10NoWait ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemoveRandGCNoWait inputArgs l (List.length l) 10
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveRandGC100 ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemoveRandGC inputArgs l (List.length l) 100
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveWorst1 ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemoveWorst1 l (List.length l) 
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.RemoveHybridWorst1 ->
-                    let l = List.ofArray data 
-                    let times, sw = doRemoveHybridWorst1 l (List.length l) 
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdateRand || x = Action.UpdateHybridRand ->
-                    let l = List.ofArray data 
-                    let times, sw = doUpdateHybridRand inputArgs (l.Item 0) l (List.length l)
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdatePsdCanRand ->
-                    let l = List.ofArray data 
-                    let times, sw = doUpdatePsdCanRand inputArgs (l.Item 0) l (List.length l)
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdatePuntRand ->
-                    let l = List.ofArray data 
-                    let times, sw = doUpdatePuntRand inputArgs (l.Item 0) l
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.Update2Rand ->
-                    let l = List.ofArray data 
-                    let times, sw = doUpdateRand2 inputArgs (l.Item 0) l (List.length l)
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdateWorst1 || x = Action.UpdateHybridWorst1 ->
-                    let l = List.ofArray data 
-                    let times, sw = doUpdateHybridWorst1 (l.Item 0) l
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.Update2Worst1 ->
-                    let l = List.ofArray data 
-                    let times, sw = doUpdate2Worst1 (l.Item 0) l (List.length l)
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdatePuntWorst1 ->
-                    let l = List.ofArray data 
-                    let times, sw = doUpdatePuntWorst1 (l.Item 0) l 
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdatePsdCanWorst1 ->
-                    let l = List.ofArray data 
-                    let times, sw = doUpdatePsdCanWorst1 (l.Item 0) l (List.length l)
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-
-                | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+            | _ -> getTime inputArgs data (List.ofArray data)
 
     let getTimeOfSeq (inputArgs:BenchArgs) (data:#('a seq)) =
             
@@ -894,35 +920,25 @@ module CoreCollectionsList =
 
             match inputArgs.Action.ToLower() with
 
-                | x when x = Action.AddOne ->
-                    doAddOneSeq data
+            | x when x = Action.AddOne ->
+                doAddOneSeq data
 
-                | x when x = Action.Append ->
-                    List.ofSeq data |> doAppend data
+            | x when x = Action.Append ->
+                List.ofSeq data |> doAppend data
 
-                | x when x = Action.Init ->
-                    Utility.getTime List.ofSeq Operator.OfSeq data data
+            | x when x = Action.Init ->
+                Utility.getTime List.ofSeq Operator.OfSeq data data
 
-                | x when x = Action.Iterate ->
-                    let foldFun =
-                        (fun i b -> 
-                            let c = b
-                            i + 1)
+            | x when x = Action.Iterate ->
+                let foldFun =
+                    (fun i b -> 
+                        let c = b
+                        i + 1)
                         
-                    let lFold = List.fold foldFun 0
-                    List.ofSeq data |> Utility.getTime lFold Operator.Fold data
+                let lFold = List.fold foldFun 0
+                List.ofSeq data |> Utility.getTime lFold Operator.Fold data
                 
-                | x when x = Action.LookUpRand ->
-                    let times, sw = List.ofSeq data  |> doLookUpRand inputArgs
-                    Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdateRand ->
-                    let l = List.ofSeq data //do not move data structure instantiations to higher level because some tests may create very large unneeded objects
-                    let times, sw = doUpdateHybridRand inputArgs (l.Item 0) l (List.length l)
-
-                    Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+            | _ -> getTime inputArgs data (List.ofSeq data)
 
 module CoreCollectionsMap = 
 
@@ -1022,7 +1038,39 @@ module CoreCollectionsMap =
                     
         times, sw
 
-    let getTimeofArray (inputArgs:BenchArgs) zipData (appendData:#seq<'a*'a>) appDatLen (lookUpData:'a[]) =
+    let doIterateSeq (zipData:#seq<'a*'a>) (m: Map<'a,'a>) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 m
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result zipData Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let getTime (inputArgs:BenchArgs) (zipData:#seq<'a*'a>) (lookUpData:'a[]) (m: Map<'a,'a>) = 
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.IterateSeq ->
+            m |> doIterateSeq zipData
+
+        | x when x = Action.LookUpRand ->
+            let times, sw = m |> doLookUpRand inputArgs lookUpData
+            Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdateRand ->
+            let times, sw = m |> doUpdateRand inputArgs lookUpData
+            Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
+    let getTimeofArray (inputArgs:BenchArgs) zipData (appendData : #seq<'a*'a>) appDatLen (lookUpData :'a[]) =
             
         if not (inputArgs.InitData.ToLower().Contains("array")) then
             failure zipData (inputArgs.DataStructure + "\t Action InitData " + inputArgs.InitData + " not recognized")
@@ -1031,46 +1079,38 @@ module CoreCollectionsMap =
 
             match inputArgs.Action.ToLower() with
 
-                | x when x = Action.AddOne ->
-                    doAddOneArray zipData
+            | x when x = Action.AddOne ->
+                doAddOneArray zipData
 
-                | x when x = Action.Append ->
-                    Map.ofArray zipData |> doAppend zipData appendData appDatLen
+            | x when x = Action.Append ->
+                Map.ofArray zipData |> doAppend zipData appendData appDatLen
 
-                | x when x = Action.Init ->
-                    Utility.getTime Map.ofArray Operator.OfArray zipData zipData
+            | x when x = Action.Init ->
+                Utility.getTime Map.ofArray Operator.OfArray zipData zipData
 
-                | x when x = Action.Iterate ->
-                    let foldFun =
-                        (fun i b c -> 
-                            let d = b
-                            i + 1)
+            | x when x = Action.Iterate ->
+                let foldFun =
+                    (fun i b c -> 
+                        let d = b
+                        i + 1)
                         
-                    let mFold = Map.fold foldFun 0
-                    Map.ofArray zipData |> Utility.getTime mFold Operator.Fold zipData
-
-                | x when x = Action.LookUpRand ->
-                    let times, sw = Map.ofArray zipData |> doLookUpRand inputArgs lookUpData
-                    Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
+                let mFold = Map.fold foldFun 0
+                Map.ofArray zipData |> Utility.getTime mFold Operator.Fold zipData
                     
-                | x when x = Action.NewInit ->
+            | x when x = Action.NewInit ->
                 
-                    let sw = new System.Diagnostics.Stopwatch()
-                    sw.Start()
+                let sw = new System.Diagnostics.Stopwatch()
+                sw.Start()
  
-                    let m = Map zipData
+                let m = Map zipData
                     
-                    sw.Stop()
+                sw.Stop()
                     
-                    Utility.getTimeResult m zipData Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
+                Utility.getTimeResult m zipData Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
-                | x when x = Action.UpdateRand ->
-                    let times, sw = Map.ofArray zipData  |> doUpdateRand inputArgs lookUpData
-                    Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
+            | _ -> getTime inputArgs zipData lookUpData (Map.ofArray zipData)
 
-                | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
-    let getTimeOfList (inputArgs:BenchArgs) zipData (appendData:#seq<'a*'a>) appDatLen (lookUpData:'a[]) = 
+    let getTimeOfList (inputArgs:BenchArgs) zipData (appendData:list<'a*'a>) appDatLen (lookUpData:'a[]) = 
             
         if not (inputArgs.InitData.ToLower().Contains("list")) then
             failure zipData (inputArgs.DataStructure + "\t Action InitData " + inputArgs.InitData + " not recognized")
@@ -1079,44 +1119,36 @@ module CoreCollectionsMap =
 
             match inputArgs.Action.ToLower() with
 
-                | x when x = Action.AddOne ->
-                    doAddOneList zipData
+            | x when x = Action.AddOne ->
+                doAddOneList zipData
 
-                | x when x = Action.Append ->
-                    Map.ofList zipData |> doAppend zipData appendData appDatLen
+            | x when x = Action.Append ->
+                Map.ofList zipData |> doAppend zipData appendData appDatLen
 
-                | x when x = Action.Init ->
-                    Utility.getTime Map.ofList Operator.OfList zipData zipData
+            | x when x = Action.Init ->
+                Utility.getTime Map.ofList Operator.OfList zipData zipData
 
-                | x when x = Action.Iterate ->
-                    let foldFun =
-                        (fun i b c -> 
-                            let d = b
-                            i + 1)
+            | x when x = Action.Iterate ->
+                let foldFun =
+                    (fun i b c -> 
+                        let d = b
+                        i + 1)
                         
-                    let mFold = Map.fold foldFun 0
-                    Map.ofList zipData |> Utility.getTime mFold Operator.Fold zipData
+                let mFold = Map.fold foldFun 0
+                Map.ofList zipData |> Utility.getTime mFold Operator.Fold zipData
 
-                | x when x = Action.LookUpRand ->
-                    let times, sw = Map.ofList zipData |> doLookUpRand inputArgs lookUpData
-                    Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.NewInit ->
+            | x when x = Action.NewInit ->
                 
-                    let sw = new System.Diagnostics.Stopwatch()
-                    sw.Start()
+                let sw = new System.Diagnostics.Stopwatch()
+                sw.Start()
  
-                    let m = Map zipData
+                let m = Map zipData
                     
-                    sw.Stop()
+                sw.Stop()
                     
-                    Utility.getTimeResult m zipData Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
+                Utility.getTimeResult m zipData Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
-                | x when x = Action.UpdateRand ->
-                    let times, sw = Map.ofList zipData |> doUpdateRand inputArgs lookUpData
-                    Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+            | _ -> getTime inputArgs zipData lookUpData (Map.ofList zipData)
 
     let getTimeOfSeq (inputArgs:BenchArgs) (zipData:#seq<'a*'a>) (appendData:#seq<'a*'a>) appDatLen (lookUpData:'a[]) =
             
@@ -1127,44 +1159,36 @@ module CoreCollectionsMap =
 
             match inputArgs.Action.ToLower() with
 
-                | x when x = Action.AddOne ->
-                    doAddOneSeq zipData
+            | x when x = Action.AddOne ->
+                doAddOneSeq zipData
 
-                | x when x = Action.Append ->
-                    Map.ofSeq zipData  |> doAppend zipData appendData appDatLen
+            | x when x = Action.Append ->
+                Map.ofSeq zipData  |> doAppend zipData appendData appDatLen
 
-                | x when x = Action.Init ->
-                    Utility.getTime Map.ofSeq Operator.OfSeq zipData zipData
+            | x when x = Action.Init ->
+                Utility.getTime Map.ofSeq Operator.OfSeq zipData zipData
 
-                | x when x = Action.Iterate ->
-                    let foldFun =
-                        (fun i b c -> 
-                            let d = b
-                            i + 1)
+            | x when x = Action.Iterate ->
+                let foldFun =
+                    (fun i b c -> 
+                        let d = b
+                        i + 1)
                         
-                    let mFold = Map.fold foldFun 0
-                    Map.ofSeq zipData |> Utility.getTime mFold Operator.Fold zipData
+                let mFold = Map.fold foldFun 0
+                Map.ofSeq zipData |> Utility.getTime mFold Operator.Fold zipData
 
-                | x when x = Action.LookUpRand ->
-                    let times, sw = Map.ofSeq zipData  |> doLookUpRand inputArgs lookUpData
-                    Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.NewInit ->
+            | x when x = Action.NewInit ->
                 
-                    let sw = new System.Diagnostics.Stopwatch()
-                    sw.Start()
+                let sw = new System.Diagnostics.Stopwatch()
+                sw.Start()
  
-                    let m = Map zipData
+                let m = Map zipData
                     
-                    sw.Stop()
+                sw.Stop()
                     
-                    Utility.getTimeResult m zipData Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
+                Utility.getTimeResult m zipData Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
-                | x when x = Action.UpdateRand ->
-                    let times, sw = Map.ofSeq zipData |> doUpdateRand inputArgs lookUpData
-                    Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+            | _ -> getTime inputArgs zipData lookUpData (Map.ofSeq zipData)
 
 module CoreCollectionsSet = 
 
@@ -1173,7 +1197,6 @@ module CoreCollectionsSet =
             match acc with
             | _ when acc = len -> set
             | _ -> loop (Set.add d.[acc]  set) d len (acc + 1)
-                
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -1265,6 +1288,39 @@ module CoreCollectionsSet =
                     
         times, sw
 
+    let doIterateSeq (data:'a seq) (s: Set<'a>) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 s
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let getTime (inputArgs:BenchArgs) data (lookUpData:'a[]) (s: Set<'a>) = 
+
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.IterateSeq ->
+            s |> doIterateSeq data
+
+        | x when x = Action.LookUpRand ->
+            let times, sw = s |> doLookUpRand inputArgs lookUpData
+            Utility.getTimeResult times data Operator.Contains sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdateRand ->
+            let times, sw = s |> doUpdateRand inputArgs lookUpData
+            Utility.getTimeResult times data Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
     let getTimeOfArray (inputArgs:BenchArgs) data appendData appDatLen (lookUpData:'a[]) = 
             
         if not (inputArgs.InitData.ToLower().Contains("array")) then
@@ -1274,14 +1330,54 @@ module CoreCollectionsSet =
 
         match inputArgs.Action.ToLower() with
 
+        | x when x = Action.AddOne ->
+                doAddOneArray data
+
+        | x when x = Action.Append ->
+            Set.ofArray data |> doAppend data appendData appDatLen
+                    
+        | x when x = Action.Init ->
+            Utility.getTime Set.ofArray Operator.OfArray data data
+
+        | x when x = Action.Iterate ->
+            let foldFun =
+                (fun i b -> 
+                    let c = b
+                    i + 1)
+                        
+            let sFold = Set.fold foldFun 0
+            Set.ofArray data |> Utility.getTime sFold Operator.Fold data
+
+        | x when x = Action.NewInit ->
+                
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let s = Set data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult s data Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | _ -> getTime inputArgs data lookUpData (Set.ofArray data)
+
+    let getTimeOfList (inputArgs:BenchArgs) data appendData appDatLen (lookUpData:'a[]) = 
+            
+        if not (inputArgs.InitData.ToLower().Contains("list")) then
+            failure data (inputArgs.DataStructure + "\t Action InitData " + inputArgs.InitData + " not recognized")
+        else
+            System.GC.Collect()
+
+            match inputArgs.Action.ToLower() with
+
             | x when x = Action.AddOne ->
-                    doAddOneArray data
+                doAddOneList data
 
             | x when x = Action.Append ->
-                Set.ofArray data |> doAppend data appendData appDatLen
-                    
+                Set.ofList data |> doAppend data appendData appDatLen
+
             | x when x = Action.Init ->
-                Utility.getTime Set.ofArray Operator.OfArray data data
+                Utility.getTime Set.ofList Operator.OfList data data
 
             | x when x = Action.Iterate ->
                 let foldFun =
@@ -1290,11 +1386,7 @@ module CoreCollectionsSet =
                         i + 1)
                         
                 let sFold = Set.fold foldFun 0
-                Set.ofArray data |> Utility.getTime sFold Operator.Fold data
-
-            | x when x = Action.LookUpRand ->
-                let times, sw = Set.ofArray data |> doLookUpRand inputArgs lookUpData
-                Utility.getTimeResult times data Operator.Contains sw.ElapsedTicks sw.ElapsedMilliseconds
+                Set.ofList data |> Utility.getTime sFold Operator.Fold data
 
             | x when x = Action.NewInit ->
                 
@@ -1307,59 +1399,7 @@ module CoreCollectionsSet =
                     
                 Utility.getTimeResult s data Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
-            | x when x = Action.UpdateRand ->
-                let times, sw = Set.ofArray data |> doUpdateRand inputArgs lookUpData
-                Utility.getTimeResult times data Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
-
-            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
-    let getTimeOfList (inputArgs:BenchArgs) data appendData appDatLen (lookUpData:'a[]) = 
-            
-        if not (inputArgs.InitData.ToLower().Contains("list")) then
-            failure data (inputArgs.DataStructure + "\t Action InitData " + inputArgs.InitData + " not recognized")
-        else
-            System.GC.Collect()
-
-            match inputArgs.Action.ToLower() with
-
-                | x when x = Action.AddOne ->
-                    doAddOneList data
-
-                | x when x = Action.Append ->
-                    Set.ofList data |> doAppend data appendData appDatLen
-
-                | x when x = Action.Init ->
-                    Utility.getTime Set.ofList Operator.OfList data data
-
-                | x when x = Action.Iterate ->
-                    let foldFun =
-                        (fun i b -> 
-                            let c = b
-                            i + 1)
-                        
-                    let sFold = Set.fold foldFun 0
-                    Set.ofList data |> Utility.getTime sFold Operator.Fold data
-
-                | x when x = Action.LookUpRand ->
-                    let times, sw = Set.ofList data |> doLookUpRand inputArgs lookUpData
-                    Utility.getTimeResult times data Operator.Contains sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.NewInit ->
-                
-                    let sw = new System.Diagnostics.Stopwatch()
-                    sw.Start()
- 
-                    let s = Set data
-                    
-                    sw.Stop()
-                    
-                    Utility.getTimeResult s data Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.UpdateRand ->
-                    let times, sw = Set.ofList data |> doUpdateRand inputArgs lookUpData
-                    Utility.getTimeResult times data Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+            | _ -> getTime inputArgs data lookUpData (Set.ofList data)
 
     let getTimeOfSeq (inputArgs:BenchArgs) (data:#('a seq)) appendData appDatLen (lookUpData:'a[]) =
             
@@ -1370,43 +1410,35 @@ module CoreCollectionsSet =
 
             match inputArgs.Action.ToLower() with
 
-                | x when x = Action.AddOne ->
-                    doAddOneSeq data
+            | x when x = Action.AddOne ->
+                doAddOneSeq data
 
-                | x when x = Action.Append ->
-                    Set.ofSeq data |> doAppend data appendData appDatLen
+            | x when x = Action.Append ->
+                Set.ofSeq data |> doAppend data appendData appDatLen
 
-                | x when x = Action.Init ->
-                    Utility.getTime Set.ofSeq Operator.OfSeq data data
+            | x when x = Action.Init ->
+                Utility.getTime Set.ofSeq Operator.OfSeq data data
 
-                | x when x = Action.Iterate ->
-                    let foldFun =
-                        (fun i b -> 
-                            let c = b
-                            i + 1)
+            | x when x = Action.Iterate ->
+                let foldFun =
+                    (fun i b -> 
+                        let c = b
+                        i + 1)
                         
-                    let sFold = Set.fold foldFun 0
-                    Set.ofSeq data |> Utility.getTime sFold Operator.Fold data
+                let sFold = Set.fold foldFun 0
+                Set.ofSeq data |> Utility.getTime sFold Operator.Fold data
 
-                | x when x = Action.LookUpRand ->
-                    let times, sw = Set.ofSeq data |> doLookUpRand inputArgs lookUpData
-                    Utility.getTimeResult times data Operator.Contains sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | x when x = Action.NewInit ->
+            | x when x = Action.NewInit ->
                     
-                    let sw = new System.Diagnostics.Stopwatch()
-                    sw.Start()
+                let sw = new System.Diagnostics.Stopwatch()
+                sw.Start()
  
-                    let s = Set data
+                let s = Set data
                     
-                    sw.Stop()
+                sw.Stop()
 
-                    Utility.getTimeResult s data Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
+                Utility.getTimeResult s data Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
-                | x when x = Action.UpdateRand ->
-                    let times, sw = Set.ofSeq data |> doUpdateRand inputArgs lookUpData
-                    Utility.getTimeResult times data Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
-
-                | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+            | _ -> getTime inputArgs data lookUpData (Set.ofSeq data)
 
         

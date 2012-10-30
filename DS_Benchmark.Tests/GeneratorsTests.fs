@@ -11,7 +11,7 @@ type GeneratorsTest() =
     [<TestMethod>]
     member x.``Generators get allDataStructures`` () =
         let y = Generators.allDataStructures
-        y.Length = 18 |> should be True
+        y.Length > 18 |> should be True
 
     [<TestMethod>]
      member x.``Generators get allActions`` () =
@@ -20,7 +20,7 @@ type GeneratorsTest() =
 
     [<TestMethod>]
     member x.``Generators script file`` () =
-        Generators.tmpltToScriptFile "fsharpxbsqueue!1!.*!new.*|init" ""
+        Generators.tmpltToScriptFile "fsharpx.queue.bootstrappedqueue!1!.*!new.*|init" ""
         true |> should be True
 
     [<TestMethod>]

@@ -41,6 +41,10 @@
     <Compile Include="BenchmarkTests.fs" />
     <Compile Include="CoreCollectionsTests.fs" />
     <Compile Include="FSharpxTests.fs" />
+    <Compile Include="FSharpxDequeTests.fs" />
+    <Compile Include="FSharpxHeapTests.fs" />
+    <Compile Include="FSharpxQueueTests.fs" />
+    <Compile Include="FSharpxRandomAccessTests.fs" />
     <Compile Include="PowerPackTests.fs" />
     <Compile Include="NaiveDataStructuresTests.fs" />
     <Compile Include="GeneratorsTests.fs" />
@@ -52,7 +56,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharpx.Core">
-      <HintPath>..\packages\FSharpx.Core.1.6.93\lib\40\Fsharpx.Core.dll</HintPath>
+      <HintPath>..\packages\FSharpx.Core.1.6.94\lib\40\Fsharpx.Core.dll</HintPath>
     </Reference>
     <Reference Include="FsUnit.CustomMatchers">
       <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.1\Lib\Net40\FsUnit.CustomMatchers.dll</HintPath>

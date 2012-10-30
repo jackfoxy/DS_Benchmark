@@ -463,404 +463,302 @@ module Benchmark =
                                 ('\u27FF'.ToString() + x), y)
         Seq.map mapFun zipData
         
+    let getTimeOfGenericSeq (inputArgs:BenchArgs) (data : seq<'a> ) =
+        //generic getTime and specific seq getTimeOfSeq falls through to here
+        match inputArgs.DataStructure.ToLower() with
+
+            | x when x = DataStructure.CoreCollectionsArray -> 
+                CoreCollectionsArray.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.CoreCollectionsList -> 
+                CoreCollectionsList.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxDList -> 
+                FSharpxDList.getTime inputArgs data
+
+            | x when x = DataStructure.FSharpxDeque -> 
+                FSharpxDeque.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxDequeBankers -> 
+                FSharpxDequeBankers.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxDequeBatched -> 
+                FSharpxDequeBatched.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxDequeRealTime -> 
+                FSharpxDequeRealTime.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxHeapLeftist -> 
+                FSharpxHeapLeftist.getTime inputArgs data
+
+            | x when x = DataStructure.FSharpxQueueBankers -> 
+                FSharpxQueueBankers.getTime inputArgs data
+
+            | x when x = DataStructure.FSharpxQueueBatched -> 
+                FSharpxQueueBatched.getTimeOfSeq inputArgs data
+                
+            | x when x = DataStructure.FSharpxQueueBootStrapped -> 
+                FSharpxQueueBootStrapped.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxQueueHoodMelville -> 
+                FSharpxQueueHoodMelville.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxQueueImplicit -> 
+                FSharpxQueueImplicit.getTimeOfSeq inputArgs data          
+
+            | x when x = DataStructure.FSharpxQueuePhysicist -> 
+                FSharpxQueuePhysicist.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxQueueRealTime -> 
+                FSharpxQueueRealTime.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxRandomAccessListAltBin -> 
+                FSharpxRandomAccessListAltBinary.getTime inputArgs data
+
+            | x when x = DataStructure.FSharpxRandomAccessListBinary -> 
+                FSharpxRandomAccessListBinary.getTime inputArgs data
+
+            | x when x = DataStructure.FSharpxRandomAccessListSkewBinary -> 
+                FSharpxRandomAccessListSkewBinary.getTime inputArgs data
+
+            | x when x = DataStructure.FSharpxVectorPersistent -> 
+                FSharpxVectorPersistent.getTime inputArgs data
+
+            | x when x = DataStructure.FSharpxVectorTransient -> 
+                FSharpxVectorTransient.getTime inputArgs data
+
+            | x when x = DataStructure.NaiveStack -> 
+                NaiveStack.getTimeOfSeq inputArgs data            
+
+            | x when x = DataStructure.PowerPackLazyList -> 
+                PowerPackLazyList.getTimeOfSeq inputArgs data
+
+            | _ -> failure data (inputArgs.DataStructure + "\tDataStructure not recognized")
+
     let getTime (inputArgs:BenchArgs) =
 
-            match inputArgs.InitData with
+        match inputArgs.InitData with
 
-            | _ when inputArgs.InitData.ToLower().Contains("arrayint") -> 
-                let data = getInitArrayInt inputArgs.InitData inputArgs.Size
-                match inputArgs.DataStructure.ToLower() with
+        | _ when inputArgs.InitData.ToLower().Contains("arrayint") -> 
+            let data = getInitArrayInt inputArgs.InitData inputArgs.Size
+            match inputArgs.DataStructure.ToLower() with
 
-                | x when x = DataStructure.CoreCollectionsArray -> 
-                    CoreCollectionsArray.getTimeOfSeq inputArgs data
+            | x when x = DataStructure.CoreCollectionsList -> 
+                CoreCollectionsList.getTimeOfArray inputArgs data
 
-                | x when x = DataStructure.CoreCollectionsList -> 
-                    CoreCollectionsList.getTimeOfArray inputArgs data
+            | x when x = DataStructure.CoreCollectionsMap -> 
+                let zipData = Array.zip data data
+                CoreCollectionsMap.getTimeofArray inputArgs zipData (getAppendDataForMapArrayInt zipData) zipData.Length data
 
-                | x when x = DataStructure.CoreCollectionsMap -> 
-                    let zipData = Array.zip data data
-                    CoreCollectionsMap.getTimeofArray inputArgs zipData (getAppendDataForMapArrayInt zipData) zipData.Length data
+            | x when x = DataStructure.CoreCollectionsSet -> 
+                CoreCollectionsSet.getTimeOfArray inputArgs data (getAppendDataForSetArrayInt data) data.Length data
 
-                | x when x = DataStructure.CoreCollectionsSet -> 
-                    CoreCollectionsSet.getTimeOfArray inputArgs data (getAppendDataForSetArrayInt data) data.Length data
+            | x when x = DataStructure.FSharpxQueueBootStrapped -> 
+                FSharpxQueueBootStrapped.getTimeOfArray inputArgs data
 
-                | x when x = DataStructure.FSharpxBsQueue -> 
-                    FsharpxBootstrappedQueue.getTimeOfArray inputArgs data
+            | x when x = DataStructure.FSharpxQueueImplicit -> 
+                FSharpxQueueImplicit.getTimeOfArray inputArgs data
 
-                | x when x = DataStructure.FSharpxDList -> 
-                    FSharpxDList.getTime inputArgs data
+            | x when x = DataStructure.FSharpxQueueRealTime -> 
+                FSharpxQueueRealTime.getTimeOfArray inputArgs data
 
-                | x when x = DataStructure.FSharpxDeque -> 
-                    FSharpxDeque.getTimeOfSeq inputArgs data
+            | x when x = DataStructure.NaiveStack -> 
+                NaiveStack.getTimeOfArray inputArgs data
 
-                | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FSharpxImplicitQueue.getTimeOfArray inputArgs data
+            | x when x = DataStructure.PowerPackHashMultiMap -> 
+                let zipData = Array.zip data data
+                PowerPackHashMultiMap.getTime inputArgs zipData (getAppendDataForMapArrayInt zipData) data
 
-                | x when x = DataStructure.FSharpxLeftistHeap -> 
-                    FSharpxLeftistHeap.getTime inputArgs data
+            | x when x = DataStructure.PowerPackLazyList -> 
+                PowerPackLazyList.getTimeOfArray inputArgs data
 
-                | x when x = DataStructure.NaiveLeftistHeap -> 
-                    NaiveLeftistHeap.getTime inputArgs data
+            | _ -> getTimeOfGenericSeq inputArgs data
 
-                | x when x = DataStructure.FSharpxPersistentVector -> 
-                    FSharpxPersistentVector.getTime inputArgs data
+        | _ when inputArgs.InitData.ToLower().Contains("arraystring") -> 
+            let data = getInitArrayString inputArgs.InitData inputArgs.Size 1 SeedAlpha.alphaAsc
+            match inputArgs.DataStructure.ToLower() with
 
-                | x when x = DataStructure.FSharpxRtDeque -> 
-                    FSharpxRealTimeDeque.getTimeOfSeq inputArgs data
+            | x when x = DataStructure.CoreCollectionsList -> 
+                CoreCollectionsList.getTimeOfArray inputArgs data
 
-                | x when x = DataStructure.FSharpxRtQueue -> 
-                    FSharpxRealTimeQueue.getTimeOfArray inputArgs data
+            | x when x = DataStructure.CoreCollectionsMap -> 
+                let zipData = Array.zip data data
+                CoreCollectionsMap.getTimeofArray inputArgs zipData (getAppendDataForMapArrayString zipData) zipData.Length data
 
-                | x when x = DataStructure.FSharpxTransientVector -> 
-                    FSharpxTransientVector.getTime inputArgs data
+            | x when x = DataStructure.CoreCollectionsSet -> 
+                CoreCollectionsSet.getTimeOfArray inputArgs data (getAppendDataForSetArrayString data) data.Length data
 
-                | x when x = DataStructure.FSharpxAltBinRndAccList -> 
-                    FSharpxAltBinaryRandomAccessList.getTimeOfArray inputArgs data
+            | x when x = DataStructure.FSharpxQueueBootStrapped -> 
+                FSharpxQueueBootStrapped.getTimeOfArray inputArgs data
 
-                | x when x = DataStructure.FSharpxBankersDeque -> 
-                    FSharpxBankersDeque.getTimeOfSeq inputArgs data
+            | x when x = DataStructure.FSharpxQueueImplicit -> 
+                FSharpxQueueImplicit.getTimeOfArray inputArgs data
 
-                | x when x = DataStructure.FSharpxBatchedDeque -> 
-                    FSharpxBatchedDeque.getTimeOfSeq inputArgs data
+            | x when x = DataStructure.FSharpxQueueRealTime -> 
+                FSharpxQueueRealTime.getTimeOfArray inputArgs data
 
-                | x when x = DataStructure.NaiveStack -> 
-                    NaiveStack.getTimeOfArray inputArgs data
+            | x when x = DataStructure.NaiveStack -> 
+                NaiveStack.getTimeOfArray inputArgs data
 
-                | x when x = DataStructure.PowerPackHashMultiMap -> 
-                    let zipData = Array.zip data data
-                    PowerPackHashMultiMap.getTime inputArgs zipData (getAppendDataForMapArrayInt zipData) data
-
-                | x when x = DataStructure.PowerPackLazyList -> 
-                    PowerPackLazyList.getTimeOfArray inputArgs data
-
-                | _ -> failure data (inputArgs.DataStructure + "\tDataStructure not recognized")
-
-            | _ when inputArgs.InitData.ToLower().Contains("arraystring") -> 
-                let data = getInitArrayString inputArgs.InitData inputArgs.Size 1 SeedAlpha.alphaAsc
-                match inputArgs.DataStructure.ToLower() with
-                    
-                | x when x = DataStructure.CoreCollectionsArray -> 
-                    CoreCollectionsArray.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.CoreCollectionsList -> 
-                    CoreCollectionsList.getTimeOfArray inputArgs data
-
-                | x when x = DataStructure.CoreCollectionsMap -> 
-                    let zipData = Array.zip data data
-                    CoreCollectionsMap.getTimeofArray inputArgs zipData (getAppendDataForMapArrayString zipData) zipData.Length data
-
-                | x when x = DataStructure.CoreCollectionsSet -> 
-                    CoreCollectionsSet.getTimeOfArray inputArgs data (getAppendDataForSetArrayString data) data.Length data
-
-                | x when x = DataStructure.FSharpxBsQueue -> 
-                    FsharpxBootstrappedQueue.getTimeOfArray inputArgs data
-
-                | x when x = DataStructure.FSharpxDList -> 
-                    FSharpxDList.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxDeque -> 
-                    FSharpxDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FSharpxImplicitQueue.getTimeOfArray inputArgs data
-
-                | x when x = DataStructure.FSharpxLeftistHeap -> 
-                    FSharpxLeftistHeap.getTime inputArgs data
-
-                | x when x = DataStructure.NaiveLeftistHeap -> 
-                    NaiveLeftistHeap.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxPersistentVector -> 
-                    FSharpxPersistentVector.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxRtDeque -> 
-                    FSharpxRealTimeDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxRtQueue -> 
-                    FSharpxRealTimeQueue.getTimeOfArray inputArgs data
-
-                | x when x = DataStructure.FSharpxTransientVector -> 
-                    FSharpxTransientVector.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxBankersDeque -> 
-                    FSharpxBankersDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxBatchedDeque -> 
-                    FSharpxBatchedDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.NaiveStack -> 
-                    NaiveStack.getTimeOfArray inputArgs data
-
-                | x when x = DataStructure.PowerPackHashMultiMap -> 
+            | x when x = DataStructure.PowerPackHashMultiMap -> 
                     let zipData = Array.zip data data
                     PowerPackHashMultiMap.getTime inputArgs zipData (getAppendDataForMapArrayString zipData) data
 
-                | x when x = DataStructure.PowerPackLazyList -> 
-                    PowerPackLazyList.getTimeOfArray inputArgs data
+            | x when x = DataStructure.PowerPackLazyList -> 
+                PowerPackLazyList.getTimeOfArray inputArgs data
 
-                | _ -> failure data (inputArgs.DataStructure + "\tDataStructure not recognized")
+            | _ -> getTimeOfGenericSeq inputArgs data 
 
-            | _ when inputArgs.InitData.ToLower().Contains("listint") -> 
-                let data = getInitListInt inputArgs.InitData inputArgs.Size
-                match inputArgs.DataStructure.ToLower() with
+        | _ when inputArgs.InitData.ToLower().Contains("listint") -> 
+            let data = getInitListInt inputArgs.InitData inputArgs.Size
+            match inputArgs.DataStructure.ToLower() with
 
-                | x when x = DataStructure.CoreCollectionsArray -> 
-                    CoreCollectionsArray.getTimeOfList inputArgs data
+            | x when x = DataStructure.CoreCollectionsArray -> 
+                CoreCollectionsArray.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.CoreCollectionsList -> 
-                    CoreCollectionsList.getTimeOfSeq inputArgs data
+            | x when x = DataStructure.CoreCollectionsList -> 
+                CoreCollectionsList.getTimeOfSeq inputArgs data
                     
-                | x when x = DataStructure.CoreCollectionsMap -> 
-                    let zipData = List.zip data data
-                    CoreCollectionsMap.getTimeOfList inputArgs zipData (getAppendDataForMapListInt zipData) zipData.Length (List.toArray data)
+            | x when x = DataStructure.CoreCollectionsMap -> 
+                let zipData = List.zip data data
+                CoreCollectionsMap.getTimeOfList inputArgs zipData (getAppendDataForMapListInt zipData) zipData.Length (List.toArray data)
 
-                | x when x = DataStructure.CoreCollectionsSet -> 
-                    CoreCollectionsSet.getTimeOfList inputArgs data (getAppendDataForSetListInt data) data.Length (List.toArray data)
-                    
-                | x when x = DataStructure.FSharpxBsQueue -> 
-                    FsharpxBootstrappedQueue.getTimeOfList inputArgs data
+            | x when x = DataStructure.CoreCollectionsSet -> 
+                CoreCollectionsSet.getTimeOfList inputArgs data (getAppendDataForSetListInt data) data.Length (List.toArray data)
+ 
+            | x when x = DataStructure.FSharpxDeque -> 
+                FSharpxDeque.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxDList -> 
-                    FSharpxDList.getTime inputArgs data
+            | x when x = DataStructure.FSharpxDequeBankers -> 
+                FSharpxDequeBankers.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxDeque -> 
-                    FSharpxDeque.getTimeOfList inputArgs data
+            | x when x = DataStructure.FSharpxDequeRealTime -> 
+                FSharpxDequeRealTime.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FSharpxImplicitQueue.getTimeOfList inputArgs data
+            | x when x = DataStructure.FSharpxDequeBatched -> 
+                FSharpxDequeBatched.getTimeOfList inputArgs data
+                
+            | x when x = DataStructure.FSharpxQueueBatched -> 
+                FSharpxQueueBatched.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxLeftistHeap -> 
-                    FSharpxLeftistHeap.getTime inputArgs data
+            | x when x = DataStructure.FSharpxQueueBootStrapped -> 
+                FSharpxQueueBootStrapped.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.NaiveLeftistHeap -> 
-                    NaiveLeftistHeap.getTime inputArgs data
+            | x when x = DataStructure.FSharpxQueueHoodMelville -> 
+                FSharpxQueueHoodMelville.getTimeOfList inputArgs data    
 
-                | x when x = DataStructure.FSharpxPersistentVector -> 
-                    FSharpxPersistentVector.getTime inputArgs data
+            | x when x = DataStructure.FSharpxQueueImplicit -> 
+                FSharpxQueueImplicit.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxRtDeque -> 
-                    FSharpxRealTimeDeque.getTimeOfList inputArgs data
+            | x when x = DataStructure.FSharpxQueuePhysicist -> 
+                FSharpxQueuePhysicist.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxRtQueue -> 
-                    FSharpxRealTimeQueue.getTimeOfList inputArgs data
+            | x when x = DataStructure.FSharpxQueueRealTime -> 
+                FSharpxQueueRealTime.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxTransientVector -> 
-                    FSharpxTransientVector.getTime inputArgs data
+            | x when x = DataStructure.NaiveStack -> 
+                NaiveStack.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxBankersDeque -> 
-                    FSharpxBankersDeque.getTimeOfList inputArgs data
-
-                | x when x = DataStructure.FSharpxBatchedDeque -> 
-                    FSharpxBatchedDeque.getTimeOfList inputArgs data
-
-                | x when x = DataStructure.NaiveStack -> 
-                    NaiveStack.getTimeOfList inputArgs data
-
-                | x when x = DataStructure.PowerPackHashMultiMap -> 
+            | x when x = DataStructure.PowerPackHashMultiMap -> 
                     let zipData = List.zip data data
                     PowerPackHashMultiMap.getTime inputArgs zipData (getAppendDataForMapListInt zipData) (List.toArray data)
 
-                | x when x = DataStructure.PowerPackLazyList -> 
-                    PowerPackLazyList.getTimeOfList inputArgs data
+            | x when x = DataStructure.PowerPackLazyList -> 
+                PowerPackLazyList.getTimeOfList inputArgs data
 
-                | _ -> failure data (inputArgs.DataStructure + "\tDataStructure not recognized")
+            | _ -> getTimeOfGenericSeq inputArgs data
                     
-            | _ when inputArgs.InitData.ToLower().Contains("liststring") -> 
-                let data = getInitListString inputArgs.InitData inputArgs.Size 1 SeedAlpha.alphaAsc
-                match inputArgs.DataStructure.ToLower() with
+        | _ when inputArgs.InitData.ToLower().Contains("liststring") -> 
+            let data = getInitListString inputArgs.InitData inputArgs.Size 1 SeedAlpha.alphaAsc
+            match inputArgs.DataStructure.ToLower() with
                     
-                | x when x = DataStructure.CoreCollectionsArray -> 
-                    CoreCollectionsArray.getTimeOfList inputArgs data
+            | x when x = DataStructure.CoreCollectionsArray -> 
+                CoreCollectionsArray.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.CoreCollectionsList -> 
-                    CoreCollectionsList.getTimeOfSeq inputArgs data
+            | x when x = DataStructure.CoreCollectionsMap -> 
+                let zipData = List.zip data data
+                CoreCollectionsMap.getTimeOfList inputArgs zipData (getAppendDataForMapListString zipData) zipData.Length (List.toArray data)
 
-                | x when x = DataStructure.CoreCollectionsMap -> 
-                    let zipData = List.zip data data
-                    CoreCollectionsMap.getTimeOfList inputArgs zipData (getAppendDataForMapListString zipData) zipData.Length (List.toArray data)
-
-                | x when x = DataStructure.CoreCollectionsSet -> 
-                    CoreCollectionsSet.getTimeOfList inputArgs data (getAppendDataForSetListString data) data.Length (List.toArray data)
+            | x when x = DataStructure.CoreCollectionsSet -> 
+                CoreCollectionsSet.getTimeOfList inputArgs data (getAppendDataForSetListString data) data.Length (List.toArray data)
                     
-                | x when x = DataStructure.FSharpxBsQueue -> 
-                    FsharpxBootstrappedQueue.getTimeOfList inputArgs data
+            | x when x = DataStructure.FSharpxDeque -> 
+                FSharpxDeque.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxDList -> 
-                    FSharpxDList.getTime inputArgs data
+            | x when x = DataStructure.FSharpxDequeBankers -> 
+                FSharpxDequeBankers.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxDeque -> 
-                    FSharpxDeque.getTimeOfList inputArgs data
+            | x when x = DataStructure.FSharpxDequeBatched -> 
+                FSharpxDequeBatched.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FSharpxImplicitQueue.getTimeOfList inputArgs data
+            | x when x = DataStructure.FSharpxDequeRealTime -> 
+                FSharpxDequeRealTime.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxLeftistHeap -> 
-                    FSharpxLeftistHeap.getTime inputArgs data
+            | x when x = DataStructure.FSharpxQueueBatched -> 
+                FSharpxQueueBatched.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.NaiveLeftistHeap -> 
-                    NaiveLeftistHeap.getTime inputArgs data
+            | x when x = DataStructure.FSharpxQueueBootStrapped -> 
+                FSharpxQueueBootStrapped.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxPersistentVector -> 
-                    FSharpxPersistentVector.getTime inputArgs data
+            | x when x = DataStructure.FSharpxQueueHoodMelville -> 
+                FSharpxQueueHoodMelville.getTimeOfList inputArgs data  
 
-                | x when x = DataStructure.FSharpxRtDeque -> 
-                    FSharpxRealTimeDeque.getTimeOfList inputArgs data
+            | x when x = DataStructure.FSharpxQueueImplicit -> 
+                FSharpxQueueImplicit.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxRtQueue -> 
-                    FSharpxRealTimeQueue.getTimeOfList inputArgs data
+            | x when x = DataStructure.FSharpxQueuePhysicist -> 
+                FSharpxQueuePhysicist.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxTransientVector -> 
-                    FSharpxTransientVector.getTime inputArgs data
+            | x when x = DataStructure.FSharpxQueueRealTime -> 
+                FSharpxQueueRealTime.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxBankersDeque -> 
-                    FSharpxBankersDeque.getTimeOfList inputArgs data
+            | x when x = DataStructure.NaiveStack -> 
+                NaiveStack.getTimeOfList inputArgs data
 
-                | x when x = DataStructure.FSharpxBatchedDeque -> 
-                    FSharpxBatchedDeque.getTimeOfList inputArgs data
-
-                | x when x = DataStructure.NaiveStack -> 
-                    NaiveStack.getTimeOfList inputArgs data
-
-                | x when x = DataStructure.PowerPackHashMultiMap -> 
+            | x when x = DataStructure.PowerPackHashMultiMap -> 
                     let zipData = List.zip data data
                     PowerPackHashMultiMap.getTime inputArgs zipData (getAppendDataForMapListString zipData) (List.toArray data)
 
-                | x when x = DataStructure.PowerPackLazyList -> 
-                    PowerPackLazyList.getTimeOfList inputArgs data
+            | x when x = DataStructure.PowerPackLazyList -> 
+                PowerPackLazyList.getTimeOfList inputArgs data
 
-                | _ -> failure data (inputArgs.DataStructure + "\tDataStructure not recognized")
+            | _ -> getTimeOfGenericSeq inputArgs data
 
-            | _ when (inputArgs.InitData.ToLower().Contains("seqint") || inputArgs.InitData.ToLower().Contains("nocalcseqint")) -> 
-                let data = getInitSeqInt inputArgs.InitData inputArgs.Size
+        | _ when (inputArgs.InitData.ToLower().Contains("seqint") || inputArgs.InitData.ToLower().Contains("nocalcseqint")) -> 
+            let data = getInitSeqInt inputArgs.InitData inputArgs.Size
 
-                match inputArgs.DataStructure.ToLower() with
+            match inputArgs.DataStructure.ToLower() with
 
-                | x when x = DataStructure.CoreCollectionsArray -> 
-                    CoreCollectionsArray.getTimeOfSeq inputArgs data
+            | x when x = DataStructure.CoreCollectionsMap -> 
+                let zipData = Seq.zip data data
+                CoreCollectionsMap.getTimeOfSeq inputArgs zipData (getAppendDataForMapSeqInt zipData) (Seq.length zipData) (Seq.toArray data)
 
-                | x when x = DataStructure.CoreCollectionsList -> 
-                    CoreCollectionsList.getTimeOfSeq inputArgs data
+            | x when x = DataStructure.CoreCollectionsSet -> 
+                CoreCollectionsSet.getTimeOfSeq inputArgs data (getAppendDataForSetSeqInt data) (Seq.length data) (Seq.toArray data)
 
-                | x when x = DataStructure.CoreCollectionsMap -> 
-                    let zipData = Seq.zip data data
-                    CoreCollectionsMap.getTimeOfSeq inputArgs zipData (getAppendDataForMapSeqInt zipData) (Seq.length zipData) (Seq.toArray data)
+            | x when x = DataStructure.PowerPackHashMultiMap -> 
+                let zipData = Seq.zip data data
+                PowerPackHashMultiMap.getTime inputArgs zipData (getAppendDataForMapSeqInt zipData) (Seq.toArray data)
 
-                | x when x = DataStructure.CoreCollectionsSet -> 
-                    CoreCollectionsSet.getTimeOfSeq inputArgs data (getAppendDataForSetSeqInt data) (Seq.length data) (Seq.toArray data)
-
-                | x when x = DataStructure.FSharpxBsQueue -> 
-                    FsharpxBootstrappedQueue.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxDList -> 
-                    FSharpxDList.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxDeque -> 
-                    FSharpxDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FSharpxImplicitQueue.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxLeftistHeap -> 
-                    FSharpxLeftistHeap.getTime inputArgs data
-
-                | x when x = DataStructure.NaiveLeftistHeap -> 
-                    NaiveLeftistHeap.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxPersistentVector -> 
-                    FSharpxPersistentVector.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxRtDeque -> 
-                    FSharpxRealTimeDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxRtQueue -> 
-                    FSharpxRealTimeQueue.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxTransientVector -> 
-                    FSharpxTransientVector.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxBankersDeque -> 
-                    FSharpxBankersDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxBatchedDeque -> 
-                    FSharpxBatchedDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.NaiveStack -> 
-                    NaiveStack.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.PowerPackHashMultiMap -> 
-                    let zipData = Seq.zip data data
-                    PowerPackHashMultiMap.getTime inputArgs zipData (getAppendDataForMapSeqInt zipData) (Seq.toArray data)
-
-                | x when x = DataStructure.PowerPackLazyList -> 
-                    PowerPackLazyList.getTimeOfSeq inputArgs data
-
-                | _ -> failure data (inputArgs.DataStructure + "\tDataStructure not recognized")
+            | _ -> getTimeOfGenericSeq inputArgs data
                     
-            | _ when (inputArgs.InitData.ToLower().Contains("seqstring")  || inputArgs.InitData.ToLower().Contains("nocalcseqstring")) -> 
-                let data = getInitSeqString inputArgs.InitData inputArgs.Size 1 SeedAlpha.alphaAsc
-                
-                match inputArgs.DataStructure.ToLower() with
-                    
-                | x when x = DataStructure.CoreCollectionsArray -> 
-                    CoreCollectionsArray.getTimeOfSeq inputArgs data
+        | _ when (inputArgs.InitData.ToLower().Contains("seqstring")  || inputArgs.InitData.ToLower().Contains("nocalcseqstring")) -> 
+            let data = getInitSeqString inputArgs.InitData inputArgs.Size 1 SeedAlpha.alphaAsc
+            
+            match inputArgs.DataStructure.ToLower() with
 
-                | x when x = DataStructure.CoreCollectionsList -> 
-                    CoreCollectionsList.getTimeOfSeq inputArgs data
+            | x when x = DataStructure.CoreCollectionsMap -> 
+                let zipData = Seq.zip data data
+                CoreCollectionsMap.getTimeOfSeq inputArgs zipData (getAppendDataForMapSeqString zipData) (Seq.length zipData) (Seq.toArray data)
 
-                | x when x = DataStructure.CoreCollectionsMap -> 
-                    let zipData = Seq.zip data data
-                    CoreCollectionsMap.getTimeOfSeq inputArgs zipData (getAppendDataForMapSeqString zipData) (Seq.length zipData) (Seq.toArray data)
-
-                | x when x = DataStructure.CoreCollectionsSet -> 
+            | x when x = DataStructure.CoreCollectionsSet -> 
                     CoreCollectionsSet.getTimeOfSeq inputArgs data (getAppendDataForSetSeqString data) (Seq.length data) (Seq.toArray data)
 
-                | x when x = DataStructure.FSharpxBsQueue -> 
-                    FsharpxBootstrappedQueue.getTimeOfSeq inputArgs data
+            | x when x = DataStructure.PowerPackHashMultiMap -> 
+                let zipData = Seq.zip data data
+                PowerPackHashMultiMap.getTime inputArgs zipData (getAppendDataForMapSeqString zipData) (Seq.toArray data)
 
-                | x when x = DataStructure.FSharpxDList -> 
-                    FSharpxDList.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxDeque -> 
-                    FSharpxDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxImplicitQueue -> 
-                    FSharpxImplicitQueue.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxLeftistHeap -> 
-                    FSharpxLeftistHeap.getTime inputArgs data
-
-                | x when x = DataStructure.NaiveLeftistHeap -> 
-                    NaiveLeftistHeap.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxPersistentVector -> 
-                    FSharpxPersistentVector.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxRtDeque -> 
-                    FSharpxRealTimeDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxRtQueue -> 
-                    FSharpxRealTimeQueue.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxTransientVector -> 
-                    FSharpxTransientVector.getTime inputArgs data
-
-                | x when x = DataStructure.FSharpxBankersDeque -> 
-                    FSharpxBankersDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.FSharpxBatchedDeque -> 
-                    FSharpxBatchedDeque.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.NaiveStack -> 
-                    NaiveStack.getTimeOfSeq inputArgs data
-
-                | x when x = DataStructure.PowerPackHashMultiMap -> 
-                    let zipData = Seq.zip data data
-                    PowerPackHashMultiMap.getTime inputArgs zipData (getAppendDataForMapSeqString zipData) (Seq.toArray data)
-
-                | x when x = DataStructure.PowerPackLazyList -> 
-                    PowerPackLazyList.getTimeOfSeq inputArgs data
-
-                | _ -> failure data (inputArgs.DataStructure + "\tDataStructure not recognized")
+            | _ -> getTimeOfGenericSeq inputArgs data
                     
-            | _ -> failure (Array.zeroCreate 1) (inputArgs.DataStructure + "\t InitData function " + inputArgs.InitData + " not recognized")
+        | _ -> failure (Array.zeroCreate 1) (inputArgs.DataStructure + "\t InitData function " + inputArgs.InitData + " not recognized")
 

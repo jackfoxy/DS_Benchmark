@@ -1,0 +1,182 @@
+# integration test script
+# 1) execute iterateseq for all covered structures
+#		this verifies IEnumerable in every structure
+# 2) execute addone for all covered structures, with each input format (array, list, seq [use nocalcseq])
+# 3) execute init (or new()) for all covered structures, with each input format (array, list, seq [use nocalcseq])
+#
+# 1) execute iterateseq for all covered structures
+#
+core.array 10 arrayintasc iterateseq
+core.list 10 arrayintasc iterateseq #test comment
+core.map 10 arrayintasc iterateseq
+core.set 10 arrayintasc iterateseq
+fsharpx.deque.bankersdeque 10 arrayintasc iterateseq
+fsharpx.deque.batcheddeque 10 arrayintasc iterateseq
+fsharpx.deque.deque 10 arrayintasc iterateseq
+fsharpx.deque.realtimedeque 10 arrayintasc iterateseq
+fsharpx.dlist 10 arrayintasc iterateseq
+fsharpx.heap.leftistheap 10 arrayintasc iterateseq
+fsharpx.queue.bankersqueue 10 arrayintasc iterateseq
+fsharpx.queue.batchedqueue 10 arrayintasc iterateseq
+#fsharpx.queue.bootstrappedqueue 10 arrayintasc iterateseq #IEnumerable not implemented
+fsharpx.queue.hoodmelvillequeue 10 arrayintasc iterateseq
+#fsharpx.queue.implicitqueue 10 arrayintasc iterateseq #IEnumerable not implemented
+fsharpx.queue.physicistqueue 10 arrayintasc iterateseq
+#fsharpx.queue.realtimequeue 10 arrayintasc iterateseq #IEnumerable not implemented
+fsharpx.rndacclst.altbinrndacclist 10 arrayintasc iterateseq
+fsharpx.rndacclst.binaryrandomaccesslist 10 arrayintasc iterateseq
+fsharpx.rndacclst.skewbinaryrandomaccesslist 10 arrayintasc iterateseq
+fsharpx.vector.persistentvector 10 arrayintasc iterateseq
+fsharpx.vector.transientvector 10 arrayintasc iterateseq
+powerpack.hashmultimap 10 arrayintasc iterateseq
+powerpack.lazylist 10 arrayintasc iterateseq
+#
+# 2) execute addone for all covered structures, with each input format (array, list, seq [use nocalcseq])
+#
+core.array 10 arrayintasc addone
+core.list 10 arrayintasc addone
+core.map 10 arrayintasc addone
+core.set 10 arrayintasc addone
+fsharpx.deque.bankersdeque 10 arrayintasc addone
+fsharpx.deque.batcheddeque 10 arrayintasc addone
+fsharpx.deque.deque 10 arrayintasc addone
+fsharpx.deque.realtimedeque 10 arrayintasc addone
+fsharpx.dlist 10 arrayintasc addone
+fsharpx.heap.leftistheap 10 arrayintasc addone
+fsharpx.queue.bankersqueue 10 arrayintasc addone
+fsharpx.queue.batchedqueue 10 arrayintasc addone
+fsharpx.queue.bootstrappedqueue 10 arrayintasc addone
+fsharpx.queue.hoodmelvillequeue 10 arrayintasc addone
+fsharpx.queue.implicitqueue 10 arrayintasc addone
+fsharpx.queue.physicistqueue 10 arrayintasc addone
+fsharpx.queue.realtimequeue 10 arrayintasc addone
+fsharpx.rndacclst.altbinrndacclist 10 arrayintasc addone
+fsharpx.rndacclst.binaryrandomaccesslist 10 arrayintasc addone
+fsharpx.rndacclst.skewbinaryrandomaccesslist 10 arrayintasc addone
+fsharpx.vector.persistentvector 10 arrayintasc addone
+fsharpx.vector.transientvector 10 arrayintasc addone
+powerpack.hashmultimap 10 arrayintasc addone
+powerpack.lazylist 10 arrayintasc addone
+core.array 10 liststringdsc addone
+core.list 10 liststringdsc addone
+core.map 10 liststringdsc addone
+core.set 10 liststringdsc addone
+fsharpx.deque.bankersdeque 10 liststringdsc addone
+fsharpx.deque.batcheddeque 10 liststringdsc addone
+fsharpx.deque.deque 10 liststringdsc addone
+fsharpx.deque.realtimedeque 10 liststringdsc addone
+fsharpx.dlist 10 liststringdsc addone
+fsharpx.heap.leftistheap 10 liststringdsc addone
+fsharpx.queue.bankersqueue 10 liststringdsc addone
+fsharpx.queue.batchedqueue 10 liststringdsc addone
+fsharpx.queue.bootstrappedqueue 10 liststringdsc addone
+fsharpx.queue.hoodmelvillequeue 10 liststringdsc addone
+fsharpx.queue.implicitqueue 10 liststringdsc addone
+fsharpx.queue.physicistqueue 10 liststringdsc addone
+fsharpx.queue.realtimequeue 10 liststringdsc addone
+fsharpx.rndacclst.altbinrndacclist 10 liststringdsc addone
+fsharpx.rndacclst.binaryrandomaccesslist 10 liststringdsc addone
+fsharpx.rndacclst.skewbinaryrandomaccesslist 10 liststringdsc addone
+fsharpx.vector.persistentvector 10 liststringdsc addone
+fsharpx.vector.transientvector 10 liststringdsc addone
+powerpack.hashmultimap 10 liststringdsc addone
+powerpack.lazylist 10 liststringdsc addone
+core.array 10 nocalcseqintrnd addone
+core.list 10 nocalcseqintrnd addone
+core.map 10 nocalcseqintrnd addone
+core.set 10 nocalcseqintrnd addone
+fsharpx.deque.bankersdeque 10 nocalcseqintrnd addone
+fsharpx.deque.batcheddeque 10 nocalcseqintrnd addone
+fsharpx.deque.deque 10 nocalcseqintrnd addone
+fsharpx.deque.realtimedeque 10 nocalcseqintrnd addone
+fsharpx.dlist 10 nocalcseqintrnd addone
+fsharpx.heap.leftistheap 10 nocalcseqintrnd addone
+fsharpx.queue.bankersqueue 10 nocalcseqintrnd addone
+fsharpx.queue.batchedqueue 10 nocalcseqintrnd addone
+fsharpx.queue.bootstrappedqueue 10 nocalcseqintrnd addone
+fsharpx.queue.hoodmelvillequeue 10 nocalcseqintrnd addone
+fsharpx.queue.implicitqueue 10 nocalcseqintrnd addone
+fsharpx.queue.physicistqueue 10 nocalcseqintrnd addone
+fsharpx.queue.realtimequeue 10 nocalcseqintrnd addone
+fsharpx.rndacclst.altbinrndacclist 10 nocalcseqintrnd addone
+fsharpx.rndacclst.binaryrandomaccesslist 10 nocalcseqintrnd addone
+fsharpx.rndacclst.skewbinaryrandomaccesslist 10 nocalcseqintrnd addone
+fsharpx.vector.persistentvector 10 nocalcseqintrnd addone
+fsharpx.vector.transientvector 10 nocalcseqintrnd addone
+powerpack.hashmultimap 10 nocalcseqintrnd addone
+powerpack.lazylist 10 nocalcseqintrnd addone
+#
+# 3) execute init (or new()) for all covered structures, with each input format (array, list, seq [use nocalcseq])
+#
+core.array 10 arrayintasc init
+core.list 10 arrayintasc init
+core.map 10 arrayintasc init
+core.set 10 arrayintasc init
+fsharpx.deque.bankersdeque 10 arrayintasc init
+fsharpx.deque.batcheddeque 10 arrayintasc init
+fsharpx.deque.deque 10 arrayintasc init
+fsharpx.deque.realtimedeque 10 arrayintasc init
+fsharpx.dlist 10 arrayintasc init
+fsharpx.heap.leftistheap 10 arrayintasc init
+fsharpx.queue.bankersqueue 10 arrayintasc init
+fsharpx.queue.batchedqueue 10 arrayintasc init
+fsharpx.queue.bootstrappedqueue 10 arrayintasc init
+fsharpx.queue.hoodmelvillequeue 10 arrayintasc init
+#fsharpx.queue.implicitqueue 10 arrayintasc init #init and new() not implimented
+fsharpx.queue.physicistqueue 10 arrayintasc init
+#fsharpx.queue.realtimequeue 10 arrayintasc init #init and new() not implimented
+fsharpx.rndacclst.altbinrndacclist 10 arrayintasc init
+fsharpx.rndacclst.binaryrandomaccesslist 10 arrayintasc init
+fsharpx.rndacclst.skewbinaryrandomaccesslist 10 arrayintasc init
+fsharpx.vector.persistentvector 10 arrayintasc init
+#fsharpx.vector.transientvector 10 arrayintasc init #init and new() not implimented
+powerpack.hashmultimap 10 arrayintasc new()
+powerpack.lazylist 10 arrayintasc init
+core.array 10 liststringrnd init
+core.list 10 liststringrnd init
+core.map 10 liststringrnd init
+core.set 10 liststringrnd init
+fsharpx.deque.bankersdeque 10 liststringrnd init
+fsharpx.deque.batcheddeque 10 liststringrnd init
+fsharpx.deque.deque 10 liststringrnd init
+fsharpx.deque.realtimedeque 10 liststringrnd init
+fsharpx.dlist 10 liststringrnd init
+fsharpx.heap.leftistheap 10 liststringrnd init
+fsharpx.queue.bankersqueue 10 liststringrnd init
+fsharpx.queue.batchedqueue 10 liststringrnd init
+fsharpx.queue.bootstrappedqueue 10 liststringrnd init
+fsharpx.queue.hoodmelvillequeue 10 liststringrnd init
+#fsharpx.queue.implicitqueue 10 liststringrnd init #init and new() not implimented
+fsharpx.queue.physicistqueue 10 liststringrnd init
+#fsharpx.queue.realtimequeue 10 liststringrnd init #init and new() not implimented
+fsharpx.rndacclst.altbinrndacclist 10 liststringrnd init
+fsharpx.rndacclst.binaryrandomaccesslist 10 liststringrnd init
+fsharpx.rndacclst.skewbinaryrandomaccesslist 10 liststringrnd init
+fsharpx.vector.persistentvector 10 liststringrnd init
+#fsharpx.vector.transientvector 10 liststringrnd init #init and new() not implimented
+powerpack.hashmultimap 10 liststringrnd new()
+powerpack.lazylist 10 liststringrnd init
+core.array 10 nocalcseqintdsc init
+core.list 10 nocalcseqintdsc init
+core.map 10 nocalcseqintdsc init
+core.set 10 nocalcseqintdsc init
+fsharpx.deque.bankersdeque 10 nocalcseqintdsc init
+fsharpx.deque.batcheddeque 10 nocalcseqintdsc init
+fsharpx.deque.deque 10 nocalcseqintdsc init
+fsharpx.deque.realtimedeque 10 nocalcseqintdsc init
+fsharpx.dlist 10 nocalcseqintdsc init
+fsharpx.heap.leftistheap 10 nocalcseqintdsc init
+fsharpx.queue.bankersqueue 10 nocalcseqintdsc init
+fsharpx.queue.batchedqueue 10 nocalcseqintdsc init
+fsharpx.queue.bootstrappedqueue 10 nocalcseqintdsc init
+fsharpx.queue.hoodmelvillequeue 10 nocalcseqintdsc init
+#fsharpx.queue.implicitqueue 10 nocalcseqintdsc init #init and new() not implimented
+fsharpx.queue.physicistqueue 10 nocalcseqintdsc init
+#fsharpx.queue.realtimequeue 10 nocalcseqintdsc init #init and new() not implimented
+fsharpx.rndacclst.altbinrndacclist 10 nocalcseqintdsc init
+fsharpx.rndacclst.binaryrandomaccesslist 10 nocalcseqintdsc init
+fsharpx.rndacclst.skewbinaryrandomaccesslist 10 nocalcseqintdsc init
+fsharpx.vector.persistentvector 10 nocalcseqintdsc init
+#fsharpx.vector.transientvector 10 nocalcseqintdsc init #init and new() not implimented
+powerpack.hashmultimap 10 nocalcseqintdsc new()
+powerpack.lazylist 10 nocalcseqintdsc init

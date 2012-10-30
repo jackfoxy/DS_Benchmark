@@ -15,138 +15,145 @@ module PowerPackHashMultiMap =
                     
         Utility.getTimeResult h zipData Operator.ForEachAdd sw.ElapsedTicks sw.ElapsedMilliseconds
 
+    let doIterateSeq (data:#seq<'a*'a>) (h:HashMultiMap<'a,'a>) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 h
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
+
     let getTime (inputArgs:BenchArgs) (zipData:#seq<'a*'a>) (appendData:#seq<'a*'a>) (lookUpData:'a[]) =
 
         System.GC.Collect()
 
         match inputArgs.Action.ToLower() with
 
-            | x when x = Action.AddOne ->
-                let h = new HashMultiMap<'a, 'a>(HashIdentity.Structural)
+        | x when x = Action.AddOne ->
+            let h = new HashMultiMap<'a, 'a>(HashIdentity.Structural)
 
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
  
-                for a in zipData do
-                    h.Add a 
+            for a in zipData do
+                h.Add a 
                     
-                sw.Stop()
+            sw.Stop()
                     
-                Utility.getTimeResult h zipData Operator.ForEachAdd sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.getTimeResult h zipData Operator.ForEachAdd sw.ElapsedTicks sw.ElapsedMilliseconds
 
 
-            | x when x = Action.Append ->
-                HashMultiMap (zipData, HashIdentity.Structural) |> doAppend zipData appendData
+        | x when x = Action.Append ->
+            HashMultiMap (zipData, HashIdentity.Structural) |> doAppend zipData appendData
 
-            | x when x = Action.Iterate ->
-                let h = HashMultiMap (zipData, HashIdentity.Structural) //do not move data structure instantiations to higher level because some tests may create very large unneeded objects
+        | x when x = Action.Iterate ->
+            let h = HashMultiMap (zipData, HashIdentity.Structural) //do not move data structure instantiations to higher level because some tests may create very large unneeded objects
                     
-                let foldFun =
-                    (fun b c i -> 
-                        let d = b
-                        i + 1)
+            let foldFun =
+                (fun b c i -> 
+                    let d = b
+                    i + 1)
 
-                let hFold = h.Fold foldFun
-                Utility.getTime hFold Operator.Fold zipData 0 
+            let hFold = h.Fold foldFun
+            Utility.getTime hFold Operator.Fold zipData 0 
 
-            | x when x = Action.LookUpRand ->
+        | x when x = Action.IterateSeq ->
+                HashMultiMap (zipData, HashIdentity.Structural) |> doIterateSeq zipData
+
+        | x when x = Action.LookUpRand ->
                     
-                let h = HashMultiMap (zipData, HashIdentity.Structural) //do not move data structure instantiations to higher level because some tests may create very large unneeded objects
-                let rnd = new System.Random()
-                let times = Utility.getIterations inputArgs
-                let hCount = h.Count
+            let h = HashMultiMap (zipData, HashIdentity.Structural) //do not move data structure instantiations to higher level because some tests may create very large unneeded objects
+            let rnd = new System.Random()
+            let times = Utility.getIterations inputArgs
+            let hCount = h.Count
 
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
 
-                for i = 1 to times do
-                    let b = h.TryFind (lookUpData.[(rnd.Next hCount)])
-                    ()
+            for i = 1 to times do
+                let b = h.TryFind (lookUpData.[(rnd.Next hCount)])
+                ()
                     
-                sw.Stop()
+            sw.Stop()
                     
-                Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
 
-            | x when x = Action.NewInit ->
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
+        | x when x = Action.NewInit ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
 
-                let h = HashMultiMap (zipData, HashIdentity.Structural)
+            let h = HashMultiMap (zipData, HashIdentity.Structural)
                     
-                sw.Stop()
+            sw.Stop()
                     
-                Utility.getTimeResult h zipData Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.getTimeResult h zipData Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
-            | x when x = Action.UpdateRand ->
-                let h =  HashMultiMap (zipData, HashIdentity.Structural)
+        | x when x = Action.UpdateRand ->
+            let h =  HashMultiMap (zipData, HashIdentity.Structural)
 
-                let rnd = new System.Random()       
-                let times = Utility.getIterations inputArgs
-                let hCount = h.Count
+            let rnd = new System.Random()       
+            let times = Utility.getIterations inputArgs
+            let hCount = h.Count
                         
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
 
-                for i = 1 to times do
-                    let a = (lookUpData.[(rnd.Next hCount)])
-                    h.Remove a
-                    h.Add (a,a)
-                    ()
+            for i = 1 to times do
+                let a = (lookUpData.[(rnd.Next hCount)])
+                h.Remove a
+                h.Add (a,a)
+                ()
                    
-                sw.Stop()
+            sw.Stop()
 
-                Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
 
-            | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+        | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
 (*  module PowerPackHashSet = --hashset from PP is deprecated in favor of System.Collections.Generic.HashSet<_>  *)
 
 module PowerPackLazyList = 
     
     let doAddOneArray (data:'a[]) =
-        let rec loop (ll:'a LazyList) (d:'a[])  dLength acc =
-            match acc  with
-            | _ when acc = dLength -> ll
-            | _ -> loop (LazyList.cons (d.[acc]) ll) d dLength (acc + 1)
-
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let ll1 =loop LazyList.empty data data.Length 0
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult ll1 data Operator.CreateRecCreate sw.ElapsedTicks sw.ElapsedMilliseconds
-
-    let doAddOneList (data:'a list) =
-        let rec loop (ll:'a LazyList) (d:'a list)  =
-            match d  with
-            | hd::tl -> loop (LazyList.cons hd ll) tl 
-            | [] -> ll
-
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let ll1 =loop LazyList.empty data
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult ll1 data Operator.CreateRecCreate sw.ElapsedTicks sw.ElapsedMilliseconds
-
-    let doAddOneSeq (data:'a seq) =
-        let rec loop (ll:'a LazyList) (d:'a seq) dCount acc =
-            match acc  with
-            | _ when acc = dCount -> ll
-            | _ -> loop (LazyList.cons (Seq.nth acc d) ll) d dCount (acc + 1)  
         
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
- 
-        let ll1 =loop LazyList.empty data (Seq.length data) 0
+
+        let l2 = Array.fold (fun (ll:'a LazyList) t -> LazyList.cons t ll) LazyList.empty data
                     
         sw.Stop()
                     
-        Utility.getTimeResult ll1 data Operator.CreateRecCreate sw.ElapsedTicks sw.ElapsedMilliseconds  
+        Utility.getTimeResult l2 data Operator.Cons sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doAddOneList (data:'a list) =
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let l2 = List.fold (fun (ll:'a LazyList) t -> LazyList.cons t ll) LazyList.empty data
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult l2 data Operator.Cons sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doAddOneSeq (data:'a seq) =
+       
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let l2 = Seq.fold (fun (ll:'a LazyList) t -> LazyList.cons t ll) LazyList.empty data
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult l2 data Operator.Cons sw.ElapsedTicks sw.ElapsedMilliseconds  
 
     let iterate (ll:LazyList<'a>) =
 
@@ -166,6 +173,22 @@ module PowerPackLazyList =
         sw.Stop()
                     
         Utility.getTimeResult l2 data Operator.Append sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doIterateSeq (data:'a seq) (ll :'a LazyList) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 ll
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doLookUpRand (inputArgs:BenchArgs) lCount ll = 
         let rnd = new System.Random()
@@ -188,6 +211,21 @@ module PowerPackLazyList =
         sw.Stop()
 
         times, sw
+
+    let doTailToEmpty data (ll:'a LazyList) =
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let rec loop : 'a LazyList -> unit =  function
+            | LazyList.Cons(hd, tl) -> loop tl
+            | LazyList.Nil -> ()
+
+        loop ll
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult ll data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doUpdateRand (inputArgs:BenchArgs) update lCount ll =
         let rnd = new System.Random()
@@ -422,9 +460,15 @@ module PowerPackLazyList =
             | x when x = Action.Iterate ->
                 ll |> Utility.getTime iterate Operator.RecAcc data
                 
+            | x when x = Action.IterateSeq ->
+                ll |> doIterateSeq data
+
             | x when x = Action.LookUpRand ->
                 let times, sw = ll |> doLookUpRand inputArgs (Seq.length data)
                 Utility.getTimeResult times data Operator.RecAccHead sw.ElapsedTicks sw.ElapsedMilliseconds
+
+            | x when x = Action.TailToEmpty ->
+                ll |> doTailToEmpty data
 
             | x when x = Action.UpdateRand ->
                 let times, sw = ll |> doUpdateRand inputArgs (Seq.nth 0 data) (Seq.length data)

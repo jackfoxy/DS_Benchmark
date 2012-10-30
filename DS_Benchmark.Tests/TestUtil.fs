@@ -7,18 +7,18 @@ type TestObj =
     static member arrInt = Array.create 2 0
     static member arrString = Array.create 2 "a"
 
-    static member bsQueueInt = 
-        let b = BootstrappedQueue.Empty
-        BootstrappedQueue.snoc 0 b
+    static member bankersQueue = BankersQueue.empty() |> BankersQueue.snoc 0
+    static member batchedQueue = BatchedQueue.empty() |> BatchedQueue.snoc 0
+    static member hoodMelvilleQueue = HoodMelvilleQueue.empty() |> HoodMelvilleQueue.snoc 0
+    static member physicistQueue = PhysicistQueue.empty() |> PhysicistQueue.snoc 0
 
-    static member bsQueueString = 
-        let b = BootstrappedQueue.Empty
-        BootstrappedQueue.snoc "" b
+    static member bsQueueInt = BootstrappedQueue.Empty |> BootstrappedQueue.snoc 0
+
+    static member bsQueueString = BootstrappedQueue.Empty |> BootstrappedQueue.snoc ""
 
     static member dListInt = DList.ofSeq TestObj.seqInt
     static member dListString = DList.ofSeq TestObj.seqString
 
-        
 //        static member hmMapInt = HashMultiMap (TestObj.zipArrInt, HashIdentity.Structural)
 //        static member hmMapString =  HashMultiMap (TestObj.zipSeqString, HashIdentity.Structural)
 
@@ -39,7 +39,16 @@ type TestObj =
     static member mapInt = Map TestObj.zipSeqInt
     static member mapString = Map TestObj.zipSeqString
 
-    static member naiveAltBinRndAccListInt = AltBinaryRandomAccessList.empty |> AltBinaryRandomAccessList.cons 0
+    static member altBinRndAccListInt = AltBinaryRandomAccessList.empty |> AltBinaryRandomAccessList.cons 0
+    static member binaryRandomAccessList = BinaryRandomAccessList.empty() |> BinaryRandomAccessList.cons 0
+    static member skewBinaryRandomAccessList = SkewBinaryRandomAccessList.empty() |> SkewBinaryRandomAccessList.cons 0
+
+    static member leftistHeap = LeftistHeap.empty false |> LeftistHeap.insert 0
+
+    static member bankersDeque = BankersDeque.empty 2 |> BankersDeque.snoc 0
+    static member batchedDeque = BatchedDeque.empty() |> BatchedDeque.snoc 0
+    static member deque = Deque.empty() |> Deque.snoc 0
+    static member realTimeDeque = RealTimeDeque.empty 2 |> RealTimeDeque.snoc 0
 
     static member naiveStackInt = 
         let s = Stack.EmptyStack
@@ -107,7 +116,7 @@ module TestUtil =
         else
             ((result.Ticks > 0L) && (result.Operator.Length > 0) && (result.ResultInt > 0))
         
-    let dsGetTimeTestResult dataSet initData action typeDs typeData = 
+    let dsGetTimeTestResult dataSet initData action = 
         Benchmark.getTime {DataStructure = dataSet;
                                     Size = 10;
                                 InitData = initData;

@@ -44,7 +44,6 @@
     <Compile Include="BottomUpMergeSort.fs" />
     <Compile Include="CustomStack.fs" />
     <Compile Include="FiniteMap.fs" />
-    <Compile Include="HoodMelvilleQueue.fs" />
     <Compile Include="LazyBinomialHeap.fs" />
     <Compile Include="LazyPairingHeap.fs" />
     <Compile Include="PairingHeap.fs" />

@@ -53,6 +53,7 @@ type Action =
     static member RemoveWorst1 = "removeworst1"
     static member RemoveDescend = "removedescend"
 
+    static member TailToEmpty = "tailtoempty"
     static member UpdateHybridRand = "updatehybridrand"
     static member UpdateHybridWorst1 = "updatehybridworst1"
     static member UpdateRand = "updaterand"
@@ -107,29 +108,40 @@ type InitData =
 type DataStructure =
     val private y : unit
     new () = {y=()}
-    static member CoreCollectionsArray = "corearray"
-    static member CoreCollectionsList = "corelist"
-    static member CoreCollectionsMap = "coremap"
-    static member CoreCollectionsSet = "coreset"
-        
-    static member FSharpxAltBinRndAccList = "fsharpxaltbinrndacclist"
-    static member FSharpxBankersDeque = "fsharpxbankersdeque"
-    static member FSharpxBatchedDeque = "fsharpxbatcheddeque"
-    static member FSharpxBsQueue = "fsharpxbsqueue"
-    static member FSharpxDList = "fsharpxdlist"
-    static member FSharpxDeque = "fsharpxdeque"
-    static member FSharpxImplicitQueue = "fsharpximplicitqueue"
-    static member FSharpxLeftistHeap = "fsharpxleftistheap"
-    static member FSharpxPersistentVector = "fsharpxpersistentvector"
-    static member FSharpxRtDeque = "fsharpxrtdeque"
-    static member FSharpxRtQueue = "fsharpxrtqueue"
-    static member FSharpxTransientVector = "fsharpxtransientvector"
+    static member CoreCollectionsArray = "core.array"
+    static member CoreCollectionsList = "core.list"
+    static member CoreCollectionsMap = "core.map"
+    static member CoreCollectionsSet = "core.set"
 
-    static member NaiveStack = "naivestack"
-    static member NaiveLeftistHeap = "naiveleftistheap"
+    static member FSharpxDequeBankers = "fsharpx.deque.bankersdeque"
+    static member FSharpxDequeBatched = "fsharpx.deque.batcheddeque"
+    static member FSharpxDeque = "fsharpx.deque.deque"
+    static member FSharpxDequeRealTime = "fsharpx.deque.realtimedeque"
 
-    static member PowerPackHashMultiMap = "powerpackhashmultimap"
-    static member PowerPackLazyList = "powerpacklazylist"
+    static member FSharpxDList = "fsharpx.dlist"
+
+    static member FSharpxHeapLeftist = "fsharpx.heap.leftistheap"
+
+    static member FSharpxQueueBankers = "fsharpx.queue.bankersqueue"
+    static member FSharpxQueueBatched = "fsharpx.queue.batchedqueue"
+    static member FSharpxQueueBootStrapped = "fsharpx.queue.bootstrappedqueue"
+    static member FSharpxQueueHoodMelville = "fsharpx.queue.hoodmelvillequeue"
+    static member FSharpxQueueImplicit = "fsharpx.queue.implicitqueue"
+    static member FSharpxQueuePhysicist = "fsharpx.queue.physicistqueue"
+    static member FSharpxQueueRealTime = "fsharpx.queue.realtimequeue"
+
+    static member FSharpxRandomAccessListAltBin = "fsharpx.rndacclst.altbinrndacclist"
+    static member FSharpxRandomAccessListBinary = "fsharpx.rndacclst.binaryrandomaccesslist"
+    static member FSharpxRandomAccessListSkewBinary = "fsharpx.rndacclst.skewbinaryrandomaccesslist"
+
+    static member FSharpxVectorPersistent = "fsharpx.vector.persistentvector"
+    static member FSharpxVectorTransient = "fsharpx.vector.transientvector"
+
+    static member NaiveStack = "naive.stack"
+    static member NaiveLeftistHeap = "naive.leftistheap"
+
+    static member PowerPackHashMultiMap = "powerpack.hashmultimap"
+    static member PowerPackLazyList = "powerpack.lazylist"
 
 type Operator = 
     static member Append = "append"
@@ -151,6 +163,8 @@ type Operator =
     static member NewInit = "new()"
     static member NonEmptyBootstrappedQueueCreate = "NonEmptyBootstrappedQueue.create"
     static member OfArray = "ofArray"
+    static member OfCatLists = "ofCatLists"
+    static member OfCatSeqs = "ofCatSeqs"
     static member OfList= "ofList"
     static member OfSeq = "ofSeq"
     static member RecAcc = "rec acc"
@@ -160,8 +174,11 @@ type Operator =
     static member RecHead = "rec head"
     static member RecHeadSnoc = "rec head snoc"
     static member RecSnoc = "rec snoc"
+    static member RecTail = "rec tail until empty"
     static member Remove = "remove"
     static member RemoveAdd = "remove add"
+    static member SeqFold = "Seq.fold"
+    static member SeqNth  = "Seq.nth"
     static member Snoc = "snoc"
     static member SplitConsAppend = "split cons append"
     static member SplitSnocAppend = "split snoc append"

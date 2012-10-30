@@ -23,8 +23,10 @@ type ReadyScript =
         let iterate fileName (lastItem: int ref) (progress:Event<unit>) =
             (fun i (s:string) ->
                 let param = s.Split(" ".ToCharArray())
+//                if (param.[0].Trim().StartsWith("#")) then ()
+//                else
                 let benchmarkDsAction = 
-                    if param.Length > 4 then
+                    if ((param.Length > 4) || ((param.Length > 4) && (param.[4].Trim().StartsWith("#")))) then
                         let pArray = Array.create 5 ""
                         pArray.[0] <- param.[4]
                         new BenchmarkDsAction (param.[0], (int param.[1]), param.[2], param.[3], pArray)
@@ -59,11 +61,22 @@ type ReadyScript =
         List.toSeq x._script 
         |> Seq.iteri (iterate x._outputPath x._lastItem x._progress)
         ()
+
+    static member private listNoComment l =
+        
+        let rec loop acc (l : list<string>) =
+                match l with
+                | [] -> acc
+                | hd::tl -> 
+                    if (hd.Trim().StartsWith("#")) then loop acc tl
+                    else loop (hd::acc) tl
+        List.rev (loop [] l)
     
     new (script:string list, outputPath:string) =
-        { _script = script;
+        let newScript = ReadyScript.listNoComment script
+        { _script = newScript;
           _lastItem = ref 0;
-          _length = List.length script;
+          _length = newScript.Length;
           _outputPath = 
             if outputPath.Length = 0 then
                 if List.length script > 0 then
@@ -74,15 +87,12 @@ type ReadyScript =
           _progress = new Event<unit>()}
 
     new (filePath:string, outputPath:string) =
-        { _script = 
-            let a = File.ReadAllLines(filePath)
-            Array.toList a;
+        let a = File.ReadAllLines(filePath)
+        let newScript = ReadyScript.listNoComment (Array.toList a);
+        { _script = newScript;
           _lastItem = ref 0;
-          _length = 
-            let a = File.ReadAllLines(filePath)
-            a.Length;
+          _length = newScript.Length;
           _outputPath = 
-            let a = File.ReadAllLines(filePath)
             if outputPath.Length = 0 then
                 if a.Length > 0 then
                     if a.Length = 1 then a.[0]
