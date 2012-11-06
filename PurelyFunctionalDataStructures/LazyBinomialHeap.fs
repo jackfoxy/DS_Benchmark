@@ -4,6 +4,7 @@
 
 module LazyBinomialHeap =
 
+  type BinomialTree<'a> = Node of (int * 'a * list<BinomialTree<'a>>)  
   type t<'a> = Lazy<list<BinomialTree<'a>>>
 
   let empty() = lazy []

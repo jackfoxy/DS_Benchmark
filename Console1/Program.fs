@@ -184,6 +184,6 @@ module console1 =
             | _ -> Info.printAll
 
         printfn "%i ticks in a millisecond" System.TimeSpan.TicksPerMillisecond
-        printfn "Hit any key to exit."
-        System.Console.ReadKey() |> ignore
+//        printfn "Hit any key to exit."
+//        System.Console.ReadKey() |> ignore
         0 // return an integer exit code

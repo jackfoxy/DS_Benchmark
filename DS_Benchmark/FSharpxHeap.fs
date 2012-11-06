@@ -3,6 +3,109 @@
 open FSharpx.DataStructures
 open Utility
 
+
+module FSharpxHeapBinomial =
+
+    let doAddOne (data: seq<'a>) =
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let h1 = Seq.fold (fun (h : 'a BinomialHeap) t -> (h.Insert t)) (BinomialHeap.empty false) data
+                            
+        sw.Stop()
+                    
+        Utility.getTimeResult h1 data Operator.Insert sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doAddOneArray (data: 'a []) =
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let h1 = Array.fold (fun (h : 'a BinomialHeap) t -> (h.Insert t)) (BinomialHeap.empty false) data
+                            
+        sw.Stop()
+                    
+        Utility.getTimeResult h1 data Operator.Insert sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doAddOneList (data: 'a list) =
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let h1 = List.fold (fun (h : 'a BinomialHeap) t -> (h.Insert t)) (BinomialHeap.empty false) data
+                            
+        sw.Stop()
+                    
+        Utility.getTimeResult h1 data Operator.Insert sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doAppend (h:'a BinomialHeap) data (hAppend:'a BinomialHeap) =
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let h2 = h.Merge hAppend 
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult h2 data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doTailToEmpty data (h:'a BinomialHeap) =
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let rec loop : 'a BinomialHeap -> unit =  function
+            | BinomialHeap.Cons(hd, tl) -> loop tl
+            | BinomialHeap.Nil -> ()
+
+        loop h
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult h data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let getTime (inputArgs:BenchArgs) (data:'a seq) = 
+        
+        System.GC.Collect()
+        
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.AddOne ->
+            doAddOne data
+
+        | x when x = Action.Append ->
+            let s = BinomialHeap.ofSeq true data
+            BinomialHeap.ofSeq true data |> doAppend s data
+    
+        | x when x = Action.Init ->
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let h = BinomialHeap.ofSeq false data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult h data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.IterateSeq ->
+            let foldFun =
+                (fun i b -> 
+                    let c = b
+                    i + 1)
+                
+            let sFold = Seq.fold foldFun 0
+
+            BinomialHeap.ofSeq true data |> Utility.getTime sFold Operator.SeqFold data
+
+        | x when x = Action.Init ->
+            Utility.getTime (BinomialHeap.ofSeq true) Operator.OfSeq data data
+
+        | x when x = Action.TailToEmpty ->
+            BinomialHeap.ofSeq true data |> doTailToEmpty data
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
 module FSharpxHeapLeftist =
 
     let doAddOne (data: seq<'a>) =

@@ -802,6 +802,9 @@ module FSharpxQueueImplicit =
             | x when x = Action.LookUpRand ->
                 iQueueOfList data |> doLookup inputArgs data data.Length 
 
+            | x when x = Action.TailToEmpty ->
+                iQueueOfList data |> doTailToEmpty data
+
             | x when x = Action.UpdateRand ->
                 iQueueOfList data |> doUpdateRand inputArgs data data.Length (Seq.nth 0 data)
 
@@ -832,6 +835,9 @@ module FSharpxQueueImplicit =
 
             | x when x = Action.LookUpRand ->
                 iQueueOfSeq data |> doLookup inputArgs data (Seq.length data) 
+
+            | x when x = Action.TailToEmpty ->
+                iQueueOfSeq data |> doTailToEmpty data
 
             | x when x = Action.UpdateRand ->
                 iQueueOfSeq data |> doUpdateRand inputArgs data (Seq.length data) (Seq.nth 0 data)
@@ -974,25 +980,16 @@ module FSharpxQueueRealTime =
         loop rtQueue rtQueue2
 
     let rtQueueOfArray (data:'a[]) =
-        let rec loop (d:'a[]) (r:'a RealTimeQueue.RealTimeQueue) acc =
-            match acc  with
-            | _ when acc = d.Length -> r
-            | _ -> loop d (RealTimeQueue.snoc (d.[acc]) r) (acc + 1)
-        loop data RealTimeQueue.empty 0
+
+        Array.fold (fun (q : 'a RealTimeQueue.RealTimeQueue) t -> (RealTimeQueue.snoc t q)) (RealTimeQueue.empty) data
 
     let rtQueueOfList (data:'a list) =
-        let rec loop (d:'a list) (r:'a RealTimeQueue.RealTimeQueue)=
-            match d  with
-            | hd::tl -> loop tl (RealTimeQueue.snoc hd r)
-            | [] -> r
-        loop data RealTimeQueue.empty
+
+        List.fold (fun (q : 'a RealTimeQueue.RealTimeQueue) t -> (RealTimeQueue.snoc t q)) (RealTimeQueue.empty) data
 
     let rtQueueOfSeq (data:'a seq) =
-        let rec loop (d:'a seq) (r:'a RealTimeQueue.RealTimeQueue) dCount acc =
-            match acc  with
-            | _ when acc = dCount -> r
-            | _ -> loop d (RealTimeQueue.snoc (Seq.nth acc d) r) dCount (acc + 1)
-        loop data RealTimeQueue.empty (Seq.length data) 0
+
+        Seq.fold (fun (q : 'a RealTimeQueue.RealTimeQueue) t -> (RealTimeQueue.snoc t q)) (RealTimeQueue.empty) data
 
     let doAppend (r:'a RealTimeQueue.RealTimeQueue) data (bAppend:'a RealTimeQueue.RealTimeQueue) =
 
@@ -1147,6 +1144,9 @@ module FSharpxQueueRealTime =
             | x when x = Action.LookUpRand ->
                 rtQueueOfList data |> doLookup inputArgs data data.Length 
 
+            | x when x = Action.TailToEmpty ->
+                rtQueueOfList data |> doTailToEmpty data
+
             | x when x = Action.UpdateRand ->
                 rtQueueOfList data |> doUpdateRand inputArgs data data.Length (Seq.nth 0 data)
 
@@ -1178,8 +1178,10 @@ module FSharpxQueueRealTime =
             | x when x = Action.LookUpRand ->
                 rtQueueOfSeq data |> doLookup inputArgs data (Seq.length data) 
 
+            | x when x = Action.TailToEmpty ->
+                rtQueueOfSeq data |> doTailToEmpty data
+
             | x when x = Action.UpdateRand ->
                 rtQueueOfSeq data |> doUpdateRand inputArgs data (Seq.length data) (Seq.nth 0 data)
 
             | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-

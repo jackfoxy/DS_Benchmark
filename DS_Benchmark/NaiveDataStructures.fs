@@ -180,3 +180,4 @@ module NaiveStack =
                 Stack.ofSeq data |> doUpdateRand inputArgs data (Seq.length data) (Seq.nth 0 data)
 
             | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+

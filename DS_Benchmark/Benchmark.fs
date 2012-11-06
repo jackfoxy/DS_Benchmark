@@ -488,9 +488,12 @@ module Benchmark =
             | x when x = DataStructure.FSharpxDequeRealTime -> 
                 FSharpxDequeRealTime.getTimeOfSeq inputArgs data
 
+            | x when x = DataStructure.FSharpxHeapBinomial -> 
+                FSharpxHeapBinomial.getTime inputArgs data
+
             | x when x = DataStructure.FSharpxHeapLeftist -> 
                 FSharpxHeapLeftist.getTime inputArgs data
-
+            
             | x when x = DataStructure.FSharpxQueueBankers -> 
                 FSharpxQueueBankers.getTime inputArgs data
 
@@ -671,7 +674,7 @@ module Benchmark =
         | _ when inputArgs.InitData.ToLower().Contains("liststring") -> 
             let data = getInitListString inputArgs.InitData inputArgs.Size 1 SeedAlpha.alphaAsc
             match inputArgs.DataStructure.ToLower() with
-                    
+
             | x when x = DataStructure.CoreCollectionsArray -> 
                 CoreCollectionsArray.getTimeOfList inputArgs data
 

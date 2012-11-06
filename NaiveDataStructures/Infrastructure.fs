@@ -1,38 +1,50 @@
 ﻿namespace NaiveDataStructures
 
-type IDeque<'a> =
-    inherit System.Collections.IEnumerable
-    inherit System.Collections.Generic.IEnumerable<'a>
-    
-    ///returns a new deque with the element added to the beginning
-    abstract member Cons : 'a -> IDeque<'a>
-
-    ///returns the first element
-    abstract member Head : unit -> 'a
-
-    ///returns a new deque of the elements before the last element
-    abstract member Init : unit -> IDeque<'a>
-
-    ///returns true if the deque has no elements
-    abstract member IsEmpty : unit -> bool
-
-    ///returns the last element
-    abstract member Last : unit -> 'a
-
-    ///returns the count of elememts
-    abstract member Length : unit -> int
-
-    ///returns a new deque with the element added to the end
-    abstract member Snoc : 'a -> IDeque<'a>
-
-    ///returns a new deque of the elements trailing the first element
-    abstract member Tail : unit -> IDeque<'a>
-
-    ///returns the first element and tail
-    abstract member Uncons : unit -> 'a * IDeque<'a>
-
-    ///returns init and the last element
-    abstract member Unsnoc : unit -> IDeque<'a> * 'a
+//type IHeap<'a when 'a : comparison> =
+//    inherit System.Collections.IEnumerable
+//    inherit System.Collections.Generic.IEnumerable<'a>
+//
+//    ///returns the count of elememts
+//    abstract member Count : int with get
+//
+//    ///returns the min or max element
+//    abstract member Head : 'a with get
+//
+//    ///returns option first min or max element
+//    abstract member TryGetHead : 'a option with get
+//
+//    ///returns true if the heap has no elements
+//    abstract member IsEmpty : bool with get
+//
+//    ///returns true if the heap has max element at head
+//    abstract member IsMaximalist : bool with get
+//
+//    ///returns the count of elememts
+//    abstract member Length : int with get
+//
+//type IHeap<'c, 'a when 'c :> IHeap<'c, 'a> and 'a : comparison> =
+//    inherit IHeap<'a>
+//
+//    ///returns a new heap with the element inserted
+//    abstract member Insert : 'a -> 'c
+//
+//    ///returns heap from merging two heaps, both must have same isMaximalist
+//    abstract member Merge : 'c -> 'c
+//
+//    ///returns heap option from merging two heaps
+//    abstract member TryMerge : 'c -> 'c option
+//
+//    ///returns a new heap of the elements trailing the head
+//    abstract member Tail : 'c with get
+//
+//    ///returns option heap of the elements trailing the head
+//    abstract member TryGetTail : 'c option with get
+//
+//    ///returns the head element and tail
+//    abstract member Uncons : 'a * 'c with get
+//
+//    ///returns option head element and tail
+//    abstract member TryUncons : ('a * 'c) option with get
 
 module LazyListHelpr =
 

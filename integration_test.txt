@@ -15,6 +15,7 @@ fsharpx.deque.batcheddeque 10 arrayintasc iterateseq
 fsharpx.deque.deque 10 arrayintasc iterateseq
 fsharpx.deque.realtimedeque 10 arrayintasc iterateseq
 fsharpx.dlist 10 arrayintasc iterateseq
+fsharpx.heap.binomialheap 10 arrayintasc iterateseq
 fsharpx.heap.leftistheap 10 arrayintasc iterateseq
 fsharpx.queue.bankersqueue 10 arrayintasc iterateseq
 fsharpx.queue.batchedqueue 10 arrayintasc iterateseq
@@ -42,6 +43,7 @@ fsharpx.deque.batcheddeque 10 arrayintasc addone
 fsharpx.deque.deque 10 arrayintasc addone
 fsharpx.deque.realtimedeque 10 arrayintasc addone
 fsharpx.dlist 10 arrayintasc addone
+fsharpx.heap.binomialheap 10 arrayintasc addone
 fsharpx.heap.leftistheap 10 arrayintasc addone
 fsharpx.queue.bankersqueue 10 arrayintasc addone
 fsharpx.queue.batchedqueue 10 arrayintasc addone
@@ -66,6 +68,7 @@ fsharpx.deque.batcheddeque 10 liststringdsc addone
 fsharpx.deque.deque 10 liststringdsc addone
 fsharpx.deque.realtimedeque 10 liststringdsc addone
 fsharpx.dlist 10 liststringdsc addone
+fsharpx.heap.binomialheap 10 liststringdsc addone
 fsharpx.heap.leftistheap 10 liststringdsc addone
 fsharpx.queue.bankersqueue 10 liststringdsc addone
 fsharpx.queue.batchedqueue 10 liststringdsc addone
@@ -90,6 +93,7 @@ fsharpx.deque.batcheddeque 10 nocalcseqintrnd addone
 fsharpx.deque.deque 10 nocalcseqintrnd addone
 fsharpx.deque.realtimedeque 10 nocalcseqintrnd addone
 fsharpx.dlist 10 nocalcseqintrnd addone
+fsharpx.heap.binomialheap 10 nocalcseqintrnd addone
 fsharpx.heap.leftistheap 10 nocalcseqintrnd addone
 fsharpx.queue.bankersqueue 10 nocalcseqintrnd addone
 fsharpx.queue.batchedqueue 10 nocalcseqintrnd addone
@@ -117,6 +121,7 @@ fsharpx.deque.batcheddeque 10 arrayintasc init
 fsharpx.deque.deque 10 arrayintasc init
 fsharpx.deque.realtimedeque 10 arrayintasc init
 fsharpx.dlist 10 arrayintasc init
+fsharpx.heap.binomialheap 10 arrayintasc init
 fsharpx.heap.leftistheap 10 arrayintasc init
 fsharpx.queue.bankersqueue 10 arrayintasc init
 fsharpx.queue.batchedqueue 10 arrayintasc init
@@ -141,6 +146,7 @@ fsharpx.deque.batcheddeque 10 liststringrnd init
 fsharpx.deque.deque 10 liststringrnd init
 fsharpx.deque.realtimedeque 10 liststringrnd init
 fsharpx.dlist 10 liststringrnd init
+fsharpx.heap.binomialheap 10 liststringrnd init
 fsharpx.heap.leftistheap 10 liststringrnd init
 fsharpx.queue.bankersqueue 10 liststringrnd init
 fsharpx.queue.batchedqueue 10 liststringrnd init
@@ -165,6 +171,7 @@ fsharpx.deque.batcheddeque 10 nocalcseqintdsc init
 fsharpx.deque.deque 10 nocalcseqintdsc init
 fsharpx.deque.realtimedeque 10 nocalcseqintdsc init
 fsharpx.dlist 10 nocalcseqintdsc init
+fsharpx.heap.binomialheap 10 nocalcseqintdsc init
 fsharpx.heap.leftistheap 10 nocalcseqintdsc init
 fsharpx.queue.bankersqueue 10 nocalcseqintdsc init
 fsharpx.queue.batchedqueue 10 nocalcseqintdsc init

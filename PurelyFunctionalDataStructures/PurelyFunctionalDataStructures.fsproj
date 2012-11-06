@@ -40,7 +40,6 @@
     <Compile Include="Exceptions.fs" />
     <Compile Include="LazyList.fs" />
     <Compile Include="BinarySearchTree.fs" />
-    <Compile Include="BinomialHeap.fs" />
     <Compile Include="BottomUpMergeSort.fs" />
     <Compile Include="CustomStack.fs" />
     <Compile Include="FiniteMap.fs" />

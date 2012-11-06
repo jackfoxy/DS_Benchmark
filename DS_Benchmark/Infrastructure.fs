@@ -120,6 +120,7 @@ type DataStructure =
 
     static member FSharpxDList = "fsharpx.dlist"
 
+    static member FSharpxHeapBinomial = "fsharpx.heap.binomialheap"
     static member FSharpxHeapLeftist = "fsharpx.heap.leftistheap"
 
     static member FSharpxQueueBankers = "fsharpx.queue.bankersqueue"
@@ -138,7 +139,6 @@ type DataStructure =
     static member FSharpxVectorTransient = "fsharpx.vector.transientvector"
 
     static member NaiveStack = "naive.stack"
-    static member NaiveLeftistHeap = "naive.leftistheap"
 
     static member PowerPackHashMultiMap = "powerpack.hashmultimap"
     static member PowerPackLazyList = "powerpack.lazylist"
