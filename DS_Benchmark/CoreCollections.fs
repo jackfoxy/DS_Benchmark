@@ -942,54 +942,42 @@ module CoreCollectionsList =
 
 module CoreCollectionsMap = 
 
-    let doAddOneArray (zipData: ('a*'a)[]) = 
-        let rec loop (map:Map<'a,'a>) (d: ('a*'a)[]) len acc =
-            match acc with
-            | _ when acc = len -> map
-            | _ -> loop (Map.add (fst d.[acc]) (snd d.[acc])  map) d len (acc + 1)
+    let doAddOneArray (zipData: ('Key*'Value)[]) = 
                 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let m1 = loop Map.empty zipData (Array.length zipData) 0
+        let m1 = Array.fold (fun (m : Map<'Key, 'Value>) (d : ('Key * 'Value)) -> (m.Add d) ) Map.empty zipData
                     
         sw.Stop()
                     
-        Utility.getTimeResult m1 zipData Operator.EmptyRecAdd sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult m1 zipData Operator.ArrayFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doAddOneList (zipData: ('a*'a) list) = 
-        let rec loop (map:Map<'a,'a>) (d: ('a*'a) list) len acc =
-            match acc with
-            | _ when acc = len -> map
-            | _ -> loop (Map.add (fst d.[acc]) (snd d.[acc])  map) d len (acc + 1)
+    let doAddOneList (zipData: ('Key*'Value) list) = 
                 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        let m1 = loop Map.empty zipData (List.length zipData) 0
+        let m1 = List.fold (fun (m : Map<'Key, 'Value>) (d : ('Key * 'Value)) -> (m.Add d) ) Map.empty zipData
                     
         sw.Stop()
                     
-        Utility.getTimeResult m1 zipData Operator.EmptyRecAdd sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult m1 zipData Operator.ListFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doAddOneSeq (zipData: ('a*'a) seq) = 
-        let rec loop (map:Map<'a,'a>) (d: ('a*'a) seq) len acc =
-            match acc with
-            | _ when acc = len -> map
-            | _ -> loop (Map.add (fst (Seq.nth acc d)) (snd (Seq.nth acc d))  map) d len (acc + 1)
+    let doAddOneSeq (zipData: ('Key*'Value) seq) = 
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
- 
-        let m1 = loop Map.empty zipData (Seq.length zipData) 0
+
+        let m1 = Seq.fold (fun (m : Map<'Key, 'Value>) (d : ('Key * 'Value)) -> (m.Add d) ) Map.empty zipData
                     
         sw.Stop()
                     
-        Utility.getTimeResult m1 zipData Operator.EmptyRecAdd sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult m1 zipData Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doAppend zipData (appendData:#seq<'a*'a>) appDatLen m = 
-        let mapAppend (map:Map<'a,'a>) aData count = 
-            let rec loop (m2:Map<'a,'a>) dat c acc =
+        let mapAppend (map:Map<'Key, 'Value>) aData count = 
+            let rec loop (m2:Map<'Key, 'Value>) dat c acc =
                 if acc < c then
                     loop (m2.Add (Seq.nth acc dat)) dat c (acc + 1)
                 else m2
@@ -1004,7 +992,23 @@ module CoreCollectionsMap =
                     
         Utility.getTimeResult m3 zipData Operator.RecAdd sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doLookUpRand (inputArgs:BenchArgs) (lookUpData:'a[]) (m:Map<'a,'a>)  =
+    let doLookUpOverhead (inputArgs:BenchArgs) (lookUpData:'Key[]) (m:Map<'Key, 'Value>)  =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs         
+        let mCount = m.Count
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let b = lookUpData.[(rnd.Next mCount)]
+            ()
+                    
+        sw.Stop()
+                    
+        times, sw
+
+    let doLookUpRand (inputArgs:BenchArgs) (lookUpData:'Key[]) (m:Map<'Key, 'Value>)  =
         let rnd = new System.Random()
         let times = Utility.getIterations inputArgs         
         let mCount = m.Count
@@ -1020,7 +1024,7 @@ module CoreCollectionsMap =
                     
         times, sw
 
-    let doUpdateRand (inputArgs:BenchArgs) (lookUpData:'a[]) (m:Map<'a,'a>) =
+    let doUpdateRand (inputArgs:BenchArgs) (lookUpData:'a[]) (m:Map<'a, 'a>) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
         let mCount = m.Count
@@ -1038,7 +1042,7 @@ module CoreCollectionsMap =
                     
         times, sw
 
-    let doIterateSeq (zipData:#seq<'a*'a>) (m: Map<'a,'a>) = 
+    let doIterateSeq (zipData:#seq<'a*'a>) (m: Map<'Key, 'Value>) = 
 
         let foldFun =
             (fun i b -> 
@@ -1054,11 +1058,15 @@ module CoreCollectionsMap =
                     
         Utility.getTimeResult result zipData Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let getTime (inputArgs:BenchArgs) (zipData:#seq<'a*'a>) (lookUpData:'a[]) (m: Map<'a,'a>) = 
+    let getTime (inputArgs:BenchArgs) (zipData:#seq<'Key*'Value>) (lookUpData:'Key[]) (m: Map<'Key, 'Value>) = 
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.IterateSeq ->
             m |> doIterateSeq zipData
+
+        | x when x = Action.LookUpOverhead ->
+            let times, sw = m |> doLookUpOverhead inputArgs lookUpData
+            Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
 
         | x when x = Action.LookUpRand ->
             let times, sw = m |> doLookUpRand inputArgs lookUpData

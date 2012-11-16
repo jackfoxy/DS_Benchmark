@@ -57,6 +57,8 @@ type Info =
         printfn " "
         printfn "           *addone*      -- Start with an empty data structure and add elements from the initialization data one at a time, usually performed in a tail-recursive loop."
         printfn " "
+        printfn "           *addonenocapacity* -- Only available for Sys.Dictionary and Sys.Hashtable. Same as *addone* except object is not initialized with capacity equal to input size."
+        printfn " "
         printfn "           *append*      -- Initializes two structures of the same type and length of data (not within the timing) then appends one to the other."
         printfn " "
         printfn "           *init*        -- Initializes the structure from the initialization data using the appropriate structure function member, typically create, ofArray, ofSeq, etc."

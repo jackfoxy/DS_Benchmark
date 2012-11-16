@@ -81,6 +81,34 @@ type FSharpxDListTest() =
         dsGetTime ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.UpdateRand (TestObj.dListInt.GetType()) (TestObj.arrInt.GetType()) |> should be True
 
 [<TestClass>]
+type FSharpxIntMap() = 
+
+    let dsGetTimeResult initData action = 
+        TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxIntMap initData action 
+
+    [<TestMethod>]
+    member x.``IntMap AddOne array int`` () =
+        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne 
+        let data = result.Data:?>(int*int) seq |> Array.ofSeq
+        let output =  (result.Result:?>IntMap<int>) |> Array.ofSeq
+        TestUtil.compArr2 data output -1 |> should be True
+
+    [<TestMethod>]
+    member x.``IntMap LookUpRand array int`` () =
+        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.LookUpRand
+//        let data = result.Data:?>(int*int)[]
+        let data = result.Data:?>(int*int) seq |> Array.ofSeq
+        let output =  (result.Result:?>IntMap<int>) |> Array.ofSeq
+        TestUtil.compArr2 data output -1 |> should be True
+
+//    [<TestMethod>]
+//    member x.``IntMap IterateSeq list string`` () =
+//        let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.IterateSeq 
+//        let data = result.Data :?> list<string>
+//        let output =  result.Result :?> int
+//        data.Length |> should equal output
+
+[<TestClass>]
 type FSharpxPersistentVectorTest() = 
     
     let dsGetTime initData action typeDs typeData =

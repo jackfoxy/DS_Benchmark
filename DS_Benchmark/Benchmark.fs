@@ -536,6 +536,14 @@ module Benchmark =
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfSeq inputArgs data
 
+            | x when x = DataStructure.SysCollectionsDictionary -> 
+                let zipData = Seq.zip data data
+                SysCollectionsDictionary.getTime inputArgs zipData (Seq.toArray data)
+
+            | x when x = DataStructure.SysCollectionsHashtable -> 
+                let zipData = Seq.zip data data
+                SysCollectionsHashtable.getTime inputArgs zipData (Seq.toArray data)
+
             | _ -> failure data (inputArgs.DataStructure + "\tDataStructure not recognized")
 
     let getTime (inputArgs:BenchArgs) =
@@ -561,6 +569,10 @@ module Benchmark =
 
             | x when x = DataStructure.FSharpxQueueImplicit -> 
                 FSharpxQueueImplicit.getTimeOfArray inputArgs data
+
+            | x when x = DataStructure.FSharpxIntMap -> 
+                let zipData = Seq.zip data data
+                FSharpxIntMap.getTime inputArgs zipData (Seq.toArray data)
 
             | x when x = DataStructure.FSharpxQueueRealTime -> 
                 FSharpxQueueRealTime.getTimeOfArray inputArgs data
@@ -641,6 +653,10 @@ module Benchmark =
             | x when x = DataStructure.FSharpxDequeBatched -> 
                 FSharpxDequeBatched.getTimeOfList inputArgs data
                 
+            | x when x = DataStructure.FSharpxIntMap -> 
+                let zipData = Seq.zip data data
+                FSharpxIntMap.getTime inputArgs zipData (Seq.toArray data)
+
             | x when x = DataStructure.FSharpxQueueBatched -> 
                 FSharpxQueueBatched.getTimeOfList inputArgs data
 
@@ -738,6 +754,10 @@ module Benchmark =
 
             | x when x = DataStructure.CoreCollectionsSet -> 
                 CoreCollectionsSet.getTimeOfSeq inputArgs data (getAppendDataForSetSeqInt data) (Seq.length data) (Seq.toArray data)
+
+            | x when x = DataStructure.FSharpxIntMap -> 
+                let zipData = Seq.zip data data
+                FSharpxIntMap.getTime inputArgs zipData (Seq.toArray data)
 
             | x when x = DataStructure.PowerPackHashMultiMap -> 
                 let zipData = Seq.zip data data

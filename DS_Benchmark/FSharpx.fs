@@ -145,6 +145,111 @@ module FSharpxDList =
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
+
+module FSharpxIntMap = 
+
+    let doAddOneSeq (zipData: (int*'a) seq) = 
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let m = Seq.fold (fun (m : IntMap<'a>) ((k:int), (v:'a))-> (IntMap.insert k v m) ) IntMap.empty zipData
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult m zipData Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doLookUpOverhead (inputArgs:BenchArgs) (lookUpData:int[]) (map : IntMap<'a>)  =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs         
+        let mCount = lookUpData.Length
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let b = lookUpData.[(rnd.Next mCount)]
+            ()
+                    
+        sw.Stop()
+                    
+        times, sw
+
+    let doLookUpRand (inputArgs:BenchArgs) (lookUpData:int[]) (map : IntMap<'a>)  =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs         
+        let mCount = lookUpData.Length
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let b = IntMap.find (lookUpData.[(rnd.Next mCount)]) map
+            ()
+                    
+        sw.Stop()
+                    
+        times, sw
+
+    let doUpdateRand (inputArgs:BenchArgs) (lookUpData: 'int[]) (map:IntMap<'a>) =
+        let rnd = new System.Random()       
+        let times = Utility.getIterations inputArgs
+        let mCount = lookUpData.Length
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let a = (lookUpData.[(rnd.Next mCount)])
+            let m = IntMap.alter (fun _ -> Some(a * 2)) a map
+            ()
+                   
+        sw.Stop()
+                    
+        times, sw
+
+    let doIterateSeq (zipData:#seq<'int*'a>) (map: IntMap<'a>) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 map
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result zipData Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let getTime (inputArgs:BenchArgs) (zipData:#seq<int*'a>) (lookUpData:int[]) =
+            
+        System.GC.Collect()
+
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.AddOne ->
+            doAddOneSeq zipData
+
+        | x when x = Action.IterateSeq ->
+            IntMap.ofSeq zipData |> doIterateSeq zipData
+
+        | x when x = Action.LookUpOverhead ->
+            let times, sw = IntMap.ofSeq zipData |> doLookUpOverhead inputArgs lookUpData
+            Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.LookUpRand ->
+            let times, sw = IntMap.ofSeq zipData |> doLookUpRand inputArgs lookUpData
+            Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.UpdateRand ->
+            let times, sw = IntMap.ofSeq zipData |> doUpdateRand inputArgs lookUpData
+            Utility.getTimeResult times zipData Operator.Alter sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+
 module iVector =
         
     let doAppend (v1:Vector.vector<_>) (v2:Vector.vector<_>) data =

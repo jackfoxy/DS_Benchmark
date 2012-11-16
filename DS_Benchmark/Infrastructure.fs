@@ -30,13 +30,16 @@ type Action =
     val private y : unit    //this val and constructor is a spoof to get reflection to work
     new () = {y=()}
     static member AddOne = "addone"
+    static member AddOneNoCapacity = "addonenocapacity"
     static member Append = "append"
     static member Init = "init"
     static member InitOfCatLists = "initofcatlists"
     static member InitOfCatSeqs = "initofcatseqs"
     static member Iterate = "iterate"
     static member IterateSeq = "iterateseq"
+    static member LookUpOverhead = "lookupoverhead"
     static member LookUpRand = "lookuprand"
+    static member LookUpRandNoCapacity = "lookuprandnocapacity"
     static member LookUpRandSeq = "lookuprandseq"
     static member NewInit = "new()"
 
@@ -123,6 +126,8 @@ type DataStructure =
     static member FSharpxHeapBinomial = "fsharpx.heap.binomialheap"
     static member FSharpxHeapLeftist = "fsharpx.heap.leftistheap"
 
+    static member FSharpxIntMap = "fsharpx.intmap"
+
     static member FSharpxQueueBankers = "fsharpx.queue.bankersqueue"
     static member FSharpxQueueBatched = "fsharpx.queue.batchedqueue"
     static member FSharpxQueueBootStrapped = "fsharpx.queue.bootstrappedqueue"
@@ -143,8 +148,13 @@ type DataStructure =
     static member PowerPackHashMultiMap = "powerpack.hashmultimap"
     static member PowerPackLazyList = "powerpack.lazylist"
 
+    static member SysCollectionsDictionary = "sys.dictionary"
+    static member SysCollectionsHashtable = "sys.hashtable"
+
 type Operator = 
+    static member Alter = "alter"
     static member Append = "append"
+    static member ArrayFold = "Array.fold"
     static member AssocN = "assocn"
     static member ConjEnumerateData = "conj enumerate data"
     static member Cons = "cons"
@@ -159,6 +169,7 @@ type Operator =
     static member ItemByIndex = "item index"
     static member ItemByKey = "item key"
     static member Lookup = "lookup"
+    static member ListFold = "List.fold"
     static member Merge ="merge"
     static member NewInit = "new()"
     static member NonEmptyBootstrappedQueueCreate = "NonEmptyBootstrappedQueue.create"
