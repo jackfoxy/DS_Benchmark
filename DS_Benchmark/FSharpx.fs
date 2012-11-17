@@ -191,19 +191,22 @@ module FSharpxIntMap =
                     
         times, sw
 
-    let doUpdateRand (inputArgs:BenchArgs) (lookUpData: 'int[]) (map:IntMap<'a>) =
+    let doUpdateRand (inputArgs:BenchArgs) (lookUpData: 'int[]) (m : IntMap<'a>) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
         let mCount = lookUpData.Length
-                        
+                      
+        let rec loop (map : IntMap<'a>) dec (rnd' : System.Random) count =
+            if dec = 0 then ()
+            else
+                let a = (lookUpData.[(rnd'.Next count)])
+                loop (IntMap.alter (fun _ -> Some(a + 2)) a map) (dec - 1) rnd' count
+                  
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
+                  
+        loop m times rnd mCount
 
-        for i = 1 to times do
-            let a = (lookUpData.[(rnd.Next mCount)])
-            let m = IntMap.alter (fun _ -> Some(a * 2)) a map
-            ()
-                   
         sw.Stop()
                     
         times, sw
@@ -298,13 +301,15 @@ module iVector =
         let times = Utility.getIterations inputArgs
         let update = Seq.nth 0 data
         let vCount = Vector.count v
-                        
+                     
+        let rec loop (vec : Vector.vector<_>) dec (rnd' : System.Random) count =
+            if dec = 0 then ()
+            else loop (vec.AssocN ((rnd'.Next count), update)) (dec - 1)  rnd' count
+               
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        for i = 1 to times do
-            let newV = v.AssocN ((rnd.Next vCount), update)
-            ()
+        loop v times rnd vCount
                     
         sw.Stop()
                     

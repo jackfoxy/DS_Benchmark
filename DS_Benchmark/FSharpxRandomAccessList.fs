@@ -39,13 +39,15 @@ module RandomAccessList =
     let doUpdateRand (inputArgs:BenchArgs) (update:'a) lCount (l:'a IRandomAccessList) =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
-                        
+                    
+        let rec loop (l':'a IRandomAccessList) dec (rnd' : System.Random) count =
+            if dec = 0 then ()
+            else loop (l'.Update (rnd'.Next count) update) (dec - 1) rnd' count
+                    
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        for i = 1 to times do
-            let a = l.Update (rnd.Next lCount) update
-            ()
+        loop l times rnd lCount
                    
         sw.Stop()
                     

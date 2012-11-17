@@ -80,16 +80,14 @@ module ModDeque =
 
         let update = b.Head
 
+        let rec loop (b':'a IDeque) (rnd': System.Random) count = function
+            | 0 -> ()
+            | acc -> loop (b'.Update (rnd'.Next count) update) rnd' count (acc - 1)
+
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        let rec loop (b':'a IDeque) (rnd': System.Random) = function
-            | 0 -> ()
-            | acc -> 
-                let b2 = b.Update (rnd'.Next dCount) update
-                loop b' rnd' (acc - 1)
-
-        loop b rnd times
+        loop b rnd times dCount
                     
         sw.Stop()
                     

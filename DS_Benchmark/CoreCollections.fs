@@ -1028,16 +1028,19 @@ module CoreCollectionsMap =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
         let mCount = m.Count
-                        
+                     
+        let rec loop (map : Map<'a, 'a>) dec (rnd' : System.Random) count =
+            if dec = 0 then ()
+            else
+                let a = (lookUpData.[(rnd'.Next count)])
+                let m2 = Map.remove a map
+                loop (Map.add a a m2) (dec - 1) rnd' count
+                   
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
-        for i = 1 to times do
-            let a = (lookUpData.[(rnd.Next mCount)])
-            let m2 = Map.remove a m
-            let m3 = Map.add a a m2
-            ()
-                   
+        loop m times rnd mCount
+          
         sw.Stop()
                     
         times, sw
@@ -1282,16 +1285,19 @@ module CoreCollectionsSet =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
         let sCount = Set.count s
-                        
+                      
+        let rec loop (set :'a Set) dec (rnd' : System.Random) count =
+            if dec = 0 then ()
+            else 
+                let a = (lookUpData.[(rnd'.Next count)])
+                let s2 = Set.remove a s
+                loop (Set.add a s2) (dec - 1) rnd' count
+              
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
-
-        for i = 1 to times do
-            let a = (lookUpData.[(rnd.Next sCount)])
-            let s2 = Set.remove a s
-            let s3 = Set.add a s2
-            ()
                    
+        loop s times rnd sCount
+
         sw.Stop()
                     
         times, sw
