@@ -188,6 +188,7 @@ type Operator =
     static member RecTail = "rec tail until empty"
     static member Remove = "remove"
     static member RemoveAdd = "remove add"
+    static member Replace = "replace"
     static member SeqFold = "Seq.fold"
     static member SeqNth  = "Seq.nth"
     static member Snoc = "snoc"

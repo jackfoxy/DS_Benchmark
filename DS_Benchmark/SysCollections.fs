@@ -72,15 +72,14 @@ module SysCollectionsDictionary =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
         let mCount = dict.Count
-                        
+                       
+        let update =  dict.[lookUpData.[0]]
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
         for i = 1 to times do
             let a = (lookUpData.[(rnd.Next mCount)])
-            
-            dict.Remove a |> ignore
-            dict.Add(a, a)
+            dict.[a] <- update
             ()
                    
         sw.Stop()
@@ -149,7 +148,7 @@ module SysCollectionsDictionary =
 
         | x when x = Action.UpdateRand ->
             let times, sw = newDict zipData |> doUpdateRand inputArgs lookUpData
-            Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
 
         | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
@@ -221,15 +220,15 @@ module SysCollectionsHashtable =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
         let mCount = hshTbl.Count
+
+        let update = hshTbl.[0]
                         
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
         for i = 1 to times do
             let a = (lookUpData.[(rnd.Next mCount)])
-            
-            hshTbl.Remove a |> ignore
-            hshTbl.Add(a, a)
+            hshTbl.[a] <- update
             ()
                    
         sw.Stop()
@@ -298,6 +297,6 @@ module SysCollectionsHashtable =
 
         | x when x = Action.UpdateRand ->
             let times, sw = newHash zipData |> doUpdateRand inputArgs lookUpData
-            Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
 
         | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")

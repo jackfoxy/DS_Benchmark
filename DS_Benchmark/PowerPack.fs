@@ -102,19 +102,20 @@ module PowerPackHashMultiMap =
             let rnd = new System.Random()       
             let times = Utility.getIterations inputArgs
             let hCount = h.Count
+
+            let update = h.[lookUpData.[0]]
                         
             let sw = new System.Diagnostics.Stopwatch()
             sw.Start()
 
             for i = 1 to times do
                 let a = (lookUpData.[(rnd.Next hCount)])
-                h.Remove a
-                h.Add (a,a)
+                h.Replace (a,update)
                 ()
                    
             sw.Stop()
 
-            Utility.getTimeResult times zipData Operator.RemoveAdd sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.getTimeResult times zipData Operator.Replace sw.ElapsedTicks sw.ElapsedMilliseconds
 
         | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 

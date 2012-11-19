@@ -195,17 +195,19 @@ module FSharpxIntMap =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
         let mCount = lookUpData.Length
+
+        let update = IntMap.find lookUpData.[0] m
                       
-        let rec loop (map : IntMap<'a>) dec (rnd' : System.Random) count =
+        let rec loop (map : IntMap<'a>) dec (rnd' : System.Random) count update' =
             if dec = 0 then ()
             else
                 let a = (lookUpData.[(rnd'.Next count)])
-                loop (IntMap.alter (fun _ -> Some(a + 2)) a map) (dec - 1) rnd' count
+                loop (IntMap.alter (fun _ -> Some(update')) a map) (dec - 1) rnd' count update'
                   
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
                   
-        loop m times rnd mCount
+        loop m times rnd mCount update
 
         sw.Stop()
                     
