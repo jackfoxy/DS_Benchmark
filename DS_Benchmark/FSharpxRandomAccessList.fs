@@ -211,7 +211,7 @@ module FSharpxRandomAccessListAltBinary =
                     
         sw.Stop()
                     
-        Utility.getTimeResult l data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult l data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) (data:'a seq) =
 
@@ -335,7 +335,7 @@ module FSharpxRandomAccessListBinary =
                     
         Utility.getTimeResult h1 data Operator.Cons sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (l:'a BinaryRandomAccessList) =
+    let doUnconsToEmpty data (l:'a BinaryRandomAccessList) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -348,7 +348,7 @@ module FSharpxRandomAccessListBinary =
                     
         sw.Stop()
                     
-        Utility.getTimeResult l data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult l data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) (data:'a seq) =
 
@@ -393,8 +393,8 @@ module FSharpxRandomAccessListBinary =
                 let times, sw = BinaryRandomAccessList.ofSeq data |> RandomAccessList.doLookUpRand inputArgs (Seq.length data)
                 Utility.getTimeResult times data Operator.Lookup sw.ElapsedTicks sw.ElapsedMilliseconds
 
-            | x when x = Action.TailToEmpty ->
-                BinaryRandomAccessList.ofSeq data |> doTailToEmpty data
+            | x when x = Action.UnconsToEmpty ->
+                BinaryRandomAccessList.ofSeq data |> doUnconsToEmpty data
 
             | x when x = Action.UpdateRand ->
                 let l = BinaryRandomAccessList.ofSeq data
@@ -436,7 +436,7 @@ module FSharpxRandomAccessListSkewBinary =
                     
         Utility.getTimeResult h1 data Operator.Cons sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (l:'a SkewBinaryRandomAccessList) =
+    let doUnconsToEmpty data (l:'a SkewBinaryRandomAccessList) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -449,7 +449,7 @@ module FSharpxRandomAccessListSkewBinary =
                     
         sw.Stop()
                     
-        Utility.getTimeResult l data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult l data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) (data:'a seq) =
 
@@ -494,8 +494,8 @@ module FSharpxRandomAccessListSkewBinary =
                 let times, sw = SkewBinaryRandomAccessList.ofSeq data |> RandomAccessList.doLookUpRand inputArgs (Seq.length data)
                 Utility.getTimeResult times data Operator.Lookup sw.ElapsedTicks sw.ElapsedMilliseconds
 
-            | x when x = Action.TailToEmpty ->
-                SkewBinaryRandomAccessList.ofSeq data |> doTailToEmpty data
+            | x when x = Action.UnconsToEmpty ->
+                SkewBinaryRandomAccessList.ofSeq data |> doUnconsToEmpty data
 
             | x when x = Action.UpdateRand ->
                 let l = SkewBinaryRandomAccessList.ofSeq data

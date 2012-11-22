@@ -51,7 +51,7 @@ module FSharpxQueueBankers =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (q:'a BankersQueue) =
+    let doUnconsToEmpty data (q:'a BankersQueue) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -64,7 +64,7 @@ module FSharpxQueueBankers =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) data = 
         match inputArgs.Action.ToLower() with
@@ -88,8 +88,8 @@ module FSharpxQueueBankers =
         | x when x = Action.IterateSeq ->
             BankersQueue.ofSeq data |> doIterateSeq data
 
-        | x when x = Action.TailToEmpty ->
-            BankersQueue.ofSeq data |> doTailToEmpty data
+        | x when x = Action.UnconsToEmpty ->
+            BankersQueue.ofSeq data |> doUnconsToEmpty data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
@@ -141,7 +141,7 @@ module FSharpxQueueBatched =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (q:'a BatchedQueue) =
+    let doUnconsToEmpty data (q:'a BatchedQueue) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -154,7 +154,7 @@ module FSharpxQueueBatched =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) data (b: 'a BatchedQueue) = 
         match inputArgs.Action.ToLower() with
@@ -178,8 +178,8 @@ module FSharpxQueueBatched =
         | x when x = Action.IterateSeq ->
             b |> doIterateSeq data
 
-        | x when x = Action.TailToEmpty ->
-            b |> doTailToEmpty data
+        | x when x = Action.UnconsToEmpty ->
+            b |> doUnconsToEmpty data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
@@ -353,7 +353,7 @@ module FSharpxQueueBootStrapped =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doUpdateRand inputArgs data dCount update (b:'a BootstrappedQueue.BootstrappedQueue) =
         let rnd = new System.Random()
@@ -540,7 +540,7 @@ module FSharpxQueueHoodMelville =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (q:'a HoodMelvilleQueue) =
+    let doUnconsToEmpty data (q:'a HoodMelvilleQueue) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -553,7 +553,7 @@ module FSharpxQueueHoodMelville =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) data (b: 'a HoodMelvilleQueue) = 
         match inputArgs.Action.ToLower() with
@@ -577,8 +577,8 @@ module FSharpxQueueHoodMelville =
         | x when x = Action.IterateSeq ->
             b |> doIterateSeq data
 
-        | x when x = Action.TailToEmpty ->
-            b |> doTailToEmpty data
+        | x when x = Action.UnconsToEmpty ->
+            b |> doUnconsToEmpty data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
@@ -714,7 +714,7 @@ module FSharpxQueueImplicit =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doUpdateRand inputArgs data dCount update (iQ:'a ImplicitQueue.ImplicitQueue) =
         let rnd = new System.Random()
@@ -892,7 +892,7 @@ module FSharpxQueuePhysicist =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (q:'a PhysicistQueue) =
+    let doUnconsToEmpty data (q:'a PhysicistQueue) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -905,7 +905,7 @@ module FSharpxQueuePhysicist =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) data (b: 'a PhysicistQueue) = 
         match inputArgs.Action.ToLower() with
@@ -929,8 +929,8 @@ module FSharpxQueuePhysicist =
         | x when x = Action.IterateSeq ->
             b |> doIterateSeq data
 
-        | x when x = Action.TailToEmpty ->
-            b |> doTailToEmpty data
+        | x when x = Action.UnconsToEmpty ->
+            b |> doUnconsToEmpty data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
@@ -1057,7 +1057,7 @@ module FSharpxQueueRealTime =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doUpdateRand inputArgs data dCount update (r:'a RealTimeQueue.RealTimeQueue) =
         let rnd = new System.Random()

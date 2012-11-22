@@ -156,7 +156,7 @@ module FSharpxDequeBankers =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (q:'a BankersDeque) =
+    let doUnconsToEmpty data (q:'a BankersDeque) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -170,7 +170,7 @@ module FSharpxDequeBankers =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) data (b: 'a BankersDeque) = 
         match inputArgs.Action.ToLower() with
@@ -218,8 +218,8 @@ module FSharpxDequeBankers =
             let times, sw = b |> ModDeque.doRemoveWorst1 (Seq.length data)
             Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
 
-        | x when x = Action.TailToEmpty ->
-            b|> doTailToEmpty data
+        | x when x = Action.UnconsToEmpty ->
+            b|> doUnconsToEmpty data
 
         | x when x = Action.UpdateRand ->
             b |> ModDeque.doUpdateRand inputArgs data (Seq.length data)
@@ -336,7 +336,7 @@ module FSharpxDequeBatched =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (q:'a BatchedDeque) =
+    let doUnconsToEmpty data (q:'a BatchedDeque) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -350,7 +350,7 @@ module FSharpxDequeBatched =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let ofBalanced (data:'a seq) =
 
@@ -403,8 +403,8 @@ module FSharpxDequeBatched =
             let times, sw = b |> ModDeque.doRemoveWorst1 (Seq.length data)
             Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
 
-        | x when x = Action.TailToEmpty ->
-            b |> doTailToEmpty data
+        | x when x = Action.UnconsToEmpty ->
+            b |> doUnconsToEmpty data
 
         | x when x = Action.UpdateRand ->
             b |> ModDeque.doUpdateRand inputArgs data (Seq.length data)
@@ -488,7 +488,7 @@ module FSharpxDeque =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (q:'a Deque) =
+    let doUnconsToEmpty data (q:'a Deque) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -502,7 +502,7 @@ module FSharpxDeque =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let ofBalanced (data:'a seq) =
 
@@ -555,8 +555,8 @@ module FSharpxDeque =
             let times, sw = b |> ModDeque.doRemoveWorst1 (Seq.length data)
             Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
 
-        | x when x = Action.TailToEmpty ->
-            b |> doTailToEmpty data
+        | x when x = Action.UnconsToEmpty ->
+            b |> doUnconsToEmpty data
 
         | x when x = Action.UpdateRand ->
             b |> ModDeque.doUpdateRand inputArgs data (Seq.length data)
@@ -640,7 +640,7 @@ module FSharpxDequeRealTime =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (q:'a RealTimeDeque) =
+    let doUnconsToEmpty data (q:'a RealTimeDeque) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -654,7 +654,7 @@ module FSharpxDequeRealTime =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) data (b: 'a RealTimeDeque) = 
         match inputArgs.Action.ToLower() with
@@ -702,8 +702,8 @@ module FSharpxDequeRealTime =
             let times, sw = b |> ModDeque.doRemoveWorst1 (Seq.length data)
             Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
 
-        | x when x = Action.TailToEmpty ->
-            b |> doTailToEmpty data
+        | x when x = Action.UnconsToEmpty ->
+            b |> doUnconsToEmpty data
 
         | x when x = Action.UpdateRand ->
             b |> ModDeque.doUpdateRand inputArgs data (Seq.length data)

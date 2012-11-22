@@ -34,7 +34,7 @@ module FSharpxDList =
                     
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult q data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) (data:#('a seq)) =
 

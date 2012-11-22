@@ -57,6 +57,7 @@ type Action =
     static member RemoveDescend = "removedescend"
 
     static member TailToEmpty = "tailtoempty"
+    static member UnconsToEmpty = "unconstoempty"
     static member UpdateHybridRand = "updatehybridrand"
     static member UpdateHybridWorst1 = "updatehybridworst1"
     static member UpdateRand = "updaterand"
@@ -125,6 +126,7 @@ type DataStructure =
 
     static member FSharpxHeapBinomial = "fsharpx.heap.binomialheap"
     static member FSharpxHeapLeftist = "fsharpx.heap.leftistheap"
+    static member FSharpxHeapPairing = "fsharpx.heap.pairingheap"
 
     static member FSharpxIntMap = "fsharpx.intmap"
 
@@ -195,6 +197,7 @@ type Operator =
     static member SplitConsAppend = "split cons append"
     static member SplitSnocAppend = "split snoc append"
     static member ToArrayItemOfArray = "toarray item ofarray"
+    static member tryUncons = "tryuncons"
     static member Update = "update"
 
 module Utility =

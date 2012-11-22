@@ -213,7 +213,7 @@ module PowerPackLazyList =
 
         times, sw
 
-    let doTailToEmpty data (ll:'a LazyList) =
+    let doUnconsToEmpty data (ll:'a LazyList) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -226,7 +226,7 @@ module PowerPackLazyList =
                     
         sw.Stop()
                     
-        Utility.getTimeResult ll data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult ll data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doUpdateRand (inputArgs:BenchArgs) update lCount ll =
         let rnd = new System.Random()
@@ -468,8 +468,8 @@ module PowerPackLazyList =
                 let times, sw = ll |> doLookUpRand inputArgs (Seq.length data)
                 Utility.getTimeResult times data Operator.RecAccHead sw.ElapsedTicks sw.ElapsedMilliseconds
 
-            | x when x = Action.TailToEmpty ->
-                ll |> doTailToEmpty data
+            | x when x = Action.UnconsToEmpty ->
+                ll |> doUnconsToEmpty data
 
             | x when x = Action.UpdateRand ->
                 let times, sw = ll |> doUpdateRand inputArgs (Seq.nth 0 data) (Seq.length data)

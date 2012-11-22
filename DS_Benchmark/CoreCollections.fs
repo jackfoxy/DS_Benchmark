@@ -609,7 +609,7 @@ module CoreCollectionsList =
                     
         sw.Stop()
                     
-        Utility.getTimeResult l data Operator.Merge sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult l data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doUpdatePuntRand (inputArgs:BenchArgs) (update:'a) (l:'a list) =
         let rnd = new System.Random()       

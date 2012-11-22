@@ -493,6 +493,9 @@ module Benchmark =
 
             | x when x = DataStructure.FSharpxHeapLeftist -> 
                 FSharpxHeapLeftist.getTime inputArgs data
+
+            | x when x = DataStructure.FSharpxHeapPairing -> 
+                FSharpxHeapPairing.getTime inputArgs data
             
             | x when x = DataStructure.FSharpxQueueBankers -> 
                 FSharpxQueueBankers.getTime inputArgs data

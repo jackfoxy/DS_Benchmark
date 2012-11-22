@@ -45,7 +45,6 @@
     <Compile Include="FiniteMap.fs" />
     <Compile Include="LazyBinomialHeap.fs" />
     <Compile Include="LazyPairingHeap.fs" />
-    <Compile Include="PairingHeap.fs" />
     <Compile Include="RedBlackSet.fs" />
     <Compile Include="ScheduledBinomialHeap.fs" />
     <Compile Include="ScheduledBottomUpMergeSort.fs" />
