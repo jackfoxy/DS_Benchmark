@@ -6,7 +6,7 @@ Each timing cycle executes <del>100</del> 50 timings and takes the best <del>85<
 
 ##Usage
 
-Execute Console1.exe with no parameter for help. Help is always up-to-date with the latest documentation.
+Execute Console1.exe with no parameter for help. Help is always complete and up-to-date with the latest documentation. (Usage in this readme file is not kept up-to-date.)
 
 IMPORTANT NOTE: CD the bin folder from which you execute Console1 in the shell. Setting the environment path does not work for now because of temp file handling. Hope to fix this <del>soon</del> someday.
 

@@ -539,9 +539,26 @@ module Benchmark =
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfSeq inputArgs data
 
-            | x when x = DataStructure.SysCollectionsDictionary -> 
+            | x when x = DataStructure.SysCollectionsConcurrentQueue -> 
+                SysCollectionsConcurrentQueue.getTime inputArgs data
+
+            | x when x = DataStructure.SysCollectionsGenDictionary -> 
                 let zipData = Seq.zip data data
-                SysCollectionsDictionary.getTime inputArgs zipData (Seq.toArray data)
+                SysCollectionsGenDictionary.getTime inputArgs zipData (Seq.toArray data)
+
+            | x when x = DataStructure.SysCollectionsGenDictionaryHash -> 
+                let zipData = Seq.zip data data
+                SysCollectionsGenDictionaryHash.getTime inputArgs zipData (Seq.toArray data)
+
+            | x when x = DataStructure.SysCollectionsGenHashSet -> 
+                SysCollectionsGenHashSet.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.SysCollectionsGenQueue -> 
+                SysCollectionsGenQueue.getTime inputArgs data
+
+            | x when x = DataStructure.SysCollectionsGenSortedDictionary -> 
+                let zipData = Seq.zip data data
+                SysCollectionsGenSortedDictionary.getTime inputArgs zipData (Seq.toArray data)
 
             | x when x = DataStructure.SysCollectionsHashtable -> 
                 let zipData = Seq.zip data data
@@ -590,6 +607,9 @@ module Benchmark =
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfArray inputArgs data
 
+            | x when x = DataStructure.SysCollectionsGenHashSet -> 
+                SysCollectionsGenHashSet.getTimeOfArray inputArgs data
+
             | _ -> getTimeOfGenericSeq inputArgs data
 
         | _ when inputArgs.InitData.ToLower().Contains("arraystring") -> 
@@ -624,6 +644,9 @@ module Benchmark =
 
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfArray inputArgs data
+
+            | x when x = DataStructure.SysCollectionsGenHashSet -> 
+                SysCollectionsGenHashSet.getTimeOfArray inputArgs data
 
             | _ -> getTimeOfGenericSeq inputArgs data 
 
@@ -688,6 +711,9 @@ module Benchmark =
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfList inputArgs data
 
+            | x when x = DataStructure.SysCollectionsGenHashSet -> 
+                SysCollectionsGenHashSet.getTimeOfList inputArgs data
+
             | _ -> getTimeOfGenericSeq inputArgs data
                     
         | _ when inputArgs.InitData.ToLower().Contains("liststring") -> 
@@ -743,6 +769,9 @@ module Benchmark =
 
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfList inputArgs data
+
+            | x when x = DataStructure.SysCollectionsGenHashSet -> 
+                SysCollectionsGenHashSet.getTimeOfList inputArgs data
 
             | _ -> getTimeOfGenericSeq inputArgs data
 
