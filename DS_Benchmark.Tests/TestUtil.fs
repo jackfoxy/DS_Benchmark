@@ -75,24 +75,6 @@ type TestObj =
     static member setInt = Set TestObj.seqInt
     static member setString = Set TestObj.seqString
 
-    static member typeOfTransientVectorInt =
-        let mutable vi = Vector.TransientVector()
-        let en = TestObj.seqInt.GetEnumerator()
-
-        while en.MoveNext() do
-            vi <- vi.conj en.Current
-
-        vi.GetType()
-
-    static member typeOfTransientVectorString =
-        let mutable vi = Vector.TransientVector()
-        let en = TestObj.seqString.GetEnumerator()
-
-        while en.MoveNext() do
-            vi <- vi.conj en.Current
-
-        vi.GetType()
-
     static member zipArrInt = Array.zip TestObj.arrInt TestObj.arrInt
     static member zipArrString = Array.zip TestObj.arrString TestObj.arrString
 

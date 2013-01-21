@@ -7,39 +7,26 @@ open System.Collections.Generic
 
 module SysCollectionsConcurrentQueue = 
 
-    let doAddOne (data: 'a seq) = 
+    let iterate2Empty (q:'a ConcurrentQueue) count =
+        let rec loop = function
+            | count when count = 0 -> ()
+            | _ -> 
+                let (success, a) = q.TryDequeue()
+                loop q.Count
+        loop count
 
-        let queue = ConcurrentQueue()
-
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
-
-        let l1 = Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult queue.Count data Operator.SeqIter sw.ElapsedTicks sw.ElapsedMilliseconds
+        count
 
     let doIterate (data:'a seq) (q:'a ConcurrentQueue) = 
-
-        let iterateBsQueue count =
-            let rec loop = function
-                | count when count = 0 -> ()
-                | _ -> 
-                    let (success, a) = q.TryDequeue()
-                    loop q.Count
-            loop count
-
-            count
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let result = iterateBsQueue q.Count
+        let result = iterate2Empty q q.Count
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.TryDequeue Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterateSeq (data:#seq<'a>) (queue: ConcurrentQueue<'a>) = 
 
@@ -54,9 +41,39 @@ module SysCollectionsConcurrentQueue =
                     
         Utility.getTimeResult queue.Count data Operator.ForIn sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doDequeueToEmpty data (q:'a ConcurrentQueue) =
+    let doQueueIntegration data = 
 
-        doIterate data q
+        let queue = ConcurrentQueue()
+
+        let iterateDown (q:'a ConcurrentQueue) count =
+            let rec loop acc =
+                match acc  with
+                | 0 -> ()
+                | _ -> 
+                    let (success, a) = q.TryDequeue()
+                    loop (acc - 1)
+            loop count
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let dataLen = Seq.length data
+ 
+        Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
+
+        iterateDown queue (dataLen / 2)
+
+        Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
+
+        iterateDown queue (((dataLen / 2) + dataLen) / 2)
+
+        Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
+
+        let result = iterate2Empty queue queue.Count
+
+        sw.Stop()
+                    
+        Utility.getTimeResult dataLen data Operator.QueueIntegration sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) (data:#seq<'a>) =
             
@@ -65,7 +82,16 @@ module SysCollectionsConcurrentQueue =
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.AddOne ->
-            doAddOne data
+            let queue = ConcurrentQueue()
+
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+
+            Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult queue.Count data (sprintf "%s %s" Operator.SeqIter Operator.Enqueue) sw.ElapsedTicks sw.ElapsedMilliseconds
 
         | x when x = Action.Iterate ->
             ConcurrentQueue data |> doIterate data
@@ -74,18 +100,11 @@ module SysCollectionsConcurrentQueue =
             ConcurrentQueue data |> doIterateSeq data
 
         | x when x = Action.NewInit ->
-                
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
- 
-                let q = ConcurrentQueue data
-                    
-                sw.Stop()
-                    
-                Utility.getTimeResult q data Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
+            let f data = ConcurrentQueue data
+            Utility.timeAction f data Operator.NewInit
 
-        | x when x = Action.UnconsToEmpty ->
-            ConcurrentQueue data |> doDequeueToEmpty data
+        | x when x = Action.QueueIntegration  ->
+            doQueueIntegration data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
@@ -236,7 +255,6 @@ module SysCollectionsGenDictionary =
             Utility.getTimeResult times zipData Operator.ItemByKey sw.ElapsedTicks sw.ElapsedMilliseconds
 
         | _ -> failure zipData (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
 
 module SysCollectionsGenDictionaryHash = 
 
@@ -549,52 +567,26 @@ module SysCollectionsGenHashSet =
 
 module SysCollectionsGenQueue = 
 
-    let doAddOne (data: 'a seq) = 
+    let iterate2Empty (q:'a  Generic.Queue) count =
+        let rec loop = function
+            | count when count = 0 -> ()
+            | _ -> 
+                let a = q.Dequeue()
+                loop q.Count
+        loop count
 
-        let queue = Generic.Queue(Seq.length data)
-
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
-
-        let l1 = Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult queue.Count data Operator.SeqIter sw.ElapsedTicks sw.ElapsedMilliseconds
-
-    let doAddOneNoCapacity (data: 'a seq) = 
-
-        let queue = Generic.Queue()
-
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
-
-        let l1 = Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult queue.Count data Operator.SeqIter sw.ElapsedTicks sw.ElapsedMilliseconds
+        count
 
     let doIterate (data:'a seq) (q:'a Generic.Queue) = 
-
-        let iterateBsQueue count =
-            let rec loop = function
-                | count when count = 0 -> ()
-                | _ -> 
-                    let a = q.Dequeue()
-                    loop q.Count
-            loop count
-
-            count
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let result = iterateBsQueue q.Count
+        let result = iterate2Empty q q.Count
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Dequeue Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterateSeq (data:#seq<'a>) (queue: Generic.Queue<'a>) = 
 
@@ -609,9 +601,39 @@ module SysCollectionsGenQueue =
                     
         Utility.getTimeResult queue.Count data Operator.ForIn sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doDequeueToEmpty data (q:'a Generic.Queue) =
+    let doQueueIntegration data = 
 
-        doIterate data q
+        let queue = Generic.Queue(Seq.length data)
+
+        let iterateDown (q:'a  Generic.Queue) count =
+            let rec loop acc =
+                match acc  with
+                | 0 -> ()
+                | _ -> 
+                    let a = q.Dequeue()
+                    loop (acc - 1)
+            loop count
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let dataLen = Seq.length data
+ 
+        Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
+
+        iterateDown queue (dataLen / 2)
+
+        Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
+
+        iterateDown queue (((dataLen / 2) + dataLen) / 2)
+
+        Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
+
+        let result = iterate2Empty queue queue.Count
+
+        sw.Stop()
+                    
+        Utility.getTimeResult dataLen data Operator.QueueIntegration sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) (data:#seq<'a>) =
             
@@ -620,10 +642,28 @@ module SysCollectionsGenQueue =
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.AddOne ->
-            doAddOne data
+            let queue = Generic.Queue(Seq.length data)
+
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+
+            Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult queue.Count data (sprintf "%s %s" Operator.SeqIter Operator.Enqueue) sw.ElapsedTicks sw.ElapsedMilliseconds
 
         | x when x = Action.AddOneNoCapacity ->
-            doAddOneNoCapacity data
+            let queue = Generic.Queue()
+
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+
+            Seq.iter (fun (v:'a) ->  queue.Enqueue v) data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult queue.Count data (sprintf "%s %s" Operator.SeqIter Operator.Enqueue) sw.ElapsedTicks sw.ElapsedMilliseconds
 
         | x when x = Action.Iterate ->
             Generic.Queue data |> doIterate data
@@ -632,18 +672,18 @@ module SysCollectionsGenQueue =
             Generic.Queue data |> doIterateSeq data
 
         | x when x = Action.NewInit ->
-                
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
- 
-                let q = Generic.Queue data
-                    
-                sw.Stop()
-                    
-                Utility.getTimeResult q data Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
 
-        | x when x = Action.UnconsToEmpty ->
-            Generic.Queue data |> doDequeueToEmpty data
+            let sw = new System.Diagnostics.Stopwatch()
+            sw.Start()
+ 
+            let q = Generic.Queue data
+                    
+            sw.Stop()
+                    
+            Utility.getTimeResult q.Count data Operator.NewInit sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.QueueIntegration  ->
+            doQueueIntegration data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 

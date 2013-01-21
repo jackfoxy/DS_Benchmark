@@ -109,17 +109,6 @@ module ModDeque =
 
 module FSharpxDequeBankers =
 
-    let doAddOne (data:'a seq) =
-
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let q2 = Seq.fold (fun (q : 'a BankersDeque) t -> (q.Snoc t)) (BankersDeque.empty 2) data
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult q2 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
-
     let doIterate (data:'a seq) (b:'a BankersDeque) = 
 
         let iterateBsQueue (bsQueue:'a BankersDeque) =
@@ -138,7 +127,7 @@ module FSharpxDequeBankers =
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Head Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterateSeq (data:'a seq) (q:'a BankersDeque) = 
 
@@ -172,11 +161,30 @@ module FSharpxDequeBankers =
                     
         Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
+    let ofBalanced (data:'a seq) =
+
+        let rec loop (b:'a BankersDeque) (d:'a seq)  dLength acc =
+            match acc  with
+            | _ when acc = dLength -> b
+            | _ -> 
+                if ((acc % 2) = 0) then
+                    loop (BankersDeque.cons (Seq.nth acc d) b) d dLength (acc + 1)
+                else
+                    loop (BankersDeque.snoc (Seq.nth acc d) b) d dLength (acc + 1)
+ 
+        loop (BankersDeque.singleton (Seq.nth 0 data)) data (Seq.length data) 1
+
     let getTime (inputArgs:BenchArgs) data (b: 'a BankersDeque) = 
         match inputArgs.Action.ToLower() with
 
-        | x when x = Action.AddOne ->
-            doAddOne data
+        | x when x = Action.AddOneCons ->
+            Utility.timeAction (Seq.fold (fun (q : 'a BankersDeque) t -> BankersDeque.cons t q) (BankersDeque.empty 2)) data (sprintf "%s %s" Operator.SeqFold Operator.Cons)
+
+        | x when x = Action.AddOneConj ->
+            Utility.timeAction (Seq.fold (fun (q : 'a BankersDeque) t -> q.Snoc t) (BankersDeque.empty 2)) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
+
+        | x when x = Action.AddTwo ->
+            Utility.timeAction (Seq.fold (fun (q : 'a BankersDeque) t -> q.Snoc t |> BankersDeque.cons t) (BankersDeque.empty 2)) data (sprintf "%s %s %s" Operator.SeqFold Operator.Snoc Operator.Cons)
 
         | x when x = Action.Append ->
 
@@ -219,7 +227,7 @@ module FSharpxDequeBankers =
             Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
 
         | x when x = Action.UnconsToEmpty ->
-            b|> doUnconsToEmpty data
+            b |> doUnconsToEmpty data
 
         | x when x = Action.UpdateRand ->
             b |> ModDeque.doUpdateRand inputArgs data (Seq.length data)
@@ -257,7 +265,7 @@ module FSharpxDequeBankers =
                     
             Utility.getTimeResult b data Operator.OfCatLists sw.ElapsedTicks sw.ElapsedMilliseconds
            
-        | _ -> getTime inputArgs data (BankersDeque.ofSeq data)
+        | _ -> getTime inputArgs data (ofBalanced(data))
 
     let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
 
@@ -285,20 +293,9 @@ module FSharpxDequeBankers =
                     
             Utility.getTimeResult b data Operator.OfCatSeqs sw.ElapsedTicks sw.ElapsedMilliseconds
 
-        | _ -> getTime inputArgs data (BankersDeque.ofSeq data)
+        | _ -> getTime inputArgs data (ofBalanced(data))
 
 module FSharpxDequeBatched =
-
-    let doAddOne (data:'a seq) =
-
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let q2 = Seq.fold (fun (q : 'a BatchedDeque) t -> (q.Snoc t)) (BatchedDeque.empty()) data
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult q2 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterate (data:'a seq) (b:'a BatchedDeque) = 
 
@@ -318,7 +315,7 @@ module FSharpxDequeBatched =
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Head Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterateSeq (data:'a seq) (b:'a BatchedDeque) = 
 
@@ -335,6 +332,21 @@ module FSharpxDequeBatched =
         sw.Stop()
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doUnconjToEmpty data (q:'a BatchedDeque) =
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let rec loop : 'a BatchedDeque -> unit =  function
+            | BatchedDeque.Snoc(intl, lst) -> loop intl
+            | BatchedDeque.Nil -> ()
+
+        loop q
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doUnconsToEmpty data (q:'a BatchedDeque) =
 
@@ -371,8 +383,14 @@ module FSharpxDequeBatched =
 
         match inputArgs.Action.ToLower() with
 
-        | x when x = Action.AddOne ->
-            doAddOne data
+        | x when x = Action.AddOneCons ->
+            Utility.timeAction (Seq.fold (fun (q : 'a BatchedDeque) t -> BatchedDeque.cons t q) (BatchedDeque.empty())) data (sprintf "%s %s" Operator.SeqFold Operator.Cons)
+
+        | x when x = Action.AddOneConj ->
+            Utility.timeAction (Seq.fold (fun (q : 'a BatchedDeque) t -> q.Snoc t) (BatchedDeque.empty())) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
+
+        | x when x = Action.AddTwo ->
+            Utility.timeAction (Seq.fold (fun (q : 'a BatchedDeque) t -> q.Snoc t |> BatchedDeque.cons t) (BatchedDeque.empty())) data (sprintf "%s %s %s" Operator.SeqFold Operator.Snoc Operator.Cons)
 
         | x when x = Action.Init ->
                 let sw = new System.Diagnostics.Stopwatch()
@@ -403,6 +421,9 @@ module FSharpxDequeBatched =
             let times, sw = b |> ModDeque.doRemoveWorst1 (Seq.length data)
             Utility.getTimeResult times data Operator.Remove sw.ElapsedTicks sw.ElapsedMilliseconds
 
+        | x when x = Action.UnconjToEmpty ->
+            b |> doUnconjToEmpty data
+
         | x when x = Action.UnconsToEmpty ->
             b |> doUnconsToEmpty data
 
@@ -420,6 +441,16 @@ module FSharpxDequeBatched =
         System.GC.Collect()
             
         match inputArgs.Action.ToLower() with
+
+        | x when x = Action.Init ->
+                let sw = new System.Diagnostics.Stopwatch()
+                sw.Start()
+ 
+                let h = BatchedDeque.ofList data
+                    
+                sw.Stop()
+                    
+                Utility.getTimeResult h data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
 
         | x when x = Action.InitOfCatLists ->
             let sw = new System.Diagnostics.Stopwatch()
@@ -441,17 +472,6 @@ module FSharpxDequeBatched =
 
 module FSharpxDeque =
 
-    let doAddOne (data:'a seq) =
-
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let q2 = Seq.fold (fun (q : 'a Deque) t -> (q.Snoc t)) (Deque.empty()) data
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult q2 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
-
     let doIterate (data:'a seq) (b:'a Deque) = 
 
         let iterateBsQueue (q:'a Deque) =
@@ -470,7 +490,7 @@ module FSharpxDeque =
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Head Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterateSeq (data:'a seq) (b:'a Deque) = 
 
@@ -523,8 +543,14 @@ module FSharpxDeque =
         
         match inputArgs.Action.ToLower() with
 
-        | x when x = Action.AddOne ->
-            doAddOne data
+        | x when x = Action.AddOneCons ->
+            Utility.timeAction (Seq.fold (fun (q : 'a Deque) t -> Deque.cons t q) (Deque.empty())) data (sprintf "%s %s" Operator.SeqFold Operator.Cons)
+
+        | x when x = Action.AddOneConj ->
+            Utility.timeAction (Seq.fold (fun (q : 'a Deque) t -> q.Snoc t) (Deque.empty())) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
+
+        | x when x = Action.AddTwo ->
+            Utility.timeAction (Seq.fold (fun (q : 'a Deque) t -> q.Snoc t |> Deque.cons t) (Deque.empty())) data (sprintf "%s %s %s" Operator.SeqFold Operator.Snoc Operator.Cons)
 
         | x when x = Action.Init ->
             let sw = new System.Diagnostics.Stopwatch()
@@ -540,7 +566,7 @@ module FSharpxDeque =
             b |> doIterate data
 
         | x when x = Action.IterateSeq ->
-            b |> doIterate data
+            b |> doIterateSeq data
 
         | x when x = Action.LookUpRand ->
             b |> ModDeque.doLookup inputArgs data (Seq.length data) 
@@ -593,17 +619,6 @@ module FSharpxDeque =
 
 module FSharpxDequeRealTime =
 
-    let doAddOne (data:'a seq) =
-
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let q2 = Seq.fold (fun (q : 'a RealTimeDeque) t -> (q.Snoc t)) (RealTimeDeque.empty 2) data
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult q2 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
-
     let doIterate (data:'a seq) (b:'a RealTimeDeque) = 
 
         let iterateBsQueue (bsQueue:'a RealTimeDeque) =
@@ -622,7 +637,7 @@ module FSharpxDequeRealTime =
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Head Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterateSeq (data:'a seq) (b:'a RealTimeDeque) = 
 
@@ -656,11 +671,30 @@ module FSharpxDequeRealTime =
                     
         Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
 
+    let ofBalanced (data:'a seq) =
+
+        let rec loop (b:'a RealTimeDeque) (d:'a seq)  dLength acc =
+            match acc  with
+            | _ when acc = dLength -> b
+            | _ -> 
+                if ((acc % 2) = 0) then
+                    loop (RealTimeDeque.cons (Seq.nth acc d) b) d dLength (acc + 1)
+                else
+                    loop (RealTimeDeque.snoc (Seq.nth acc d) b) d dLength (acc + 1)
+ 
+        loop (RealTimeDeque.singleton (Seq.nth 0 data)) data (Seq.length data) 1
+
     let getTime (inputArgs:BenchArgs) data (b: 'a RealTimeDeque) = 
         match inputArgs.Action.ToLower() with
 
-        | x when x = Action.AddOne ->
-            doAddOne data
+        | x when x = Action.AddOneCons ->
+            Utility.timeAction (Seq.fold (fun (q : 'a RealTimeDeque) t -> RealTimeDeque.cons t q) (RealTimeDeque.empty 2)) data (sprintf "%s %s" Operator.SeqFold Operator.Cons)
+
+        | x when x = Action.AddOneConj ->
+            Utility.timeAction (Seq.fold (fun (q : 'a RealTimeDeque) t -> q.Snoc t) (RealTimeDeque.empty 2)) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
+
+        | x when x = Action.AddTwo ->
+            Utility.timeAction (Seq.fold (fun (q : 'a RealTimeDeque) t -> q.Snoc t |> RealTimeDeque.cons t) (RealTimeDeque.empty 2)) data (sprintf "%s %s %s" Operator.SeqFold Operator.Snoc Operator.Cons)
 
         | x when x = Action.Append ->
 
@@ -687,7 +721,7 @@ module FSharpxDequeRealTime =
             b |> doIterate data
 
         | x when x = Action.IterateSeq ->
-            b |> doIterate data
+            b |> doIterateSeq data
 
         | x when x = Action.LookUpRand ->
             b |> ModDeque.doLookup inputArgs data (Seq.length data) 
@@ -741,7 +775,7 @@ module FSharpxDequeRealTime =
                     
             Utility.getTimeResult b data Operator.OfCatLists sw.ElapsedTicks sw.ElapsedMilliseconds
            
-        | _ -> getTime inputArgs data (RealTimeDeque.ofSeq data)
+        | _ -> getTime inputArgs data (ofBalanced(data))
 
     let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
 
@@ -769,4 +803,4 @@ module FSharpxDequeRealTime =
                     
             Utility.getTimeResult b data Operator.OfCatSeqs sw.ElapsedTicks sw.ElapsedMilliseconds
 
-        | _ -> getTime inputArgs data (RealTimeDeque.ofSeq data)
+        | _ -> getTime inputArgs data (ofBalanced(data))

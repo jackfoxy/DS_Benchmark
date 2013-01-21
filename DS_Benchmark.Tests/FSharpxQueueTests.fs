@@ -6,6 +6,18 @@ open Benchmark
 open FSharpx.DataStructures
 
 [<TestClass>]
+type FSharpxCollQueue() = 
+    let dsGetTimeResult initData action =
+        TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxCollQueue initData action
+
+    [<TestMethod>]
+    member x.``Queue array int Reverse`` () =
+        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Reverse
+        let data = result.Data:?>int[]
+        let output =  (result.Result:?>FSharpx.Collections.Queue<int>) |> Array.ofSeq
+        TestUtil.compArr data output -1 |> should be True
+
+[<TestClass>]
 type FSharpxBankersQueue() = 
 
     let dsGetTimeResult initData action =

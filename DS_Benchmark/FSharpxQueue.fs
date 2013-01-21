@@ -5,35 +5,25 @@ open Utility
 
 module FSharpxQueueBankers =
 
-    let doAddOne (data:'a seq) =
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let q2 = Seq.fold (fun (q : 'a BankersQueue) t -> (q.Snoc t)) (BankersQueue.empty()) data
-                            
-        sw.Stop()
-                            
-        Utility.getTimeResult q2 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
+    let iterate2Empty (queue:'a BankersQueue) =
+        let rec loop (q :'a BankersQueue) acc =
+            match q  with
+            | _ when q.IsEmpty -> acc
+            | _ -> 
+                let a = q.Head
+                loop q.Tail (acc + 1)
+        loop queue 0
 
     let doIterate (data:'a seq) (b:'a BankersQueue) = 
 
-        let iterateBsQueue (bsQueue:'a BankersQueue) =
-            let rec loop (b' :'a BankersQueue) acc =
-                match b'  with
-                | _ when b'.IsEmpty -> acc
-                | _ -> 
-                    let a = b'.Head
-                    loop b'.Tail (acc + 1)
-            loop bsQueue 0
-
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let result = iterateBsQueue b
+        let result = iterate2Empty b
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Uncons Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterateSeq (data:'a seq) (q:'a BankersQueue) = 
 
@@ -51,36 +41,46 @@ module FSharpxQueueBankers =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doUnconsToEmpty data (q:'a BankersQueue) =
+    let doQueueIntegration data = 
+
+        let iterateDown (queue:'a BankersQueue) count =
+            let rec loop (q:'a BankersQueue) acc =
+                match acc  with
+                | 0 -> q
+                | _ -> 
+                    let a = q.Head
+                    loop q.Tail (acc - 1)
+            loop queue count
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
- 
-        let rec loop : 'a BankersQueue -> unit =  function
-            | BankersQueue.Cons(hd, tl) -> loop tl
-            | BankersQueue.Nil -> ()
 
-        loop q
-                    
+        let dataLen = Seq.length data
+ 
+        let q0 = Seq.fold (fun (q : 'a BankersQueue) t -> BankersQueue.snoc t q) (BankersQueue.empty()) data
+
+        let q1 = iterateDown q0 (dataLen / 2)
+
+        let q2 = Seq.fold (fun (q : 'a BankersQueue) t -> BankersQueue.snoc t q) q1 data
+
+        let q3 = iterateDown q0 (((dataLen / 2) + dataLen) / 2)
+
+        let q4 = Seq.fold (fun (q : 'a BankersQueue) t -> BankersQueue.snoc t q) q3 data
+
+        let result = iterate2Empty q4
+
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult dataLen data Operator.QueueIntegration sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let getTime (inputArgs:BenchArgs) data = 
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.AddOne ->
-            doAddOne data
+            Utility.timeAction (Seq.fold (fun (q : 'a BankersQueue) t -> (q.Snoc t)) (BankersQueue.empty())) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
 
         | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let q = BankersQueue.ofSeq data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult q data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction (BankersQueue.ofSeq) data Operator.OfSeq
 
         | x when x = Action.Iterate ->
             BankersQueue.ofSeq data |> doIterate data
@@ -88,42 +88,32 @@ module FSharpxQueueBankers =
         | x when x = Action.IterateSeq ->
             BankersQueue.ofSeq data |> doIterateSeq data
 
-        | x when x = Action.UnconsToEmpty ->
-            BankersQueue.ofSeq data |> doUnconsToEmpty data
+        | x when x = Action.QueueIntegration  ->
+            doQueueIntegration data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
 module FSharpxQueueBatched =
 
-    let doAddOne (data:'a seq) =
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let q2 = Seq.fold (fun (q : 'a BatchedQueue) t -> (q.Snoc t)) (BatchedQueue.empty()) data
-                            
-        sw.Stop()
-                            
-        Utility.getTimeResult q2 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
+    let iterate2Empty (queue:'a BatchedQueue) =
+        let rec loop (q :'a BatchedQueue) acc =
+            match q  with
+            | _ when q.IsEmpty -> acc
+            | _ -> 
+                let a = q.Head
+                loop q.Tail (acc + 1)
+        loop queue 0
 
     let doIterate (data:'a seq) (b:'a BatchedQueue) = 
 
-        let iterateBsQueue (bsQueue:'a BatchedQueue) =
-            let rec loop (b' :'a BatchedQueue) acc =
-                match b'  with
-                | _ when b'.IsEmpty -> acc
-                | _ -> 
-                    let a = b'.Head
-                    loop b'.Tail (acc + 1)
-            loop bsQueue 0
-
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let result = iterateBsQueue b
+        let result = iterate2Empty b
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Head Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterateSeq (data:'a seq) (q:'a BatchedQueue) = 
 
@@ -141,45 +131,52 @@ module FSharpxQueueBatched =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doUnconsToEmpty data (q:'a BatchedQueue) =
+    let doQueueIntegration data = 
+
+        let iterateDown (queue:'a BatchedQueue) count =
+            let rec loop (q:'a BatchedQueue) acc =
+                match acc  with
+                | 0 -> q
+                | _ -> 
+                    let a = q.Head
+                    loop q.Tail (acc - 1)
+            loop queue count
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
- 
-        let rec loop : 'a BatchedQueue -> unit =  function
-            | BatchedQueue.Cons(hd, tl) -> loop tl
-            | BatchedQueue.Nil -> ()
 
-        loop q
-                    
+        let dataLen = Seq.length data
+ 
+        let q0 = Seq.fold (fun (q : 'a BatchedQueue) t -> BatchedQueue.snoc t q) (BatchedQueue.empty()) data
+
+        let q1 = iterateDown q0 (dataLen / 2)
+
+        let q2 = Seq.fold (fun (q : 'a BatchedQueue) t -> BatchedQueue.snoc t q) q1 data
+
+        let q3 = iterateDown q0 (((dataLen / 2) + dataLen) / 2)
+
+        let q4 = Seq.fold (fun (q : 'a BatchedQueue) t -> BatchedQueue.snoc t q) q3 data
+
+        let result = iterate2Empty q4
+
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult dataLen data Operator.QueueIntegration sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let getTime (inputArgs:BenchArgs) data (b: 'a BatchedQueue) = 
+    let getTime (inputArgs:BenchArgs) data = 
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.AddOne ->
-            doAddOne data
-
-        | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let q = BatchedQueue.ofSeq data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult q data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction (Seq.fold (fun (q : 'a BatchedQueue) t -> (q.Snoc t)) (BatchedQueue.empty())) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
 
         | x when x = Action.Iterate ->
-            b |> doIterate data
+            BatchedQueue.ofList data |> doIterate data
 
         | x when x = Action.IterateSeq ->
-            b |> doIterateSeq data
+            BatchedQueue.ofList data |> doIterateSeq data
 
-        | x when x = Action.UnconsToEmpty ->
-            b |> doUnconsToEmpty data
+        | x when x = Action.QueueIntegration  ->
+            doQueueIntegration data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
@@ -190,16 +187,9 @@ module FSharpxQueueBatched =
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let b = BatchedQueue.ofList data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult b data Operator.OfList sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction BatchedQueue.ofList data Operator.OfList
            
-        | _ -> getTime inputArgs data (BatchedQueue.ofList data)
+        | _ -> getTime inputArgs data
 
     let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
 
@@ -208,84 +198,18 @@ module FSharpxQueueBatched =
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let b = BatchedQueue.ofSeq data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult b data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction BatchedQueue.ofSeq data Operator.OfSeq
            
-        | _ -> getTime inputArgs data (BatchedQueue.ofSeq data)
+        | _ -> getTime inputArgs (List.ofSeq data)
 
 module FSharpxQueueBootStrapped =
         
-    let doAddOneArray (data:'a[]) =
-        let rec loop (b:'a BootstrappedQueue.BootstrappedQueue) (d:'a[])  dLength acc =
-            match acc  with
-            | _ when acc = dLength -> b
-            | _ -> loop (BootstrappedQueue.snoc (d.[acc]) b) d dLength (acc + 1)
-
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let b1 =loop BootstrappedQueue.Empty data data.Length 0
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult b1 data Operator.CreateRecCreate sw.ElapsedTicks sw.ElapsedMilliseconds
-
-    let doAddOneList (data:'a list) =
-        let rec loop (b:'a BootstrappedQueue.BootstrappedQueue) (d:'a list)  =
-            match d  with
-            | hd::tl -> loop (BootstrappedQueue.snoc hd b) tl 
-            | [] -> b
-
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let b1 =loop BootstrappedQueue.Empty data
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult b1 data Operator.CreateRecCreate sw.ElapsedTicks sw.ElapsedMilliseconds
-
-    let doAddOneSeq (data:'a seq) =
-        let rec loop (b:'a BootstrappedQueue.BootstrappedQueue) (d:'a seq) dCount acc =
-            match acc  with
-            | _ when acc = dCount -> b
-            | _ -> loop (BootstrappedQueue.snoc (Seq.nth acc d) b) d dCount (acc + 1)  
-        
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let b1 =loop BootstrappedQueue.Empty data (Seq.length data) 0
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult b1 data Operator.CreateRecCreate sw.ElapsedTicks sw.ElapsedMilliseconds  
-
     let appendBsQueue (bsQueue:'a BootstrappedQueue.BootstrappedQueue) (bsQueue2:'a BootstrappedQueue.BootstrappedQueue) =
         let rec loop (b:'a BootstrappedQueue.BootstrappedQueue) (b2:'a BootstrappedQueue.BootstrappedQueue) =
             match b2  with
             | _ when BootstrappedQueue.isEmpty b2 -> b
             | _ -> loop (BootstrappedQueue.snoc (BootstrappedQueue.head b2) b) (BootstrappedQueue.tail b2)
         loop bsQueue bsQueue2
-
-    let bsQueueOfArray (data:'a[]) =
-        let l = Array.toList data
-        let b0 = BootstrappedQueue.Empty
-        BootstrappedQueue.NonEmptyBootstrappedQueue<_>.create (l.Length) l b0 0 [] |> BootstrappedQueue.NonEmpty
-
-    let bsQueueOfList (data:'a list) =
-        let b0 = BootstrappedQueue.Empty
-        BootstrappedQueue.NonEmptyBootstrappedQueue<_>.create (data.Length) data b0 0 [] |> BootstrappedQueue.NonEmpty
-
-    let bsQueueOfSeq (data:'a seq) =
-        let l = Seq.toList data
-        let b0 = BootstrappedQueue.Empty
-        BootstrappedQueue.NonEmptyBootstrappedQueue<_>.create (l.Length) l b0 0 [] |> BootstrappedQueue.NonEmpty
 
     let doAppend (b:'a BootstrappedQueue.BootstrappedQueue) data (bAppend:'a BootstrappedQueue.BootstrappedQueue) =
 
@@ -298,25 +222,25 @@ module FSharpxQueueBootStrapped =
                     
         Utility.getTimeResult b2 data Operator.RecSnoc sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doIterate data (b:'a BootstrappedQueue.BootstrappedQueue) = 
+    let iterate2Empty (queue:'a BootstrappedQueue.BootstrappedQueue) =
+        let rec loop (q:'a BootstrappedQueue.BootstrappedQueue) acc =
+            match q  with
+            | _ when BootstrappedQueue.isEmpty q -> acc
+            | _ -> 
+                let a = BootstrappedQueue.head q
+                loop (BootstrappedQueue.tail q) (acc + 1)
+        loop queue 0
 
-        let iterateBsQueue (bsQueue:'a BootstrappedQueue.BootstrappedQueue) =
-            let rec loop (b:'a BootstrappedQueue.BootstrappedQueue) acc =
-                match b  with
-                | _ when BootstrappedQueue.isEmpty b -> acc
-                | _ -> 
-                    let a = BootstrappedQueue.head b
-                    loop (BootstrappedQueue.tail b) (acc + 1)
-            loop bsQueue 0
+    let doIterate data (b:'a BootstrappedQueue.BootstrappedQueue) = 
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let result = iterateBsQueue b
+        let result = iterate2Empty b
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Head Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doLookup inputArgs data dCount (b:'a BootstrappedQueue.BootstrappedQueue) = 
         let rnd = new System.Random()
@@ -340,20 +264,37 @@ module FSharpxQueueBootStrapped =
                     
         Utility.getTimeResult times data Operator.RecAccHead sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (q:'a BootstrappedQueue.BootstrappedQueue) =
+    let doQueueIntegration data = 
+
+        let iterateDown (queue:'a BootstrappedQueue.BootstrappedQueue) count =
+            let rec loop (q:'a BootstrappedQueue.BootstrappedQueue) acc =
+                match acc  with
+                | 0 -> q
+                | _ -> 
+                    let a = BootstrappedQueue.head q
+                    loop (BootstrappedQueue.tail q) (acc - 1)
+            loop queue count
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
- 
-        let rec loop : 'a BootstrappedQueue.BootstrappedQueue -> unit =  function
-            | q when (BootstrappedQueue.tail q) = BootstrappedQueue.Empty -> ()
-            | q -> loop (BootstrappedQueue.tail q)
 
-        loop q
-                    
+        let dataLen = Seq.length data
+ 
+        let q0 = Seq.fold (fun (q : 'a BootstrappedQueue.BootstrappedQueue) t -> BootstrappedQueue.snoc t q) BootstrappedQueue.Empty data
+
+        let q1 = iterateDown q0 (dataLen / 2)
+
+        let q2 = Seq.fold (fun (q : 'a BootstrappedQueue.BootstrappedQueue) t -> BootstrappedQueue.snoc t q) q1 data
+
+        let q3 = iterateDown q0 (((dataLen / 2) + dataLen) / 2)
+
+        let q4 = Seq.fold (fun (q : 'a BootstrappedQueue.BootstrappedQueue) t -> BootstrappedQueue.snoc t q) q3 data
+
+        let result = iterate2Empty q4
+
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult dataLen data Operator.QueueIntegration sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doUpdateRand inputArgs data dCount update (b:'a BootstrappedQueue.BootstrappedQueue) =
         let rnd = new System.Random()
@@ -371,7 +312,7 @@ module FSharpxQueueBootStrapped =
 
         for i = 1 to times do
             let left, right = split b (rnd.Next dCount)
-            let leftBsQueue = List.rev left |> List.toArray |> bsQueueOfArray
+            let leftBsQueue = List.rev left |> BootstrappedQueue.ofList
             let newLeft = BootstrappedQueue.snoc update leftBsQueue
             let newBsQueue = appendBsQueue newLeft right
             ()
@@ -380,67 +321,28 @@ module FSharpxQueueBootStrapped =
                     
         Utility.getTimeResult times data Operator.SplitSnocAppend sw.ElapsedTicks sw.ElapsedMilliseconds
 
-        //no IEnumerable yet for bsqueue
-//    let doIterateSeq (data:'a seq) (b:'a BootstrappedQueue.BootstrappedQueue) = 
-//
-//        let foldFun =
-//            (fun i b -> 
-//                let c = b
-//                i + 1)
-//
-//        let sw = new System.Diagnostics.Stopwatch()
-//        sw.Start()
-// 
-//        let result = Seq.fold foldFun 0 b
-//                    
-//        sw.Stop()
-//                    
-//        Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
-
-    let getTime (inputArgs:BenchArgs) data (b: 'a BootstrappedQueue.BootstrappedQueue) = 
-        match inputArgs.Action.ToLower() with
-
-//        | x when x = Action.IterateSeq ->
-//            b |> doIterateSeq data
-
-        | x when x = Action.LookUpRand ->
-            b |> doLookup inputArgs data (Seq.length data) 
-
-        | x when x = Action.UpdateRand ->
-            b |> doUpdateRand inputArgs data (Seq.length data) (Seq.nth 0 data)
-
-        | x when x = Action.TailToEmpty ->
-            b |> doTailToEmpty data
-
-        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
-    let getTimeOfArray (inputArgs:BenchArgs) (data:'a[]) =
-
+    let getTime (inputArgs:BenchArgs) data = 
+        
         System.GC.Collect()
-            
+        
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.AddOne ->
-                doAddOneArray data
-
-        | x when x = Action.Append ->
-            let b = bsQueueOfArray data
-            bsQueueOfArray data |> doAppend b data
-
-        | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let b = bsQueueOfArray data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult b data Operator.NonEmptyBootstrappedQueueCreate sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction (Seq.fold (fun (q : 'a BootstrappedQueue.BootstrappedQueue) t -> BootstrappedQueue.snoc t q) (BootstrappedQueue.Empty)) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
 
         | x when x = Action.Iterate ->
-            bsQueueOfArray data|> doIterate data
+            BootstrappedQueue.ofList data |> doIterate data
 
-        | _ -> getTime inputArgs data (bsQueueOfArray data)
+        | x when x = Action.LookUpRand ->
+            BootstrappedQueue.ofList data |> doLookup inputArgs data (Seq.length data) 
+
+        | x when x = Action.QueueIntegration  ->
+            doQueueIntegration data
+
+        | x when x = Action.UpdateRand ->
+            BootstrappedQueue.ofList data |> doUpdateRand inputArgs data (Seq.length data) (Seq.nth 0 data)
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
     let getTimeOfList (inputArgs:BenchArgs) (data:'a list) =
 
@@ -448,24 +350,14 @@ module FSharpxQueueBootStrapped =
             
         match inputArgs.Action.ToLower() with
 
-        | x when x = Action.AddOne ->
-                doAddOneList data
-
         | x when x = Action.Append ->
-            let b = bsQueueOfList data 
-            bsQueueOfList data |> doAppend b data
+            let b = BootstrappedQueue.ofList data 
+            BootstrappedQueue.ofList data |> doAppend b data
 
         | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let b = bsQueueOfList data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult b data Operator.NonEmptyBootstrappedQueueCreate sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction BootstrappedQueue.ofList data Operator.NonEmptyBootstrappedQueueCreate
 
-        | _ -> getTime inputArgs data (bsQueueOfList data)
+        | _ -> getTime inputArgs data
 
     let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
 
@@ -473,56 +365,36 @@ module FSharpxQueueBootStrapped =
             
         match inputArgs.Action.ToLower() with
 
-        | x when x = Action.AddOne ->
-            doAddOneSeq data
-
         | x when x = Action.Append ->
-            let b = bsQueueOfSeq data 
-            bsQueueOfSeq data |> doAppend b data
+            let b = BootstrappedQueue.ofList (List.ofSeq data) 
+            BootstrappedQueue.ofList (List.ofSeq data) |> doAppend b data
 
         | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let b = bsQueueOfSeq data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult b data Operator.NonEmptyBootstrappedQueueCreate sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction BootstrappedQueue.ofList (List.ofSeq data) Operator.NonEmptyBootstrappedQueueCreate
 
-        | _ -> getTime inputArgs data (bsQueueOfSeq data)
+        | _ -> getTime inputArgs (List.ofSeq data)
 
 module FSharpxQueueHoodMelville =
 
-    let doAddOne (data:'a seq) =
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let q2 = Seq.fold (fun (q : 'a HoodMelvilleQueue) t -> (q.Snoc t)) (HoodMelvilleQueue.empty()) data
-                            
-        sw.Stop()
-                            
-        Utility.getTimeResult q2 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
+    let iterate2Empty (queue:'a HoodMelvilleQueue) =
+        let rec loop (q :'a HoodMelvilleQueue) acc =
+            match q  with
+            | _ when q.IsEmpty -> acc
+            | _ -> 
+                let a = q.Head
+                loop q.Tail (acc + 1)
+        loop queue 0
 
     let doIterate (data:'a seq) (b:'a HoodMelvilleQueue) = 
 
-        let iterateBsQueue (bsQueue:'a HoodMelvilleQueue) =
-            let rec loop (b' :'a HoodMelvilleQueue) acc =
-                match b'  with
-                | _ when b'.IsEmpty -> acc
-                | _ -> 
-                    let a = b'.Head
-                    loop b'.Tail (acc + 1)
-            loop bsQueue 0
-
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let result = iterateBsQueue b
+        let result = iterate2Empty b
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Uncons Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterateSeq (data:'a seq) (q:'a HoodMelvilleQueue) = 
 
@@ -540,45 +412,55 @@ module FSharpxQueueHoodMelville =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doUnconsToEmpty data (q:'a HoodMelvilleQueue) =
+    let doQueueIntegration data = 
+
+        let iterateDown (queue:'a HoodMelvilleQueue) count =
+            let rec loop (q:'a HoodMelvilleQueue) acc =
+                match acc  with
+                | 0 -> q
+                | _ -> 
+                    let a = q.Head
+                    loop q.Tail (acc - 1)
+            loop queue count
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
+
+        let dataLen = Seq.length data
  
-        let rec loop : 'a HoodMelvilleQueue -> unit =  function
-            | HoodMelvilleQueue.Nil -> ()
-            | HoodMelvilleQueue.Cons(hd, tl) -> loop tl
-            
-        loop q
-                    
+        let q0 = Seq.fold (fun (q : 'a HoodMelvilleQueue) t -> HoodMelvilleQueue.snoc t q) (HoodMelvilleQueue.empty()) data
+
+        let q1 = iterateDown q0 (dataLen / 2)
+
+        let q2 = Seq.fold (fun (q : 'a HoodMelvilleQueue) t -> HoodMelvilleQueue.snoc t q) q1 data
+
+        let q3 = iterateDown q0 (((dataLen / 2) + dataLen) / 2)
+
+        let q4 = Seq.fold (fun (q : 'a HoodMelvilleQueue) t -> HoodMelvilleQueue.snoc t q) q3 data
+
+        let result = iterate2Empty q4
+
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult dataLen data Operator.QueueIntegration sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let getTime (inputArgs:BenchArgs) data (b: 'a HoodMelvilleQueue) = 
+    let getTime (inputArgs:BenchArgs) data = 
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.AddOne ->
-            doAddOne data
+             Utility.timeAction (Seq.fold (fun (q : 'a HoodMelvilleQueue) t -> (q.Snoc t)) (HoodMelvilleQueue.empty())) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
 
         | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let q = HoodMelvilleQueue.ofSeq data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult q data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction HoodMelvilleQueue.ofSeq data Operator.OfSeq
 
         | x when x = Action.Iterate ->
-            b |> doIterate data
+            HoodMelvilleQueue.ofList data |> doIterate data
 
         | x when x = Action.IterateSeq ->
-            b |> doIterateSeq data
+            HoodMelvilleQueue.ofList data |> doIterateSeq data
 
-        | x when x = Action.UnconsToEmpty ->
-            b |> doUnconsToEmpty data
+        | x when x = Action.QueueIntegration  ->
+            doQueueIntegration data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
@@ -589,16 +471,9 @@ module FSharpxQueueHoodMelville =
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let b = HoodMelvilleQueue.ofList data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult b data Operator.OfList sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction HoodMelvilleQueue.ofList data Operator.OfList
            
-        | _ -> getTime inputArgs data (HoodMelvilleQueue.ofList data)
+        | _ -> getTime inputArgs data
 
     let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
 
@@ -607,16 +482,9 @@ module FSharpxQueueHoodMelville =
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let b = HoodMelvilleQueue.ofSeq data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult b data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction HoodMelvilleQueue.ofSeq data Operator.OfSeq
            
-        | _ -> getTime inputArgs data (HoodMelvilleQueue.ofSeq data)
+        | _ -> getTime inputArgs data 
 
 module FSharpxQueueImplicit =
         
@@ -626,27 +494,6 @@ module FSharpxQueueImplicit =
             | _ when ImplicitQueue.isEmpty iQ2 -> iQ
             | _ -> loop (ImplicitQueue.snoc (ImplicitQueue.head iQ2) iQ) (ImplicitQueue.tail iQ2)
         loop bsQueue bsQueue2
-
-    let iQueueOfArray (data:'a[]) =
-        let rec loop (d:'a[]) (iQ:'a ImplicitQueue.ImplicitQueue) acc =
-            match acc  with
-            | _ when acc = d.Length -> iQ
-            | _ -> loop d (ImplicitQueue.snoc (d.[acc]) iQ) (acc + 1)
-        loop data ImplicitQueue.empty 0
-
-    let iQueueOfList (data:'a list) =
-        let rec loop (d:'a list) (iQ:'a ImplicitQueue.ImplicitQueue)=
-            match d  with
-            | hd::tl -> loop tl (ImplicitQueue.snoc hd iQ)
-            | [] -> iQ
-        loop data ImplicitQueue.empty
-
-    let iQueueOfSeq (data:'a seq) =
-        let rec loop (d:'a seq) (iQ:'a ImplicitQueue.ImplicitQueue) dCount acc =
-            match acc  with
-            | _ when acc = dCount -> iQ
-            | _ -> loop d (ImplicitQueue.snoc (Seq.nth acc d) iQ) dCount (acc + 1)
-        loop data ImplicitQueue.empty (Seq.length data) 0
 
     let doAppend (iQ:'a ImplicitQueue.ImplicitQueue) data (bAppend:'a ImplicitQueue.ImplicitQueue) =
 
@@ -659,25 +506,25 @@ module FSharpxQueueImplicit =
                     
         Utility.getTimeResult iQ2 data Operator.RecSnoc sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doIterate data (iQ:'a ImplicitQueue.ImplicitQueue) = 
+    let iterate2Empty (queue:'a ImplicitQueue.ImplicitQueue) =
+        let rec loop (q:'a ImplicitQueue.ImplicitQueue) acc =
+            match q  with
+            | _ when ImplicitQueue.isEmpty q -> acc
+            | _ -> 
+                let a = ImplicitQueue.head q
+                loop (ImplicitQueue.tail q) (acc + 1)
+        loop queue 0
 
-        let iterateBsQueue (bsQueue:'a ImplicitQueue.ImplicitQueue) =
-            let rec loop (iQ:'a ImplicitQueue.ImplicitQueue) acc =
-                match iQ  with
-                | _ when ImplicitQueue.isEmpty iQ -> acc
-                | _ -> 
-                    let a = ImplicitQueue.head iQ
-                    loop (ImplicitQueue.tail iQ) (acc + 1)
-            loop bsQueue 0
+    let doIterate data (iQ:'a ImplicitQueue.ImplicitQueue) = 
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let result = iterateBsQueue iQ
+        let result = iterate2Empty iQ
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Head Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doLookup inputArgs data dCount (iQ:'a ImplicitQueue.ImplicitQueue) = 
         let rnd = new System.Random()
@@ -701,20 +548,40 @@ module FSharpxQueueImplicit =
                     
         Utility.getTimeResult times data Operator.RecAccHead sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (q:'a ImplicitQueue.ImplicitQueue) =
+    let makeImplicitQueue data =
+        Seq.fold (fun (q : 'a ImplicitQueue.ImplicitQueue) t -> ImplicitQueue.snoc t q) (ImplicitQueue.empty) data
+
+    let doQueueIntegration data = 
+
+        let iterateDown (queue:'a ImplicitQueue.ImplicitQueue) count =
+            let rec loop (q:'a ImplicitQueue.ImplicitQueue) acc =
+                match acc  with
+                | 0 -> q
+                | _ -> 
+                    let a = ImplicitQueue.head q
+                    loop (ImplicitQueue.tail q) (acc - 1)
+            loop queue count
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
- 
-        let rec loop : 'a ImplicitQueue.ImplicitQueue -> unit =  function
-            | q when (ImplicitQueue.tail q) = ImplicitQueue.empty -> ()
-            | q -> loop (ImplicitQueue.tail q)
 
-        loop q
-                    
+        let dataLen = Seq.length data
+ 
+        let q0 = Seq.fold (fun (q : 'a ImplicitQueue.ImplicitQueue) t -> ImplicitQueue.snoc t q) ImplicitQueue.empty data
+
+        let q1 = iterateDown q0 (dataLen / 2)
+
+        let q2 = Seq.fold (fun (q : 'a ImplicitQueue.ImplicitQueue) t -> ImplicitQueue.snoc t q) q1 data
+
+        let q3 = iterateDown q0 (((dataLen / 2) + dataLen) / 2)
+
+        let q4 = Seq.fold (fun (q : 'a ImplicitQueue.ImplicitQueue) t -> ImplicitQueue.snoc t q) q3 data
+
+        let result = iterate2Empty q4
+
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult dataLen data Operator.QueueIntegration sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doUpdateRand inputArgs data dCount update (iQ:'a ImplicitQueue.ImplicitQueue) =
         let rnd = new System.Random()
@@ -732,7 +599,7 @@ module FSharpxQueueImplicit =
 
         for i = 1 to times do
             let left, right = split iQ (rnd.Next dCount)
-            let leftBsQueue = List.rev left |> List.toArray |> iQueueOfArray
+            let leftBsQueue = List.rev left |> List.toArray |> makeImplicitQueue
             let newLeft = ImplicitQueue.snoc update leftBsQueue
             let newBsQueue = appendBsQueue newLeft right
             ()
@@ -741,140 +608,54 @@ module FSharpxQueueImplicit =
                     
         Utility.getTimeResult times data Operator.SplitSnocAppend sw.ElapsedTicks sw.ElapsedMilliseconds
 
-
-    let getTimeOfArray (inputArgs:BenchArgs) (data:'a[]) =
-
-        System.GC.Collect()
-            
-        match inputArgs.Action.ToLower() with
-
-            | x when x = Action.AddOne ->
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
- 
-                let iQ = iQueueOfArray data
-                    
-                sw.Stop()
-                    
-                Utility.getTimeResult iQ data Operator.RecHeadSnoc sw.ElapsedTicks sw.ElapsedMilliseconds
-            
-            | x when x = Action.Append ->
-                let iQ = iQueueOfArray data
-                iQueueOfArray data |> doAppend iQ data
-                
-            | x when x = Action.Iterate ->
-                iQueueOfArray data|> doIterate data
-
-            | x when x = Action.LookUpRand ->
-                iQueueOfArray data |> doLookup inputArgs data data.Length 
-
-            | x when x = Action.TailToEmpty ->
-                iQueueOfArray data |> doTailToEmpty data
-
-            | x when x = Action.UpdateRand ->
-                iQueueOfArray data |> doUpdateRand inputArgs data data.Length (Seq.nth 0 data)
-
-            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
-    let getTimeOfList (inputArgs:BenchArgs) (data:'a list) =
+    let getTime (inputArgs:BenchArgs) (data:'a seq) =
 
         System.GC.Collect()
             
         match inputArgs.Action.ToLower() with
 
-            | x when x = Action.AddOne ->
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
- 
-                let iQ = iQueueOfList data
-                    
-                sw.Stop()
-                    
-                Utility.getTimeResult iQ data Operator.RecHeadSnoc sw.ElapsedTicks sw.ElapsedMilliseconds
+        | x when x = Action.AddOne ->
+            Utility.timeAction (Seq.fold (fun (q : 'a ImplicitQueue.ImplicitQueue) t -> ImplicitQueue.snoc t q) (ImplicitQueue.empty)) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
 
-            | x when x = Action.Append ->
-                let iQ = iQueueOfList data 
-                iQueueOfList data |> doAppend iQ data
+        | x when x = Action.Append ->
+            let iQ = makeImplicitQueue data 
+            makeImplicitQueue data |> doAppend iQ data
 
-            | x when x = Action.Iterate ->
-                iQueueOfList data|> doIterate data
+        | x when x = Action.Iterate ->
+            makeImplicitQueue data|> doIterate data
 
-            | x when x = Action.LookUpRand ->
-                iQueueOfList data |> doLookup inputArgs data data.Length 
+        | x when x = Action.LookUpRand ->
+            makeImplicitQueue data |> doLookup inputArgs data (Seq.length data) 
 
-            | x when x = Action.TailToEmpty ->
-                iQueueOfList data |> doTailToEmpty data
+        | x when x = Action.QueueIntegration  ->
+            doQueueIntegration data
 
-            | x when x = Action.UpdateRand ->
-                iQueueOfList data |> doUpdateRand inputArgs data data.Length (Seq.nth 0 data)
+        | x when x = Action.UpdateRand ->
+            makeImplicitQueue data |> doUpdateRand inputArgs data (Seq.length data) (Seq.nth 0 data)
 
-            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
-    let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
-
-        System.GC.Collect()
-            
-        match inputArgs.Action.ToLower() with
-
-            | x when x = Action.AddOne ->
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
- 
-                let iQ = iQueueOfSeq data
-                    
-                sw.Stop()
-                    
-                Utility.getTimeResult iQ data Operator.RecHeadSnoc sw.ElapsedTicks sw.ElapsedMilliseconds
-
-            | x when x = Action.Append ->
-                let iQ = iQueueOfSeq data 
-                iQueueOfSeq data |> doAppend iQ data
-
-            | x when x = Action.Iterate ->
-                iQueueOfSeq data|> doIterate data
-
-            | x when x = Action.LookUpRand ->
-                iQueueOfSeq data |> doLookup inputArgs data (Seq.length data) 
-
-            | x when x = Action.TailToEmpty ->
-                iQueueOfSeq data |> doTailToEmpty data
-
-            | x when x = Action.UpdateRand ->
-                iQueueOfSeq data |> doUpdateRand inputArgs data (Seq.length data) (Seq.nth 0 data)
-
-            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
 module FSharpxQueuePhysicist =
 
-    let doAddOne (data:'a seq) =
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
- 
-        let q2 = Seq.fold (fun (q : 'a PhysicistQueue) t -> (q.Snoc t)) (PhysicistQueue.empty()) data
-                            
-        sw.Stop()
-                            
-        Utility.getTimeResult q2 data Operator.Snoc sw.ElapsedTicks sw.ElapsedMilliseconds
+    let iterate2Empty (queue:'a PhysicistQueue) =
+        let rec loop (q :'a PhysicistQueue) acc =
+            match q  with
+            | _ when q.IsEmpty -> acc
+            | _ -> 
+                let a = q.Head
+                loop q.Tail (acc + 1)
+        loop queue 0
 
     let doIterate (data:'a seq) (b:'a PhysicistQueue) = 
 
-        let iterateBsQueue (bsQueue:'a PhysicistQueue) =
-            let rec loop (b' :'a PhysicistQueue) acc =
-                match b'  with
-                | _ when b'.IsEmpty -> acc
-                | _ -> 
-                    let a = b'.Head
-                    loop b'.Tail (acc + 1)
-            loop bsQueue 0
-
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let result = iterateBsQueue b
+        let result = iterate2Empty b
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Uncons Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterateSeq (data:'a seq) (q:'a PhysicistQueue) = 
 
@@ -892,45 +673,52 @@ module FSharpxQueuePhysicist =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doUnconsToEmpty data (q:'a PhysicistQueue) =
+    let doQueueIntegration data = 
+
+        let iterateDown (queue:'a PhysicistQueue) count =
+            let rec loop (q:'a PhysicistQueue) acc =
+                match acc  with
+                | 0 -> q
+                | _ -> 
+                    let a = PhysicistQueue.head q
+                    loop (PhysicistQueue.tail q) (acc - 1)
+            loop queue count
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
- 
-        let rec loop : 'a PhysicistQueue -> unit =  function
-            | PhysicistQueue.Nil -> ()
-            | PhysicistQueue.Cons(hd, tl) -> loop tl
 
-        loop q
-                    
+        let dataLen = Seq.length data
+ 
+        let q0 = Seq.fold (fun (q : 'a PhysicistQueue) t -> PhysicistQueue.snoc t q) (PhysicistQueue.empty()) data
+
+        let q1 = iterateDown q0 (dataLen / 2)
+
+        let q2 = Seq.fold (fun (q : 'a PhysicistQueue) t -> PhysicistQueue.snoc t q) q1 data
+
+        let q3 = iterateDown q0 (((dataLen / 2) + dataLen) / 2)
+
+        let q4 = Seq.fold (fun (q : 'a PhysicistQueue) t -> PhysicistQueue.snoc t q) q3 data
+
+        let result = iterate2Empty q4
+
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.tryUncons sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult dataLen data Operator.QueueIntegration sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let getTime (inputArgs:BenchArgs) data (b: 'a PhysicistQueue) = 
+    let getTime (inputArgs:BenchArgs) data = 
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.AddOne ->
-            doAddOne data
-
-        | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let q = PhysicistQueue.ofSeq data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult q data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction (Seq.fold (fun (q : 'a PhysicistQueue) t -> (q.Snoc t)) (PhysicistQueue.empty())) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
 
         | x when x = Action.Iterate ->
-            b |> doIterate data
+            PhysicistQueue.ofSeq data |> doIterate data
 
         | x when x = Action.IterateSeq ->
-            b |> doIterateSeq data
+            PhysicistQueue.ofSeq data |> doIterateSeq data
 
-        | x when x = Action.UnconsToEmpty ->
-            b |> doUnconsToEmpty data
+        | x when x = Action.QueueIntegration  ->
+            doQueueIntegration data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
@@ -941,16 +729,9 @@ module FSharpxQueuePhysicist =
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let b = PhysicistQueue.ofList data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult b data Operator.OfList sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction PhysicistQueue.ofList data Operator.OfList
            
-        | _ -> getTime inputArgs data (PhysicistQueue.ofList data)
+        | _ -> getTime inputArgs data 
 
     let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
 
@@ -959,16 +740,9 @@ module FSharpxQueuePhysicist =
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.Init ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let b = PhysicistQueue.ofSeq data
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult b data Operator.OfSeq sw.ElapsedTicks sw.ElapsedMilliseconds
+            Utility.timeAction PhysicistQueue.ofSeq data Operator.OfSeq
            
-        | _ -> getTime inputArgs data (PhysicistQueue.ofSeq data)
+        | _ -> getTime inputArgs data
 
 module FSharpxQueueRealTime =
         
@@ -978,18 +752,6 @@ module FSharpxQueueRealTime =
             | _ when RealTimeQueue.isEmpty r2 -> r
             | _ -> loop (RealTimeQueue.snoc (RealTimeQueue.head r2) r) (RealTimeQueue.tail r2)
         loop rtQueue rtQueue2
-
-    let rtQueueOfArray (data:'a[]) =
-
-        Array.fold (fun (q : 'a RealTimeQueue.RealTimeQueue) t -> (RealTimeQueue.snoc t q)) (RealTimeQueue.empty) data
-
-    let rtQueueOfList (data:'a list) =
-
-        List.fold (fun (q : 'a RealTimeQueue.RealTimeQueue) t -> (RealTimeQueue.snoc t q)) (RealTimeQueue.empty) data
-
-    let rtQueueOfSeq (data:'a seq) =
-
-        Seq.fold (fun (q : 'a RealTimeQueue.RealTimeQueue) t -> (RealTimeQueue.snoc t q)) (RealTimeQueue.empty) data
 
     let doAppend (r:'a RealTimeQueue.RealTimeQueue) data (bAppend:'a RealTimeQueue.RealTimeQueue) =
 
@@ -1002,25 +764,25 @@ module FSharpxQueueRealTime =
                     
         Utility.getTimeResult r2 data Operator.RecSnoc sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doIterate data (r:'a RealTimeQueue.RealTimeQueue) = 
+    let iterate2Empty (queue:'a RealTimeQueue.RealTimeQueue) =
+        let rec loop (q:'a RealTimeQueue.RealTimeQueue) acc =
+            match q  with
+            | _ when RealTimeQueue.isEmpty q -> acc
+            | _ -> 
+                let a = RealTimeQueue.head q
+                loop (RealTimeQueue.tail q) (acc + 1)
+        loop queue 0
 
-        let iteratertQueue (rtQueue:'a RealTimeQueue.RealTimeQueue) =
-            let rec loop (r:'a RealTimeQueue.RealTimeQueue) acc =
-                match r  with
-                | _ when RealTimeQueue.isEmpty r -> acc
-                | _ -> 
-                    let a = RealTimeQueue.head r
-                    loop (RealTimeQueue.tail r) (acc + 1)
-            loop rtQueue 0
+    let doIterate data (r:'a RealTimeQueue.RealTimeQueue) = 
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let result = iteratertQueue r
+        let result = iterate2Empty r
                     
         sw.Stop()
                     
-        Utility.getTimeResult result data Operator.RecHead sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Head Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doLookup inputArgs data dCount (r:'a RealTimeQueue.RealTimeQueue) = 
         let rnd = new System.Random()
@@ -1044,20 +806,40 @@ module FSharpxQueueRealTime =
                     
         Utility.getTimeResult times data Operator.RecAccHead sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doTailToEmpty data (q:'a RealTimeQueue.RealTimeQueue) =
+    let makeRTQueue data =
+        Seq.fold (fun (q : 'a RealTimeQueue.RealTimeQueue) t -> (RealTimeQueue.snoc t q)) (RealTimeQueue.empty) data
+
+    let doQueueIntegration data = 
+
+        let iterateDown (queue:'a RealTimeQueue.RealTimeQueue) count =
+            let rec loop (q:'a RealTimeQueue.RealTimeQueue) acc =
+                match acc  with
+                | 0 -> q
+                | _ -> 
+                    let a = RealTimeQueue.head q
+                    loop (RealTimeQueue.tail q) (acc - 1)
+            loop queue count
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
- 
-        let rec loop : 'a RealTimeQueue.RealTimeQueue -> unit =  function
-            | q when (RealTimeQueue.isEmpty (RealTimeQueue.tail q)) -> ()
-            | q -> loop (RealTimeQueue.tail q)
 
-        loop q
-                    
+        let dataLen = Seq.length data
+ 
+        let q0 = Seq.fold (fun (q : 'a RealTimeQueue.RealTimeQueue) t -> RealTimeQueue.snoc t q) RealTimeQueue.empty data
+
+        let q1 = iterateDown q0 (dataLen / 2)
+
+        let q2 = Seq.fold (fun (q : 'a RealTimeQueue.RealTimeQueue) t -> RealTimeQueue.snoc t q) q1 data
+
+        let q3 = iterateDown q0 (((dataLen / 2) + dataLen) / 2)
+
+        let q4 = Seq.fold (fun (q : 'a RealTimeQueue.RealTimeQueue) t -> RealTimeQueue.snoc t q) q3 data
+
+        let result = iterate2Empty q4
+
         sw.Stop()
                     
-        Utility.getTimeResult q data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult dataLen data Operator.QueueIntegration sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doUpdateRand inputArgs data dCount update (r:'a RealTimeQueue.RealTimeQueue) =
         let rnd = new System.Random()
@@ -1075,7 +857,7 @@ module FSharpxQueueRealTime =
 
         for i = 1 to times do
             let left, right = split r (rnd.Next dCount)
-            let leftrtQueue = List.rev left |> List.toArray |> rtQueueOfArray
+            let leftrtQueue = List.rev left |> List.toArray |> makeRTQueue
             let newLeft = RealTimeQueue.snoc update leftrtQueue
             let newrtQueue = appendrtQueue newLeft right
             ()
@@ -1084,104 +866,29 @@ module FSharpxQueueRealTime =
                     
         Utility.getTimeResult times data Operator.SplitSnocAppend sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let getTimeOfArray (inputArgs:BenchArgs) (data:'a[]) =
+    let getTime (inputArgs:BenchArgs) (data:'a seq) =
 
         System.GC.Collect()
             
         match inputArgs.Action.ToLower() with
 
-            | x when x = Action.AddOne ->
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
- 
-                let r = rtQueueOfArray data
-                    
-                sw.Stop()
-                    
-                Utility.getTimeResult r data Operator.RecHeadSnoc sw.ElapsedTicks sw.ElapsedMilliseconds
+        | x when x = Action.AddOne ->
+            Utility.timeAction (Seq.fold (fun (q : 'a RealTimeQueue.RealTimeQueue) t -> (RealTimeQueue.snoc t q)) (RealTimeQueue.empty)) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
 
-            | x when x = Action.Append ->
-                let r = rtQueueOfArray data
-                rtQueueOfArray data |> doAppend r data
+        | x when x = Action.Append ->
+            let r = makeRTQueue data 
+            makeRTQueue data |> doAppend r data
 
-            | x when x = Action.Iterate ->
-                rtQueueOfArray data|> doIterate data
+        | x when x = Action.Iterate ->
+            makeRTQueue data|> doIterate data
 
-            | x when x = Action.LookUpRand ->
-                rtQueueOfArray data |> doLookup inputArgs data data.Length 
+        | x when x = Action.LookUpRand ->
+            makeRTQueue data |> doLookup inputArgs data (Seq.length data) 
 
-            | x when x = Action.TailToEmpty ->
-                rtQueueOfArray data |> doTailToEmpty data
+        | x when x = Action.QueueIntegration  ->
+            doQueueIntegration data
 
-            | x when x = Action.UpdateRand ->
-                rtQueueOfArray data |> doUpdateRand inputArgs data data.Length (Seq.nth 0 data)
+        | x when x = Action.UpdateRand ->
+            makeRTQueue data |> doUpdateRand inputArgs data (Seq.length data) (Seq.nth 0 data)
 
-            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
-    let getTimeOfList (inputArgs:BenchArgs) (data:'a list) =
-
-        System.GC.Collect()
-            
-        match inputArgs.Action.ToLower() with
-
-            | x when x = Action.AddOne ->
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
- 
-                let r = rtQueueOfList data
-                    
-                sw.Stop()
-                    
-                Utility.getTimeResult r data Operator.RecHeadSnoc sw.ElapsedTicks sw.ElapsedMilliseconds
-
-            | x when x = Action.Append ->
-                let r = rtQueueOfList data 
-                rtQueueOfList data |> doAppend r data
-
-            | x when x = Action.Iterate ->
-                rtQueueOfList data|> doIterate data
-
-            | x when x = Action.LookUpRand ->
-                rtQueueOfList data |> doLookup inputArgs data data.Length 
-
-            | x when x = Action.TailToEmpty ->
-                rtQueueOfList data |> doTailToEmpty data
-
-            | x when x = Action.UpdateRand ->
-                rtQueueOfList data |> doUpdateRand inputArgs data data.Length (Seq.nth 0 data)
-
-            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
-    let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
-
-        System.GC.Collect()
-            
-        match inputArgs.Action.ToLower() with
-
-            | x when x = Action.AddOne ->
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
- 
-                let r = rtQueueOfSeq data
-                    
-                sw.Stop()
-                    
-                Utility.getTimeResult r data Operator.RecHeadSnoc sw.ElapsedTicks sw.ElapsedMilliseconds
-
-            | x when x = Action.Append ->
-                let r = rtQueueOfSeq data 
-                rtQueueOfSeq data |> doAppend r data
-
-            | x when x = Action.Iterate ->
-                rtQueueOfSeq data|> doIterate data
-
-            | x when x = Action.LookUpRand ->
-                rtQueueOfSeq data |> doLookup inputArgs data (Seq.length data) 
-
-            | x when x = Action.TailToEmpty ->
-                rtQueueOfSeq data |> doTailToEmpty data
-
-            | x when x = Action.UpdateRand ->
-                rtQueueOfSeq data |> doUpdateRand inputArgs data (Seq.length data) (Seq.nth 0 data)
-
-            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")

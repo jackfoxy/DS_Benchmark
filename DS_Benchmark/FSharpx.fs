@@ -1,5 +1,5 @@
 ﻿namespace ds_benchmark
-
+open FSharpx.Collections
 open FSharpx.DataStructures
 open Utility
 
@@ -18,7 +18,8 @@ module FSharpxDList =
         let result = Seq.fold foldFun 0 d
                     
         sw.Stop()
-                    
+        let x = new ByteString()
+        
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doTailToEmpty data (q:'a DList) =
@@ -35,28 +36,21 @@ module FSharpxDList =
         sw.Stop()
                     
         Utility.getTimeResult q data Operator.RecTail sw.ElapsedTicks sw.ElapsedMilliseconds
-
+        
     let getTime (inputArgs:BenchArgs) (data:#('a seq)) =
 
         System.GC.Collect()
             
         match inputArgs.Action.ToLower() with
 
-        | x when x = Action.AddOne ->
+        | x when x = Action.AddOneCons ->
+            Utility.timeAction (Seq.fold (fun (q : 'a DList) t -> DList.cons t q) DList.empty) data (sprintf "%s %s" Operator.SeqFold Operator.Cons)
 
-            let rec loop (dL:'a DList) (d:'a seq) dCount acc =
-                match acc  with
-                | _ when acc = dCount ->dL
-                | _ -> loop (DList.cons (Seq.nth acc d) dL) d dCount (acc + 1)  
-        
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let dL1 =loop DList.empty data (Seq.length data) 0
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult dL1 data Operator.CreateRecCreate sw.ElapsedTicks sw.ElapsedMilliseconds  
+        | x when x = Action.AddOneConj ->
+            Utility.timeAction (Seq.fold (fun (q : 'a DList) t -> q.snoc t) DList.empty) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
+
+        | x when x = Action.AddTwo ->
+            Utility.timeAction (Seq.fold (fun (q : 'a DList) t -> q.snoc t |> DList.cons t) DList.empty) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc) 
 
         | x when x = Action.Append ->
             let dl = DList.ofSeq data //do not move data structure instantiations to higher level because some tests may create very large unneeded objects
@@ -232,7 +226,7 @@ module FSharpxIntMap =
     let getTime (inputArgs:BenchArgs) (zipData:#seq<int*'a>) (lookUpData:int[]) =
             
         System.GC.Collect()
-
+        
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.AddOne ->
@@ -342,19 +336,7 @@ module FSharpxVectorPersistent =
         match inputArgs.Action.ToLower() with
 
         | x when x = Action.AddOne ->
-            let rec loop (v:Vector.vector<_>) (d:'a seq) dCount acc =
-                match acc  with
-                | _ when acc = dCount -> v
-                | _ -> loop (v.Conj (Seq.nth acc d)) d dCount (acc + 1)  
-        
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let v1 =loop Vector.empty data (Seq.length data) 0
-                    
-            sw.Stop()
-                    
-            Utility.getTimeResult v1 data Operator.CreateRecCreate sw.ElapsedTicks sw.ElapsedMilliseconds  
+            Utility.timeAction (Seq.fold (fun (q : 'a Vector.vector) t -> q.Conj t) Vector.empty) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
 
         | x when x = Action.Append ->
             let v = Vector.ofSeq data 
@@ -374,51 +356,5 @@ module FSharpxVectorPersistent =
 
         | x when x = Action.UpdateRand ->
             Vector.ofSeq data |> iVector.doUpdateRand inputArgs data
-
-        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
-module FSharpxVectorTransient =
-
-    let getTime (inputArgs:BenchArgs) data = 
-            
-        let createTransVector (data:#('a seq)) =
-            let mutable v = Vector.TransientVector()
-
-            let en = data.GetEnumerator()
-
-            while en.MoveNext() do
-                v <- v.conj en.Current
-            v
-
-        System.GC.Collect()
-            
-        match inputArgs.Action.ToLower() with
-
-        | x when x = Action.AddOne ->
-            let sw = new System.Diagnostics.Stopwatch()
-            sw.Start()
- 
-            let v = createTransVector data
-                    
-            sw.Stop()
-
-            Utility.getTimeResult v data Operator.ConjEnumerateData sw.ElapsedTicks sw.ElapsedMilliseconds
-
-        | x when x = Action.Append ->
-            let v = createTransVector data 
-            let v2 = createTransVector data
-            iVector.doAppend v v2 data
-
-        | x when x = Action.Iterate ->
-            Utility.getTime iVector.iterate Operator.ForCountItem data (createTransVector data)
-
-        | x when x = Action.IterateSeq ->
-            createTransVector data   |> iVector.doIterateSeq data
-
-        | x when x = Action.LookUpRand ->
-            createTransVector data |> iVector.doLookUpRand inputArgs data
-
-        | x when x = Action.UpdateRand ->
-            createTransVector data |> iVector.doUpdateRand inputArgs data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")

@@ -54,7 +54,7 @@ module CoreCollectionsArray =
                     
         sw.Stop()
                     
-        Utility.getTimeResult a2 data Operator.CreateRecCreate sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult a2 data Operator.Append sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doLookUpRand (inputArgs:BenchArgs) (a:'a[]) =
         let rnd = new System.Random()  
@@ -137,6 +137,16 @@ module CoreCollectionsArray =
                     
         1, sw
 
+    let doReverse (inputArgs:BenchArgs) (data:#('a seq)) (v : 'a[]) = 
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let a = Array.rev v
+                  
+        sw.Stop()
+                    
+        Utility.getTimeResult a data Operator.Rev sw.ElapsedTicks sw.ElapsedMilliseconds
+
     let doUpdateRand (inputArgs:BenchArgs) (update:'a) (a:'a[])  =
         let rnd = new System.Random()       
         let times = Utility.getIterations inputArgs
@@ -181,8 +191,18 @@ module CoreCollectionsArray =
                     
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 
+    let iterate (v : 'a[]) =
+
+        for i = 0 to v.Length- 1 do
+            let a = v.[i]
+            ()
+        v.Length
+
     let getTime (inputArgs:BenchArgs) data (a: 'a[]) = 
         match inputArgs.Action.ToLower() with
+
+        | x when x = Action.Iterate ->
+            a |> Utility.getTime iterate Operator.ForCountItem data
 
         | x when x = Action.IterateSeq ->
             a |> doIterateSeq data
@@ -206,6 +226,9 @@ module CoreCollectionsArray =
         | x when x = Action.RemoveWorst1 ->
             let times, sw = a |> doRemoveWorst1 inputArgs (Seq.nth 0 data)
             Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+
+        | x when x = Action.Reverse ->
+            Array.ofSeq data |> doReverse inputArgs data
 
         | x when x = Action.UpdateRand ->
             let times, sw = a |> doUpdateRand inputArgs (Seq.nth 0 data)
@@ -280,28 +303,6 @@ module CoreCollectionsArray =
 
 module CoreCollectionsList = 
     
-    let doAddOneArray (data: 'a[]) = 
-        
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
-
-        let l1 = Array.fold (fun (l:'a list) t ->t::l) [] data
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult l1 data Operator.Cons sw.ElapsedTicks sw.ElapsedMilliseconds
-
-    let doAddOneSeq (data: 'a seq) = 
- 
-        let sw = new System.Diagnostics.Stopwatch()
-        sw.Start()
-
-        let l1 = Seq.fold (fun (l:'a list) t ->t::l) [] data
-                    
-        sw.Stop()
-                    
-        Utility.getTimeResult l1 data Operator.Cons sw.ElapsedTicks sw.ElapsedMilliseconds
-
     let doAppend data l = 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -596,7 +597,27 @@ module CoreCollectionsList =
                     
         1, sw   
 
-    let doTailToEmpty data (l:'a list) =
+    let doReverse (inputArgs:BenchArgs) (data:#('a seq)) (v : list<_>) = 
+
+        let iterate2Empty (queue:'a list) =
+            let rec loop (q :'a list) acc =
+                match q  with
+                | _ when q.IsEmpty -> acc
+                | _ -> 
+                    let a = q.Head
+                    loop q.Tail (acc + 1)
+            loop queue 0
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = iterate2Empty v
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Head Operator.Rev) sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doPeekDequeueEmpty data (l:'a list) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
@@ -843,8 +864,11 @@ module CoreCollectionsList =
             let times, sw = l |> doRemoveHybridWorst1 (List.length l) 
             Utility.getTimeResult times data Operator.ToArrayItemOfArray sw.ElapsedTicks sw.ElapsedMilliseconds
 
-        | x when x = Action.TailToEmpty ->
-            l |> doTailToEmpty data
+        | x when x = Action.Reverse ->
+            List.ofSeq data |> doReverse inputArgs data
+
+        | x when x = Action.PeekDequeueEmpty ->
+            l |> doPeekDequeueEmpty data
 
         | x when x = Action.UpdateRand || x = Action.UpdateHybridRand ->
             let times, sw = l |> doUpdateHybridRand inputArgs (l.Item 0) (List.length l)
@@ -890,7 +914,8 @@ module CoreCollectionsList =
             match inputArgs.Action.ToLower() with
 
             | x when x = Action.AddOne ->
-                doAddOneArray data
+                //doAddOneArray data
+                Utility.timeAction (Array.fold (fun (q : 'a list) t -> t::q) List.empty) data (sprintf "%s %s" Operator.SeqFold Operator.Cons)
 
             | x when x = Action.Append ->
                 List.ofArray data |> doAppend data
@@ -921,7 +946,8 @@ module CoreCollectionsList =
             match inputArgs.Action.ToLower() with
 
             | x when x = Action.AddOne ->
-                doAddOneSeq data
+                //doAddOneSeq data
+                 Utility.timeAction (Seq.fold (fun (q : 'a list) t -> t::q) List.empty) data (sprintf "%s %s" Operator.SeqFold Operator.Cons)
 
             | x when x = Action.Append ->
                 List.ofSeq data |> doAppend data

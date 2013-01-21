@@ -235,6 +235,17 @@ Contact me if you are interested in contributing to the project. I will consider
 
 ##Release Notes
 
+
+###v1.4
+
+>1) Further architectural clean-up in conjuction with benchmarking recent FSharpx.Collections.
+
+>2) NaiveDataStructures has evolved into my data structure sandbox. Take anything there "with a grain of salt".
+
+>3) You will need to manually reference FSharpx.Core in DS_Benchmark and DS_Benchmark.Tests to the latest NuGet package.
+
+>4) As always reference the latest documentation in Console1.exe
+
 ###v1.3
 
 >1) Architectural clean-up.

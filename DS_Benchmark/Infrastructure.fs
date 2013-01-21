@@ -30,7 +30,10 @@ type Action =
     val private y : unit    //this val and constructor is a spoof to get reflection to work
     new () = {y=()}
     static member AddOne = "addone"
+    static member AddOneCons = "addonecons"
+    static member AddOneConj = "addoneconj"
     static member AddOneNoCapacity = "addonenocapacity"
+    static member AddTwo = "addtwo"
     static member Append = "append"
     static member Init = "init"
     static member InitOfCatLists = "initofcatlists"
@@ -42,6 +45,9 @@ type Action =
     static member LookUpRandNoCapacity = "lookuprandnocapacity"
     static member LookUpRandSeq = "lookuprandseq"
     static member NewInit = "new()"
+    static member PeekDequeueEmpty ="peekdequeueempty"
+    
+    static member QueueIntegration = "queueintegration"
 
     static member RemoveRand = "removerand"
     static member RemoveRandGC10 = "removerandgc10"
@@ -56,8 +62,12 @@ type Action =
     static member RemoveWorst1 = "removeworst1"
     static member RemoveDescend = "removedescend"
 
+    static member Reverse = "rev"
+
     static member TailToEmpty = "tailtoempty"
+    static member UnconjToEmpty = "unconjtoempty"
     static member UnconsToEmpty = "unconstoempty"
+
     static member UpdateHybridRand = "updatehybridrand"
     static member UpdateHybridWorst1 = "updatehybridworst1"
     static member UpdateRand = "updaterand"
@@ -117,6 +127,14 @@ type DataStructure =
     static member CoreCollectionsMap = "core.map"
     static member CoreCollectionsSet = "core.set"
 
+    static member FSharpxCollDeque = "fsharpx.coll.deque"
+    static member FSharpxCollDList = "fsharpx.coll.dlist"
+    static member FSharpxCollHeap = "fsharpx.coll.heap"
+    static member FSharpxCollLazyList = "fsharpx.coll.lazylist"
+    static member FSharpxCollQueue = "fsharpx.coll.queue"
+    static member FSharpxCollRandomAccessList = "fsharpx.coll.randomaccesslist"
+    static member FSharpxCollVector = "fsharpx.coll.vector"
+
     static member FSharpxDequeBankers = "fsharpx.deque.bankersdeque"
     static member FSharpxDequeBatched = "fsharpx.deque.batcheddeque"
     static member FSharpxDeque = "fsharpx.deque.deque"
@@ -143,12 +161,14 @@ type DataStructure =
     static member FSharpxRandomAccessListSkewBinary = "fsharpx.rndacclst.skewbinaryrandomaccesslist"
 
     static member FSharpxVectorPersistent = "fsharpx.vector.persistentvector"
-    static member FSharpxVectorTransient = "fsharpx.vector.transientvector"
 
+    static member NaiveQueueBootStrapped1 = "fsharpx.queue.bootstrappedqueue1"
     static member NaiveStack = "naive.stack"
 
     static member PowerPackHashMultiMap = "powerpack.hashmultimap"
     static member PowerPackLazyList = "powerpack.lazylist"
+
+    static member SysColImmutQueue = "sysim.immutablequeue"
 
     static member SysCollectionsConcurrentQueue = "sys.concurrentqueue"
     static member SysCollectionsGenDictionary = "sys.dictionary"
@@ -164,16 +184,20 @@ type Operator =
     static member ArrayFold = "Array.fold"
     static member ArrayIter = "Array.iter"
     static member AssocN = "assocn"
+    static member Conj = "conj"
     static member ConjEnumerateData = "conj enumerate data"
     static member Cons = "cons"
     static member Contains = "contains"
+    static member Dequeue = "dequeue"
     static member EmptyRecAdd = "empty rec add"
+    static member Enqueue = "enqueue"
     static member CreateRecCreate = "create rec create"
     static member EmptyRecCons = "empty rec cons"
     static member Fold = "fold"
     static member ForCountItem = "for count item"
     static member ForEachAdd = "for each add"
     static member ForIn = "for ... in ..."
+    static member Head = "head"
     static member Insert = "insert"
     static member ItemByIndex = "item index"
     static member ItemByKey = "item key"
@@ -187,7 +211,9 @@ type Operator =
     static member OfCatLists = "ofCatLists"
     static member OfCatSeqs = "ofCatSeqs"
     static member OfList= "ofList"
-    static member OfSeq = "ofSeq"
+    static member OfSeq= "ofSeq"
+    static member Peek = "peek"
+    static member QueueIntegration = "queueintegration"
     static member RecAcc = "rec acc"
     static member RecAccHead = "rec acc head"
     static member RecAdd = "rec add"
@@ -199,6 +225,7 @@ type Operator =
     static member Remove = "remove"
     static member RemoveAdd = "remove add"
     static member Replace = "replace"
+    static member Rev = "rev"
     static member SeqFold = "Seq.fold"
     static member SeqIter = "Seq.iter"
     static member SeqNth  = "Seq.nth"
@@ -206,7 +233,10 @@ type Operator =
     static member SplitConsAppend = "split cons append"
     static member SplitSnocAppend = "split snoc append"
     static member ToArrayItemOfArray = "toarray item ofarray"
+    static member TryDequeue = "trydequeue"
+    static member tryUnconj = "tryunconj"
     static member tryUncons = "tryuncons"
+    static member Uncons = "uncons"
     static member Update = "update"
 
 module Utility =
@@ -259,4 +289,15 @@ module Utility =
             times <- (int inputArgs.AddlParms.[0])
                     
         times
+
+    let timeAction f data op =
+        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+        
+        let result = f data
+                            
+        sw.Stop()
+                            
+        getTimeResult result data op sw.ElapsedTicks sw.ElapsedMilliseconds
 

@@ -52,12 +52,11 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="FSharp.PowerPack, Version=2.0.0.0, Culture=neutral, PublicKeyToken=a19089b1c74d0809">
-      <Private>True</Private>
+    <Reference Include="FSharp.PowerPack">
+      <HintPath>..\packages\FSPowerPack.Core.Community.3.0.0.0\Lib\Net40\FSharp.PowerPack.dll</HintPath>
     </Reference>
     <Reference Include="FSharpx.Core">
-      <HintPath>..\packages\FSharpx.Core.1.6.120\lib\40\Fsharpx.Core.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\fsharpx\src\FSharpx.Core\bin\Release\FSharpx.Core.dll</HintPath>
     </Reference>
     <Reference Include="FsUnit.CustomMatchers">
       <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.2\lib\Net40\FsUnit.CustomMatchers.dll</HintPath>

@@ -3,101 +3,147 @@
 open NaiveDataStructures
 open Utility
 
-module NaiveStack =
+module NaiveQueueBootStrapped1 =
+        
+    let appendBsQueue (bsQueue:'a BootstrappedQueue1) (bsQueue2:'a BootstrappedQueue1) =
+        let rec loop (b:'a BootstrappedQueue1) (b2:'a BootstrappedQueue1) =
+            match b2  with
+            | _ when BootstrappedQueue1.isEmpty b2 -> b
+            | _ -> loop (BootstrappedQueue1.snoc (BootstrappedQueue1.head b2) b) (BootstrappedQueue1.tail b2)
+        loop bsQueue bsQueue2
 
-    let appendStack (left:'a Stack) (right:'a Stack) =
-        let leftList = Stack.toList left
-            
-        let rec loop (ll:'a list) (s:'a Stack) =
-            match ll  with
-            | [] -> s
-            | hd::tl -> loop tl (s.push hd)
-            
-        loop leftList right
-
-    let doAppend (s:'a Stack) data (sAppend:'a Stack) =
+    let doAppend (b:'a BootstrappedQueue1) data (bAppend:'a BootstrappedQueue1) =
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
  
-        let s2 = appendStack s sAppend 
+        let b2 = appendBsQueue b bAppend 
                     
         sw.Stop()
                     
-        Utility.getTimeResult s2 data Operator.RecSnoc sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult b2 data Operator.RecSnoc sw.ElapsedTicks sw.ElapsedMilliseconds
 
-    let doLookUpRand (inputArgs:BenchArgs) data dCount (s:'a Stack) =
-        let rnd = new System.Random()  
-        let times = Utility.getIterations inputArgs          
+    let iterate2Empty (queue:'a BootstrappedQueue1) =
+        let rec loop (q:'a BootstrappedQueue1) acc =
+            match q  with
+            | _ when BootstrappedQueue1.isEmpty q -> acc
+            | _ -> 
+                let a = BootstrappedQueue1.head q
+                loop (BootstrappedQueue1.tail q) (acc + 1)
+        loop queue 0
 
+    let doIterate data (b:'a BootstrappedQueue1) = 
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = iterate2Empty b
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data (sprintf "%s %s" Operator.Head Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doLookup inputArgs data dCount (b:'a BootstrappedQueue1) = 
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+
+        let nth (b2:'a BootstrappedQueue1) n =
+            let rec loop (b3:'a BootstrappedQueue1) z = 
+                match z with
+                | 0 -> BootstrappedQueue1.head b3
+                | _ -> loop (BootstrappedQueue1.tail b3) (z - 1)
+            loop b2 n
+                        
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
         for i = 1 to times do
-            let a = Stack.lookup (rnd.Next dCount) s
+            let a = nth b (rnd.Next dCount)
             ()
                     
         sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.RecAccHead sw.ElapsedTicks sw.ElapsedMilliseconds
 
-        Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
+    let doQueueIntegration data = 
 
-    let doUpdateRand (inputArgs:BenchArgs) data dCount update (s:'a Stack) =
-        let rnd = new System.Random()  
-        let times = Utility.getIterations inputArgs          
+        let iterateDown (queue:'a BootstrappedQueue1) count =
+            let rec loop (q:'a BootstrappedQueue1) acc =
+                match acc  with
+                | 0 -> q
+                | _ -> 
+                    let a = BootstrappedQueue1.head q
+                    loop (BootstrappedQueue1.tail q) (acc - 1)
+            loop queue count
 
         let sw = new System.Diagnostics.Stopwatch()
         sw.Start()
 
+        let dataLen = Seq.length data
+ 
+        let q0 = Seq.fold (fun (q : 'a BootstrappedQueue1) t -> BootstrappedQueue1.snoc t q) BootstrappedQueue1.Empty data
+
+        let q1 = iterateDown q0 (dataLen / 2)
+
+        let q2 = Seq.fold (fun (q : 'a BootstrappedQueue1) t -> BootstrappedQueue1.snoc t q) q1 data
+
+        let q3 = iterateDown q0 (((dataLen / 2) + dataLen) / 2)
+
+        let q4 = Seq.fold (fun (q : 'a BootstrappedQueue1) t -> BootstrappedQueue1.snoc t q) q3 data
+
+        let result = iterate2Empty q4
+
+        sw.Stop()
+                    
+        Utility.getTimeResult dataLen data Operator.QueueIntegration sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doUpdateRand inputArgs data dCount update (b:'a BootstrappedQueue1) =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+
+        let split (b2:'a BootstrappedQueue1) n  =
+            let rec loop (b3:'a BootstrappedQueue1) z (leftL:'a List) = 
+                match z with
+                | 0 -> leftL, b3
+                | _ -> loop (BootstrappedQueue1.tail b3)(z - 1)  ((BootstrappedQueue1.head b3)::leftL)
+            loop b2 n List.empty
+                        
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
         for i = 1 to times do
-            let s2 = Stack.update (rnd.Next dCount) update s
+            let left, right = split b (rnd.Next dCount)
+            let leftBsQueue = List.rev left |> BootstrappedQueue1.ofList
+            let newLeft = BootstrappedQueue1.snoc update leftBsQueue
+            let newBsQueue = appendBsQueue newLeft right
             ()
                     
         sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.SplitSnocAppend sw.ElapsedTicks sw.ElapsedMilliseconds
 
-        Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
-
+    let getTime (inputArgs:BenchArgs) data = 
         
-
-    let getTimeOfArray (inputArgs:BenchArgs) (data:'a[]) =
-
         System.GC.Collect()
-            
+        
         match inputArgs.Action.ToLower() with
 
-//            | x when x = Action.AddOne ->
-//AddOne would be no different than Init for NaiveStack
+        | x when x = Action.AddOne ->
+            Utility.timeAction (Seq.fold (fun (q : 'a BootstrappedQueue1) t -> BootstrappedQueue1.snoc t q) (BootstrappedQueue1.Empty)) data (sprintf "%s %s" Operator.SeqFold Operator.Snoc)
 
-            | x when x = Action.Append ->
-                let s = Stack.ofArray data
-                Stack.ofArray data |> doAppend s data
+        | x when x = Action.Iterate ->
+            BootstrappedQueue1.ofList data |> doIterate data
 
-            | x when x = Action.Init ->
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
- 
-                let s = Stack.ofArray data
-                    
-                sw.Stop()
-                    
-                Utility.getTimeResult s data Operator.OfArray sw.ElapsedTicks sw.ElapsedMilliseconds
+        | x when x = Action.LookUpRand ->
+            BootstrappedQueue1.ofList data |> doLookup inputArgs data (Seq.length data) 
 
-            | x when x = Action.Iterate ->
-                let foldFun =
-                    (fun i b -> 
-                        let c = b
-                        i + 1)
-                        
-                let sFold = Stack.fold foldFun 0
+        | x when x = Action.QueueIntegration  ->
+            doQueueIntegration data
 
-                Stack.ofArray data |> Utility.getTime sFold Operator.Fold data
+        | x when x = Action.UpdateRand ->
+            BootstrappedQueue1.ofList data |> doUpdateRand inputArgs data (Seq.length data) (Seq.nth 0 data)
 
-            | x when x = Action.LookUpRand ->
-                Stack.ofArray data |> doLookUpRand inputArgs data data.Length 
-
-            | x when x = Action.UpdateRand ->
-                Stack.ofArray data |> doUpdateRand inputArgs data data.Length (Seq.nth 0 data)
-
-            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
     let getTimeOfList (inputArgs:BenchArgs) (data:'a list) =
 
@@ -105,40 +151,14 @@ module NaiveStack =
             
         match inputArgs.Action.ToLower() with
 
-//            | x when x = Action.AddOne ->
-//AddOne would be no different than Init for NaiveStack
+        | x when x = Action.Append ->
+            let b = BootstrappedQueue1.ofList data 
+            BootstrappedQueue1.ofList data |> doAppend b data
 
-            | x when x = Action.Append ->
-                let s = Stack.ofList data
-                Stack.ofList data |> doAppend s data
+        | x when x = Action.Init ->
+            Utility.timeAction BootstrappedQueue1.ofList data Operator.NonEmptyBootstrappedQueueCreate
 
-            | x when x = Action.Init ->
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
- 
-                let s = Stack.ofList data
-                    
-                sw.Stop()
-                    
-                Utility.getTimeResult s data Operator.OfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-            | x when x = Action.Iterate ->
-                let foldFun =
-                    (fun i b -> 
-                        let c = b
-                        i + 1)
-                        
-                let sFold = Stack.fold foldFun 0
-
-                Stack.ofList data |> Utility.getTime sFold Operator.Fold data
-
-            | x when x = Action.LookUpRand ->
-                Stack.ofList data |> doLookUpRand inputArgs data data.Length 
-
-            | x when x = Action.UpdateRand ->
-                Stack.ofList data |> doUpdateRand inputArgs data data.Length (Seq.nth 0 data)
-
-            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
+        | _ -> getTime inputArgs data
 
     let getTimeOfSeq (inputArgs:BenchArgs) (data:'a seq) =
 
@@ -146,38 +166,11 @@ module NaiveStack =
             
         match inputArgs.Action.ToLower() with
 
-//            | x when x = Action.AddOne ->
-//AddOne would be no different than Init for NaiveStack
+        | x when x = Action.Append ->
+            let b = BootstrappedQueue1.ofList (List.ofSeq data) 
+            BootstrappedQueue1.ofList (List.ofSeq data) |> doAppend b data
 
-            | x when x = Action.Append ->
-                let s = Stack.ofSeq data
-                Stack.ofSeq data |> doAppend s data
+        | x when x = Action.Init ->
+            Utility.timeAction BootstrappedQueue1.ofList (List.ofSeq data) Operator.NonEmptyBootstrappedQueueCreate
 
-            | x when x = Action.Init ->
-                let sw = new System.Diagnostics.Stopwatch()
-                sw.Start()
- 
-                let s = Stack.ofSeq data
-                    
-                sw.Stop()
-                    
-                Utility.getTimeResult s data Operator.OfArray sw.ElapsedTicks sw.ElapsedMilliseconds
-
-            | x when x = Action.Iterate ->
-                let foldFun =
-                    (fun i b -> 
-                        let c = b
-                        i + 1)
-                        
-                let sFold = Stack.fold foldFun 0
-
-                Stack.ofSeq data |> Utility.getTime sFold Operator.Fold data
-
-            | x when x = Action.LookUpRand ->
-                Stack.ofSeq data |> doLookUpRand inputArgs data (Seq.length data) 
-
-            | x when x = Action.UpdateRand ->
-                Stack.ofSeq data |> doUpdateRand inputArgs data (Seq.length data) (Seq.nth 0 data)
-
-            | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
-
+        | _ -> getTime inputArgs (List.ofSeq data)

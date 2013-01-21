@@ -472,6 +472,27 @@ module Benchmark =
 
             | x when x = DataStructure.CoreCollectionsList -> 
                 CoreCollectionsList.getTimeOfSeq inputArgs data
+                
+            | x when x = DataStructure.FSharpxCollDeque ->
+                FSharpxCollDeque.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxCollDList ->
+                FSharpxCollDList.getTime inputArgs data
+
+            | x when x = DataStructure.FSharpxCollHeap ->
+                FSharpxCollHeap.getTime inputArgs data
+
+            | x when x = DataStructure.FSharpxCollLazyList -> 
+                FSharpxCollLazyList.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxCollQueue -> 
+                FSharpxCollQueue.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.FSharpxCollRandomAccessList -> 
+                FSharpxCollRandomAccessList.getTime inputArgs data
+
+            | x when x = DataStructure.FSharpxCollVector-> 
+                FSharpxCollVector.getTime inputArgs data
 
             | x when x = DataStructure.FSharpxDList -> 
                 FSharpxDList.getTime inputArgs data
@@ -510,13 +531,13 @@ module Benchmark =
                 FSharpxQueueHoodMelville.getTimeOfSeq inputArgs data
 
             | x when x = DataStructure.FSharpxQueueImplicit -> 
-                FSharpxQueueImplicit.getTimeOfSeq inputArgs data          
+                FSharpxQueueImplicit.getTime inputArgs data          
 
             | x when x = DataStructure.FSharpxQueuePhysicist -> 
                 FSharpxQueuePhysicist.getTimeOfSeq inputArgs data
 
             | x when x = DataStructure.FSharpxQueueRealTime -> 
-                FSharpxQueueRealTime.getTimeOfSeq inputArgs data
+                FSharpxQueueRealTime.getTime inputArgs data
 
             | x when x = DataStructure.FSharpxRandomAccessListAltBin -> 
                 FSharpxRandomAccessListAltBinary.getTime inputArgs data
@@ -530,14 +551,14 @@ module Benchmark =
             | x when x = DataStructure.FSharpxVectorPersistent -> 
                 FSharpxVectorPersistent.getTime inputArgs data
 
-            | x when x = DataStructure.FSharpxVectorTransient -> 
-                FSharpxVectorTransient.getTime inputArgs data
-
-            | x when x = DataStructure.NaiveStack -> 
-                NaiveStack.getTimeOfSeq inputArgs data            
+            | x when x = DataStructure.NaiveQueueBootStrapped1 -> 
+                NaiveQueueBootStrapped1.getTimeOfSeq inputArgs data       
 
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.SysColImmutQueue -> 
+                SysColImmutQueue.getTime inputArgs data
 
             | x when x = DataStructure.SysCollectionsConcurrentQueue -> 
                 SysCollectionsConcurrentQueue.getTime inputArgs data
@@ -584,21 +605,15 @@ module Benchmark =
             | x when x = DataStructure.CoreCollectionsSet -> 
                 CoreCollectionsSet.getTimeOfArray inputArgs data (getAppendDataForSetArrayInt data) data.Length data
 
-            | x when x = DataStructure.FSharpxQueueBootStrapped -> 
-                FSharpxQueueBootStrapped.getTimeOfArray inputArgs data
-
-            | x when x = DataStructure.FSharpxQueueImplicit -> 
-                FSharpxQueueImplicit.getTimeOfArray inputArgs data
+            | x when x = DataStructure.FSharpxCollLazyList -> 
+                FSharpxCollLazyList.getTimeOfArray inputArgs data
 
             | x when x = DataStructure.FSharpxIntMap -> 
                 let zipData = Seq.zip data data
                 FSharpxIntMap.getTime inputArgs zipData (Seq.toArray data)
 
-            | x when x = DataStructure.FSharpxQueueRealTime -> 
-                FSharpxQueueRealTime.getTimeOfArray inputArgs data
-
-            | x when x = DataStructure.NaiveStack -> 
-                NaiveStack.getTimeOfArray inputArgs data
+//            | x when x = DataStructure.NaiveStack -> 
+//                NaiveStack.getTimeOfArray inputArgs data
 
             | x when x = DataStructure.PowerPackHashMultiMap -> 
                 let zipData = Array.zip data data
@@ -626,17 +641,11 @@ module Benchmark =
             | x when x = DataStructure.CoreCollectionsSet -> 
                 CoreCollectionsSet.getTimeOfArray inputArgs data (getAppendDataForSetArrayString data) data.Length data
 
-            | x when x = DataStructure.FSharpxQueueBootStrapped -> 
-                FSharpxQueueBootStrapped.getTimeOfArray inputArgs data
+            | x when x = DataStructure.FSharpxCollLazyList -> 
+                FSharpxCollLazyList.getTimeOfArray inputArgs data
 
-            | x when x = DataStructure.FSharpxQueueImplicit -> 
-                FSharpxQueueImplicit.getTimeOfArray inputArgs data
-
-            | x when x = DataStructure.FSharpxQueueRealTime -> 
-                FSharpxQueueRealTime.getTimeOfArray inputArgs data
-
-            | x when x = DataStructure.NaiveStack -> 
-                NaiveStack.getTimeOfArray inputArgs data
+//            | x when x = DataStructure.NaiveStack -> 
+//                NaiveStack.getTimeOfArray inputArgs data
 
             | x when x = DataStructure.PowerPackHashMultiMap -> 
                     let zipData = Array.zip data data
@@ -667,6 +676,15 @@ module Benchmark =
             | x when x = DataStructure.CoreCollectionsSet -> 
                 CoreCollectionsSet.getTimeOfList inputArgs data (getAppendDataForSetListInt data) data.Length (List.toArray data)
  
+            | x when x = DataStructure.FSharpxCollDeque ->
+                FSharpxCollDeque.getTimeOfList inputArgs data
+
+            | x when x = DataStructure.FSharpxCollQueue -> 
+                FSharpxCollQueue.getTimeOfList inputArgs data
+
+            | x when x = DataStructure.FSharpxCollLazyList -> 
+                FSharpxCollLazyList.getTimeOfList inputArgs data
+
             | x when x = DataStructure.FSharpxDeque -> 
                 FSharpxDeque.getTimeOfList inputArgs data
 
@@ -692,21 +710,15 @@ module Benchmark =
             | x when x = DataStructure.FSharpxQueueHoodMelville -> 
                 FSharpxQueueHoodMelville.getTimeOfList inputArgs data    
 
-            | x when x = DataStructure.FSharpxQueueImplicit -> 
-                FSharpxQueueImplicit.getTimeOfList inputArgs data
-
             | x when x = DataStructure.FSharpxQueuePhysicist -> 
                 FSharpxQueuePhysicist.getTimeOfList inputArgs data
 
-            | x when x = DataStructure.FSharpxQueueRealTime -> 
-                FSharpxQueueRealTime.getTimeOfList inputArgs data
-
-            | x when x = DataStructure.NaiveStack -> 
-                NaiveStack.getTimeOfList inputArgs data
+            | x when x = DataStructure.NaiveQueueBootStrapped1 -> 
+                NaiveQueueBootStrapped1.getTimeOfList inputArgs data
 
             | x when x = DataStructure.PowerPackHashMultiMap -> 
-                    let zipData = List.zip data data
-                    PowerPackHashMultiMap.getTime inputArgs zipData (getAppendDataForMapListInt zipData) (List.toArray data)
+                let zipData = List.zip data data
+                PowerPackHashMultiMap.getTime inputArgs zipData (getAppendDataForMapListInt zipData) (List.toArray data)
 
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfList inputArgs data
@@ -730,6 +742,15 @@ module Benchmark =
             | x when x = DataStructure.CoreCollectionsSet -> 
                 CoreCollectionsSet.getTimeOfList inputArgs data (getAppendDataForSetListString data) data.Length (List.toArray data)
                     
+            | x when x = DataStructure.FSharpxCollDeque ->
+                FSharpxCollDeque.getTimeOfList inputArgs data
+
+            | x when x = DataStructure.FSharpxCollQueue -> 
+                FSharpxCollQueue.getTimeOfList inputArgs data
+
+            | x when x = DataStructure.FSharpxCollLazyList -> 
+                FSharpxCollLazyList.getTimeOfList inputArgs data
+
             | x when x = DataStructure.FSharpxDeque -> 
                 FSharpxDeque.getTimeOfList inputArgs data
 
@@ -751,17 +772,11 @@ module Benchmark =
             | x when x = DataStructure.FSharpxQueueHoodMelville -> 
                 FSharpxQueueHoodMelville.getTimeOfList inputArgs data  
 
-            | x when x = DataStructure.FSharpxQueueImplicit -> 
-                FSharpxQueueImplicit.getTimeOfList inputArgs data
-
             | x when x = DataStructure.FSharpxQueuePhysicist -> 
                 FSharpxQueuePhysicist.getTimeOfList inputArgs data
 
-            | x when x = DataStructure.FSharpxQueueRealTime -> 
-                FSharpxQueueRealTime.getTimeOfList inputArgs data
-
-            | x when x = DataStructure.NaiveStack -> 
-                NaiveStack.getTimeOfList inputArgs data
+            | x when x = DataStructure.NaiveQueueBootStrapped1 -> 
+                NaiveQueueBootStrapped1.getTimeOfList inputArgs data
 
             | x when x = DataStructure.PowerPackHashMultiMap -> 
                     let zipData = List.zip data data
