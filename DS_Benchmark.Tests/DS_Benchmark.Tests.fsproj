@@ -56,7 +56,7 @@
       <HintPath>..\packages\FSPowerPack.Core.Community.3.0.0.0\Lib\Net40\FSharp.PowerPack.dll</HintPath>
     </Reference>
     <Reference Include="FSharpx.Core">
-      <HintPath>..\..\fsharpx\src\FSharpx.Core\bin\Release\FSharpx.Core.dll</HintPath>
+      <HintPath>..\packages\FSharpx.Core.1.7\lib\40\FSharpx.Core.dll</HintPath>
     </Reference>
     <Reference Include="FsUnit.CustomMatchers">
       <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.2\lib\Net40\FsUnit.CustomMatchers.dll</HintPath>

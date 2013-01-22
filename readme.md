@@ -235,6 +235,9 @@ Contact me if you are interested in contributing to the project. I will consider
 
 ##Release Notes
 
+###v1.4
+
+>1) corrected FSharpx.Core references to v1.7
 
 ###v1.4
 
