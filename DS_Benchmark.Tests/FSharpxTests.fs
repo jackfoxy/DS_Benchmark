@@ -3,7 +3,7 @@
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open FsUnit.MsTest
 open Benchmark
-open FSharpx.DataStructures
+open FSharpx.Collections.Experimental
 
 [<TestClass>]
 type FSharpxDListTest() = 

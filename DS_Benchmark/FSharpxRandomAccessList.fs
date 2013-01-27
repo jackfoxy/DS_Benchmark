@@ -1,6 +1,6 @@
 ﻿namespace ds_benchmark
 
-open FSharpx.DataStructures
+open FSharpx.Collections.Experimental
 open Utility
 
 module RandomAccessList =

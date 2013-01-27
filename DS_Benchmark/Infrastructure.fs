@@ -1,7 +1,7 @@
 ﻿namespace ds_benchmark
 
 open System.Diagnostics
-open FSharpx.DataStructures
+open FSharpx.Collections.Experimental
 
 type BenchArgs =
     { DataStructure : string;

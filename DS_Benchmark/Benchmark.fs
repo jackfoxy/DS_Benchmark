@@ -1,6 +1,6 @@
 ﻿namespace ds_benchmark
 
-open FSharpx.DataStructures
+open FSharpx.Collections.Experimental
 open System.Diagnostics
 open System.IO
 open NaiveDataStructures

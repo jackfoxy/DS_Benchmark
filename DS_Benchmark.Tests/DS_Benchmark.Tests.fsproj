@@ -55,8 +55,12 @@
     <Reference Include="FSharp.PowerPack">
       <HintPath>..\packages\FSPowerPack.Core.Community.3.0.0.0\Lib\Net40\FSharp.PowerPack.dll</HintPath>
     </Reference>
+    <Reference Include="FSharpx.Collections.Experimental">
+      <HintPath>..\packages\FSharpx.Collections.Experimental.1.7.3\lib\40\FSharpx.Collections.Experimental.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FSharpx.Core">
-      <HintPath>..\packages\FSharpx.Core.1.7\lib\40\FSharpx.Core.dll</HintPath>
+      <HintPath>..\packages\FSharpx.Core.1.7.3\lib\40\FSharpx.Core.dll</HintPath>
     </Reference>
     <Reference Include="FsUnit.CustomMatchers">
       <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.2\lib\Net40\FsUnit.CustomMatchers.dll</HintPath>
