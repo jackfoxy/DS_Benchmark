@@ -162,11 +162,15 @@ type DataStructure =
 
     static member FSharpxVectorPersistent = "fsharpx.vector.persistentvector"
 
+    static member NaiveFlatList = "naive.flatlist"
     static member NaiveQueueBootStrapped1 = "fsharpx.queue.bootstrappedqueue1"
     static member NaiveStack = "naive.stack"
 
     static member PowerPackHashMultiMap = "powerpack.hashmultimap"
     static member PowerPackLazyList = "powerpack.lazylist"
+
+    static member SolidFlexibleList = "solid.flexiblelist"
+    static member SolidVector = "solid.vector"
 
     static member SysColImmutQueue = "sysim.immutablequeue"
 

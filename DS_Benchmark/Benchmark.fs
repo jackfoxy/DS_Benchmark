@@ -557,6 +557,15 @@ module Benchmark =
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfSeq inputArgs data
 
+            | x when x = DataStructure.NaiveFlatList -> 
+                NaiveFlatList.getTime inputArgs data
+
+            | x when x = DataStructure.SolidFlexibleList -> 
+                SolidFlexibleList.getTimeOfSeq inputArgs data
+
+            | x when x = DataStructure.SolidVector ->
+                SolidVector.getTime inputArgs data
+
             | x when x = DataStructure.SysColImmutQueue -> 
                 SysColImmutQueue.getTime inputArgs data
 
@@ -723,6 +732,9 @@ module Benchmark =
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfList inputArgs data
 
+            | x when x = DataStructure.SolidFlexibleList -> 
+                SolidFlexibleList.getTimeOfList inputArgs data
+
             | x when x = DataStructure.SysCollectionsGenHashSet -> 
                 SysCollectionsGenHashSet.getTimeOfList inputArgs data
 
@@ -784,6 +796,9 @@ module Benchmark =
 
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfList inputArgs data
+
+            | x when x = DataStructure.SolidFlexibleList -> 
+                SolidFlexibleList.getTimeOfList inputArgs data
 
             | x when x = DataStructure.SysCollectionsGenHashSet -> 
                 SysCollectionsGenHashSet.getTimeOfList inputArgs data

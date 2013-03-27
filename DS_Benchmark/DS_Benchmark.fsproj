@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Release\FsUnitTest.XML</DocumentationFile>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -47,6 +48,8 @@
     <Compile Include="FSharpxRandomAccessList.fs" />
     <Compile Include="NaiveDataStructures.fs" />
     <Compile Include="PowerPack.fs" />
+    <Compile Include="SolidFlexibleList.fs" />
+    <Compile Include="SolidVector.fs" />
     <Compile Include="SysCollections.fs" />
     <Compile Include="SysCollectionsImmutable.fs" />
     <Compile Include="Benchmark.fs" />
@@ -62,12 +65,19 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharpx.Core">
-      <HintPath>..\packages\FSharpx.Core.1.7.3\lib\40\FSharpx.Core.dll</HintPath>
+      <HintPath>..\packages\FSharpx.Core.1.7.11\lib\40\FSharpx.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Solid">
+      <HintPath>..\packages\Solid.exe</HintPath>
+    </Reference>
+    <Reference Include="SolidFS">
+      <HintPath>..\packages\SolidFS.exe</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable">

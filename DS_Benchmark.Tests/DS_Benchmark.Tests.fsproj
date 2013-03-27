@@ -60,7 +60,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharpx.Core">
-      <HintPath>..\packages\FSharpx.Core.1.7.3\lib\40\FSharpx.Core.dll</HintPath>
+      <HintPath>..\packages\FSharpx.Core.1.7.11\lib\40\FSharpx.Core.dll</HintPath>
     </Reference>
     <Reference Include="FsUnit.CustomMatchers">
       <HintPath>..\packages\Fs30Unit.MsTest.1.1.0.2\lib\Net40\FsUnit.CustomMatchers.dll</HintPath>

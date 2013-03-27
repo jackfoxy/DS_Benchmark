@@ -44,6 +44,7 @@
     <Compile Include="LazyList.fs" />
     <Compile Include="Queue0.fs" />
     <Compile Include="Queue1.fs" />
+    <Compile Include="FlatList1.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.PowerPack">

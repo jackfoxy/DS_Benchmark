@@ -3,6 +3,7 @@
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open FsUnit.MsTest
 open Benchmark
+open FSharpx.Collections
 open FSharpx.Collections.Experimental
 
 [<TestClass>]
