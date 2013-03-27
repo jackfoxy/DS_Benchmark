@@ -1151,7 +1151,7 @@ module FSharpxCollVector =
                     
         sw.Stop()
                     
-        Utility.getTimeResult times data Operator.AssocN sw.ElapsedTicks sw.ElapsedMilliseconds
+        Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
 
     let doIterateSeq (data:'a seq) (v : Vector<_>) = 
 

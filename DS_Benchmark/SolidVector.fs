@@ -65,6 +65,25 @@ module SolidVector =
                     
         Utility.getTimeResult result data (sprintf "%s %s" Operator.Head Operator.RecTail) sw.ElapsedTicks sw.ElapsedMilliseconds
 
+    let doUpdateRand (inputArgs:BenchArgs) (data:#('a seq)) (v:Vector<_>) =
+        let rnd = new System.Random()
+        let times = Utility.getIterations inputArgs
+        let update = Seq.nth 0 data
+        let vCount = Vector.length v
+                     
+        let rec loop (vec : Vector<_>) dec (rnd' : System.Random) count =
+            if dec = 0 then ()
+            else loop (Vector.update (rnd'.Next count) update vec) (dec - 1)  rnd' count
+               
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        loop v times rnd vCount
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.Update sw.ElapsedTicks sw.ElapsedMilliseconds
+
     let getTime (inputArgs:BenchArgs) data =
 
         System.GC.Collect()
@@ -88,5 +107,8 @@ module SolidVector =
 
         | x when x = Action.PeekDequeueEmpty ->
             Vector.ofSeq data |> doPeekDequeueEmpty data
+
+        | x when x = Action.UpdateRand ->
+            Vector.ofSeq data |> doUpdateRand inputArgs data
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
