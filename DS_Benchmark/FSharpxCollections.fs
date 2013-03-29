@@ -1127,7 +1127,7 @@ module FSharpxCollVector =
         sw.Start()
 
         for i = 1 to times do
-            let a = Vector.nth (rnd.Next vCount)
+            let a = v.[(rnd.Next vCount)]
             ()
                     
         sw.Stop()
