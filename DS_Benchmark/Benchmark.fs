@@ -557,8 +557,8 @@ module Benchmark =
             | x when x = DataStructure.PowerPackLazyList -> 
                 PowerPackLazyList.getTimeOfSeq inputArgs data
 
-            | x when x = DataStructure.NaiveFlatList -> 
-                NaiveFlatList.getTime inputArgs data
+            | x when x = DataStructure.FSharpxFlatList -> 
+                FSharpxFlatList.getTime inputArgs data
 
             | x when x = DataStructure.SolidFlexibleList -> 
                 SolidFlexibleList.getTimeOfSeq inputArgs data

@@ -142,6 +142,8 @@ type DataStructure =
 
     static member FSharpxDList = "fsharpx.dlist"
 
+    static member FSharpxFlatList = "fsharpx.flatlist"
+
     static member FSharpxHeapBinomial = "fsharpx.heap.binomialheap"
     static member FSharpxHeapLeftist = "fsharpx.heap.leftistheap"
     static member FSharpxHeapPairing = "fsharpx.heap.pairingheap"
@@ -162,7 +164,6 @@ type DataStructure =
 
     static member FSharpxVectorPersistent = "fsharpx.vector.persistentvector"
 
-    static member NaiveFlatList = "naive.flatlist"
     static member NaiveQueueBootStrapped1 = "fsharpx.queue.bootstrappedqueue1"
     static member NaiveStack = "naive.stack"
 

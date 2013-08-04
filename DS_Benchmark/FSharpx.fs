@@ -139,6 +139,81 @@ module FSharpxDList =
 
         | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
+module FSharpxFlatList =
+    let iterate (v : FlatList<_>) =
+
+        for i = 0 to v.Length- 1 do
+            let a = v.[i]
+            ()
+        v.Length
+
+    let doLookUpRand (inputArgs:BenchArgs) (data:#('a seq)) (v : FlatList<_>) = 
+        let rnd = new System.Random()     
+        let times = Utility.getIterations inputArgs         
+        let vCount = FlatList.length v  
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        for i = 1 to times do
+            let a = v.[(rnd.Next vCount)]
+            ()
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult times data Operator.ItemByIndex sw.ElapsedTicks sw.ElapsedMilliseconds
+            
+    let doIterateSeq (data:'a seq) (v : FlatList<_>) = 
+
+        let foldFun =
+            (fun i b -> 
+                let c = b
+                i + 1)
+
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+ 
+        let result = Seq.fold foldFun 0 v
+                    
+        sw.Stop()
+                    
+        Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let doReverse (inputArgs:BenchArgs) (data:#('a seq)) (v : FlatList<_>) = 
+        let sw = new System.Diagnostics.Stopwatch()
+        sw.Start()
+
+        let a = FlatList.rev v
+                  
+        sw.Stop()
+                    
+        Utility.getTimeResult a data Operator.Rev sw.ElapsedTicks sw.ElapsedMilliseconds
+
+    let getTime (inputArgs:BenchArgs) data =
+
+        System.GC.Collect()
+            
+        match inputArgs.Action.ToLower() with
+
+        | x when x = Action.AddOne -> 
+            Utility.timeAction (Seq.fold (fun (q : 'a FlatList) t -> FlatList.append q (FlatList.singleton t)) FlatList.empty) data (sprintf "%s %s" Operator.SeqFold Operator.Conj)
+
+        | x when x = Action.Init ->
+            Utility.getTime FlatList.ofSeq Operator.OfSeq data data
+
+        | x when x = Action.Iterate ->
+            FlatList.ofSeq data |> Utility.getTime iterate Operator.ForCountItem data
+
+        | x when x = Action.IterateSeq ->
+            FlatList.ofSeq data  |> doIterateSeq data
+
+        | x when x = Action.LookUpRand ->
+            FlatList.ofSeq data |> doLookUpRand inputArgs data
+
+        | x when x = Action.Reverse ->
+            FlatList.ofSeq data |> doReverse inputArgs data
+
+        | _ -> failure data (inputArgs.DataStructure + "\t Action function " + inputArgs.Action + " not recognized")
 
 module FSharpxIntMap = 
 

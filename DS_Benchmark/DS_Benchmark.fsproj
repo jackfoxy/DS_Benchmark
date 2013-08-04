@@ -61,12 +61,10 @@
       <HintPath>..\packages\FSPowerPack.Core.Community.3.0.0.0\Lib\Net40\FSharp.PowerPack.dll</HintPath>
     </Reference>
     <Reference Include="FSharpx.Collections.Experimental">
-      <HintPath>..\packages\FSharpx.Collections.Experimental.1.7.3\lib\40\FSharpx.Collections.Experimental.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\FSharpx.Collections.Experimental.1.8.3.0\lib\40\FSharpx.Collections.Experimental.dll</HintPath>
     </Reference>
     <Reference Include="FSharpx.Core">
-      <HintPath>..\packages\FSharpx.Core.1.7.11\lib\40\FSharpx.Core.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\FSharpx.Core.1.8.3.0\lib\40\FSharpx.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="mscorlib" />
@@ -89,7 +87,7 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime" />
     <Reference Include="Validation">
-      <HintPath>..\packages\Validation.2.0.1.12362\lib\portable-windows8+net40+sl5+windowsphone8\Validation.dll</HintPath>
+      <HintPath>..\packages\Validation.2.0.2.13022\lib\portable-windows8+net40+sl5+windowsphone8\Validation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
