@@ -10,7 +10,7 @@
     <RootNamespace>Console1</RootNamespace>
     <AssemblyName>Console1</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <Name>Console1</Name>
+    <Name>BenchConsole</Name>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
