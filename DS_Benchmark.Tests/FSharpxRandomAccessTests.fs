@@ -1,86 +1,83 @@
 ﻿namespace ds_benchmark
 
-open Microsoft.VisualStudio.TestTools.UnitTesting
-open FsUnit.MsTest
+open FsUnit
+open NUnit.Framework
 open Benchmark
 open FSharpx.Collections.Experimental
 
-[<TestClass>]
-type FSharpxRandomAccessAltBinTest() = 
+module FSharpxRandomAccessAltBinTest = 
 
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxRandomAccessListAltBin initData action
 
-    [<TestMethod>]
-    member x.``AltBinRndAccList array int AddOne`` () =
+    [<Test>]
+    let ``AltBinRndAccList array int AddOne`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
         let data = result.Data:?>int[]
         let output =  (result.Result:?>AltBinRndAccList<int>) |> Array.ofSeq |> Array.rev
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``AltBinRndAccList Init array int`` () =
+    [<Test>]
+    let ``AltBinRndAccList Init array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Init
         let data = result.Data:?>int[]
         let output =  (result.Result:?>AltBinRndAccList<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``AltBinRndAccList IterateSeq list string`` () =
+    [<Test>]
+    let ``AltBinRndAccList IterateSeq list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.IterateSeq 
         let data = result.Data :?> list<string>
         let output =  result.Result :?> int
         data.Length |> should equal output
 
-[<TestClass>]
-type FSharpxRandomAccessBinary() = 
+module FSharpxRandomAccessBinary = 
 
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxRandomAccessListBinary initData action 
 
-    [<TestMethod>]
-    member x.``BinaryRandomAccessList array int AddOne`` () =
+    [<Test>]
+    let ``BinaryRandomAccessList array int AddOne`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
         let data = result.Data:?>int[]
         let output =  (result.Result:?>BinaryRandomAccessList<int>) |> Array.ofSeq |> Array.rev
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``BinaryRandomAccessList Init array int`` () =
+    [<Test>]
+    let ``BinaryRandomAccessList Init array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Init
         let data = result.Data:?>int[]
         let output =  (result.Result:?>BinaryRandomAccessList<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``BinaryRandomAccessList IterateSeq list string`` () =
+    [<Test>]
+    let ``BinaryRandomAccessList IterateSeq list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.IterateSeq 
         let data = result.Data :?> list<string>
         let output =  result.Result :?> int
         data.Length |> should equal output
 
-[<TestClass>]
-type FSharpxRandomAccessSkew() = 
+module FSharpxRandomAccessSkew = 
 
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxRandomAccessListSkewBinary initData action
 
-    [<TestMethod>]
-    member x.``SkewBinaryRandomAccessList array int AddOne`` () =
+    [<Test>]
+    let ``SkewBinaryRandomAccessList array int AddOne`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
         let data = result.Data:?>int[]
         let output =  (result.Result:?>SkewBinaryRandomAccessList<int>) |> Array.ofSeq |> Array.rev
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``SkewBinaryRandomAccessList Init array int`` () =
+    [<Test>]
+    let ``SkewBinaryRandomAccessList Init array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Init
         let data = result.Data:?>int[]
         let output =  (result.Result:?>SkewBinaryRandomAccessList<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``SkewBinaryRandomAccessList IterateSeq list string`` () =
+    [<Test>]
+    let ``SkewBinaryRandomAccessList IterateSeq list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.IterateSeq 
         let data = result.Data :?> list<string>
         let output =  result.Result :?> int

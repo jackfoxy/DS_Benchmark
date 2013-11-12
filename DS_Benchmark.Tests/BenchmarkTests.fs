@@ -1,19 +1,18 @@
 ﻿namespace ds_benchmark
 
-open Microsoft.VisualStudio.TestTools.UnitTesting
-open FsUnit.MsTest
+open FsUnit
+open NUnit.Framework
 open Benchmark
 
-[<TestClass>]
-type InitDataTest() = 
+module InitDataTest = 
     let stateFun3Same = fun x (y:'a * 'a * 'a)-> 
         let a, b, c = y
         if x = false then x 
         elif ((a=b)&&(b=c)) then true 
         else false
 
-    [<TestMethod>]
-    member x.``InitDataCol._IntAsc generates same data`` () =
+    [<Test>]
+    let ``InitDataCol._IntAsc generates same data`` () =
         let count = 101
         let a = InitDataCol.arrayIntAsc count
         let b = Array.ofSeq (InitDataCol.seqIntAsc count)
@@ -21,8 +20,8 @@ type InitDataTest() =
         let abc = Array.zip3 a b c
         Array.fold stateFun3Same true abc |> should be True
 
-    [<TestMethod>]
-    member x.``InitDataCol._IntDsc generates same data`` () =
+    [<Test>]
+    let ``InitDataCol._IntDsc generates same data`` () =
         let count = 101
         let a = InitDataCol.arrayIntDsc count
         let b = Array.ofSeq (InitDataCol.seqIntDsc count)
@@ -30,24 +29,24 @@ type InitDataTest() =
         let abc = Array.zip3 a b c
         Array.fold stateFun3Same true abc |> should be True
 
-    [<TestMethod>]
-    member x.``InitDataCol._IntRnd generates correct count`` () =
+    [<Test>]
+    let ``InitDataCol._IntRnd generates correct count`` () =
         let count = 101
         let a = (InitDataCol.arrayIntRnd count).Length
         let b = Seq.length (InitDataCol.seqIntRnd count)
         let c = (InitDataCol.listIntRnd count).Length
         ((count = a) && (a = b) && (b = c)) |> should be True
 
-    [<TestMethod>]
-    member x.``InitDataCol._IntRndDup generates correct count`` () =
+    [<Test>]
+    let ``InitDataCol._IntRndDup generates correct count`` () =
         let count = 101
         let a = (InitDataCol.arrayIntRndDup count).Length
         let b = Seq.length (InitDataCol.seqIntRndDup count)
         let c = (InitDataCol.listIntRndDup count).Length
         ((count = a) && (a = b) && (b = c)) |> should be True
 
-    [<TestMethod>]
-    member x.``InitDataCol._StringAsc generates same data`` () =
+    [<Test>]
+    let ``InitDataCol._StringAsc generates same data`` () =
         let count = 101
         let minLength = 2
         let alpha = [|'a'..'e'|]
@@ -57,8 +56,8 @@ type InitDataTest() =
         let abc = Array.zip3 a b c
         Array.fold stateFun3Same true abc |> should be True
 
-    [<TestMethod>]
-    member x.``InitDataCol._StringDsc generates same data`` () =
+    [<Test>]
+    let ``InitDataCol._StringDsc generates same data`` () =
         let count = 101
         let minLength = 2
         let alpha = [|'a'..'e'|]
@@ -68,8 +67,8 @@ type InitDataTest() =
         let abc = Array.zip3 a b c
         Array.fold stateFun3Same true abc |> should be True
 
-    [<TestMethod>]
-    member x.``InitDataCol._StringRnd generates correct count`` () =
+    [<Test>]
+    let ``InitDataCol._StringRnd generates correct count`` () =
         let count = 101
         let minLength = 2
         let alpha = [|'a'..'e'|]
@@ -78,8 +77,8 @@ type InitDataTest() =
         let c = (InitDataCol.listStringRnd count minLength alpha).Length
         ((count = a) && (a = b) && (b = c)) |> should be True
 
-    [<TestMethod>]
-    member x.``InitDataCol._StringRndDup generates correct count`` () =
+    [<Test>]
+    let ``InitDataCol._StringRndDup generates correct count`` () =
         let count = 101
         let minLength = 2
         let alpha = [|'a'..'e'|]
@@ -88,46 +87,44 @@ type InitDataTest() =
         let c = (InitDataCol.listStringRndDup count minLength alpha).Length
         ((count = a) && (a = b) && (b = c)) |> should be True
 
-[<TestClass>]
-type SeedAlphaTest() = 
+module SeedAlphaTest = 
     
-    [<TestMethod>]
-    member x.``SeedAlpha.orderedAlpha in ascending order`` () = 
+    [<Test>]
+    let ``SeedAlpha.orderedAlpha in ascending order`` () = 
         let alpha = [|'a'..'d'|]
         let stateFun = fun (x:string * bool) y -> if (snd x) = false then x 
                                                   elif y > (fst x) then (y, true) 
                                                   else (y, false) 
         snd (Seq.fold stateFun ("", true) (SeedAlpha.orderedAlpha alpha)) |> should be True
     
-    [<TestMethod>]
-    member x.``SeedAlpha.orderedAlpha generate correct length`` () =  
+    [<Test>]
+    let ``SeedAlpha.orderedAlpha generate correct length`` () =  
         let alpha = [|'a'..'d'|]
         (Seq.length (SeedAlpha.orderedAlpha alpha)) |> should equal 340  
     
-    [<TestMethod>]
-    member x.``SeedAlpha.selectOrderedAlpha min length correct`` () =
+    [<Test>]
+    let ``SeedAlpha.selectOrderedAlpha min length correct`` () =
         let alpha = [|'a'..'e'|]
         let minLen = 3
         let stateFun = fun state (x:string) -> if state = true then true 
                                                else (x.Length < minLen)
         Seq.fold stateFun false (SeedAlpha.selectOrderedAlpha 10 minLen alpha) |> should be False
     
-    [<TestMethod>]
-     member x.``SeedAlpha.selectOrderedAlpha when min length > alpha length return empty`` () =
+    [<Test>]
+    let ``SeedAlpha.selectOrderedAlpha when min length > alpha length return empty`` () =
         let alpha = [|'a'..'e'|]
         let minLen = alpha.Length + 1
         (SeedAlpha.selectOrderedAlpha 10 minLen alpha) = Seq.empty |> should be True
     
-    [<TestMethod>]
-     member x.``SeedAlpha.shuffleMulti returns full collection`` () =
+    [<Test>]
+    let ``SeedAlpha.shuffleMulti returns full collection`` () =
         let count = 501
         InitDataCol.seqStringAsc count 15 SeedAlpha.alphaAsc
         |> SeedAlpha.shuffleMulti 9 
         |> Seq.length
         |> should equal count
 
-[<TestClass>]
-type BenchmarkTest() = 
+module BenchmarkTest = 
     let count = 501
     let minLen = 1
     let alpha = [|'a'..'e'|]   //results in predictable test results below
@@ -208,109 +205,109 @@ type BenchmarkTest() =
         x.Length = y.Length
 
     (*integer List tests*)
-    [<TestMethod>]
-    member x.``Benchmark.getInitListInt.ListIntAsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitListInt.ListIntAsc correct data`` () = 
         listSameInt (getInitListInt InitData.ListIntAsc) InitDataCol.listIntAsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitListInt.ListIntDsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitListInt.ListIntDsc correct data`` () = 
         listSameInt (getInitListInt InitData.ListIntDsc) InitDataCol.listIntDsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitListInt.ListIntRnd correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitListInt.ListIntRnd correct count`` () = 
         listSameCountInt (getInitListInt InitData.ListIntRnd) InitDataCol.listIntRnd  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitListInt.ListIntRndDup correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitListInt.ListIntRndDup correct count`` () = 
         listSameCountInt (getInitListInt InitData.ListIntRndDup) InitDataCol.listIntRndDup  |> should be True
 
     (*integer seq tests*)
-    [<TestMethod>]
-    member x.``Benchmark.getInitSeqInt.SeqIntAsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitSeqInt.SeqIntAsc correct data`` () = 
         seqSameInt (getInitSeqInt InitData.SeqIntAsc) InitDataCol.seqIntAsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitSeqInt.SeqIntDsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitSeqInt.SeqIntDsc correct data`` () = 
         seqSameInt (getInitSeqInt InitData.SeqIntDsc) InitDataCol.seqIntDsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitSeqInt.SeqIntRnd correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitSeqInt.SeqIntRnd correct count`` () = 
         seqSameCountInt (getInitSeqInt InitData.SeqIntRnd) InitDataCol.seqIntRnd  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitSeqInt.SeqIntRndDup correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitSeqInt.SeqIntRndDup correct count`` () = 
         seqSameCountInt (getInitSeqInt InitData.SeqIntRndDup) InitDataCol.seqIntRndDup  |> should be True
 
     (*integer array tests*)
-    [<TestMethod>]
-    member x.``Benchmark.getInitArrayInt.ArrayIntAsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitArrayInt.ArrayIntAsc correct data`` () = 
         arraySameInt (getInitArrayInt InitData.ArrayIntAsc) InitDataCol.arrayIntAsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitArrayInt.ArrayIntDsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitArrayInt.ArrayIntDsc correct data`` () = 
         arraySameInt (getInitArrayInt InitData.ArrayIntDsc) InitDataCol.arrayIntDsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitArrayInt.ArrayIntRnd correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitArrayInt.ArrayIntRnd correct count`` () = 
         arraySameCountInt (getInitArrayInt InitData.ArrayIntRnd) InitDataCol.arrayIntRnd  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitArrayInt.ArrayIntRndDup correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitArrayInt.ArrayIntRndDup correct count`` () = 
         arraySameCountInt (getInitArrayInt InitData.ArrayIntRndDup) InitDataCol.arrayIntRndDup  |> should be True
 
     (*string List tests*)
-    [<TestMethod>]
-    member x.``Benchmark.getInitListString.ListStringAsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitListString.ListStringAsc correct data`` () = 
         listSameString (getInitListString InitData.ListStringAsc) InitDataCol.listStringAsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitListString.ListStringDsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitListString.ListStringDsc correct data`` () = 
         listSameString (getInitListString InitData.ListStringDsc) InitDataCol.listStringDsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitListString.ListStringRnd correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitListString.ListStringRnd correct count`` () = 
         listSameCountString (getInitListString InitData.ListStringRnd) InitDataCol.listStringRnd  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitListString.ListStringRndDup correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitListString.ListStringRndDup correct count`` () = 
         listSameCountString (getInitListString InitData.ListStringRndDup) InitDataCol.listStringRndDup  |> should be True
 
     (*string seq tests*)
-    [<TestMethod>]
-    member x.``Benchmark.getInitSeqString.SeqStringAsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitSeqString.SeqStringAsc correct data`` () = 
         seqSameString (getInitSeqString InitData.SeqStringAsc) InitDataCol.seqStringAsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitSeqString.SeqStringDsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitSeqString.SeqStringDsc correct data`` () = 
         seqSameString (getInitSeqString InitData.SeqStringDsc) InitDataCol.seqStringDsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitSeqString.SeqStringRnd correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitSeqString.SeqStringRnd correct count`` () = 
         seqSameCountString (getInitSeqString InitData.SeqStringRnd) InitDataCol.seqStringRnd  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitSeqString.SeqStringRndDup correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitSeqString.SeqStringRndDup correct count`` () = 
         seqSameCountString (getInitSeqString InitData.SeqStringRndDup) InitDataCol.seqStringRndDup  |> should be True
 
     (*string array tests*)
-    [<TestMethod>]
-    member x.``Benchmark.getInitArrayString.ArrayStringAsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitArrayString.ArrayStringAsc correct data`` () = 
         arraySameString (getInitArrayString InitData.ArrayStringAsc) InitDataCol.arrayStringAsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitArrayString.ArrayStringDsc correct data`` () = 
+    [<Test>]
+    let ``Benchmark.getInitArrayString.ArrayStringDsc correct data`` () = 
         arraySameString (getInitArrayString InitData.ArrayStringDsc) InitDataCol.arrayStringDsc  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitArrayString.ArrayStringRnd correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitArrayString.ArrayStringRnd correct count`` () = 
         arraySameCountString (getInitArrayString InitData.ArrayStringRnd) InitDataCol.arrayStringRnd  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.getInitArrayString.ArrayStringRndDup correct count`` () = 
+    [<Test>]
+    let ``Benchmark.getInitArrayString.ArrayStringRndDup correct count`` () = 
         arraySameCountString (getInitArrayString InitData.ArrayStringRndDup) InitDataCol.arrayStringRndDup  |> should be True
 
-    [<TestMethod>]
-    member x.``Benchmark.BenchmarkDsAction.create functions correctly`` () =
-        let benchmarkDsAction = new BenchmarkDsAction (DataStructure.FSharpxVectorPersistent, 10, InitData.SeqIntAsc, Action.Init, (Array.create 5 ""))
+    [<Test>]
+    let ``Benchmark.BenchmarkDsAction.create functions correctly`` () =
+        let benchmarkDsAction = new BenchmarkDsAction (DataStructure.FSharpxVector, 10, InitData.SeqIntAsc, Action.Init, (Array.create 5 ""))
         let x = benchmarkDsAction.Create
         ((x.ExitCode = 0) && (x.Operator.Length > 0) && (x.Max > 0L) && (x.Min > 0L) && (x.Median > 0L) && (x.Deviation > 0L) && (x.DeviationPct > 0.0)) |> should be True

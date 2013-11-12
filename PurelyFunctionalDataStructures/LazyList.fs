@@ -2,6 +2,9 @@
 //originally published by Julien
 // original implementation taken from http://lepensemoi.free.fr/index.php/2009/11/24/purely-functional-data-structures-in-f-introduction
 // does not play well with release optimize compile
+
+open FSharpx.Collections
+
 module LazyList =
   let rec private revAux r acc =
     match r with

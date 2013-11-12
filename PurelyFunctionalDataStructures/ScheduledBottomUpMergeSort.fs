@@ -1,6 +1,9 @@
 ﻿namespace PurelyFunctionalDataStructures
 //originally published by Julien
 // original implementation taken from http://lepensemoi.free.fr/index.php/2010/01/21/scheduled-bottom-up-merge-sort
+
+open FSharpx.Collections
+
 module ScheduledBottomUpMergeSort =
 
   type Schedule<'a> = list<LazyList<'a>>

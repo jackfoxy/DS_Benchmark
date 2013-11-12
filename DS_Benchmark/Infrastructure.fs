@@ -162,7 +162,7 @@ type DataStructure =
     static member FSharpxRandomAccessListBinary = "fsharpx.rndacclst.binaryrandomaccesslist"
     static member FSharpxRandomAccessListSkewBinary = "fsharpx.rndacclst.skewbinaryrandomaccesslist"
 
-    static member FSharpxVectorPersistent = "fsharpx.vector.persistentvector"
+    static member FSharpxVector = "fsharpx.vector"
 
     static member NaiveQueueBootStrapped1 = "fsharpx.queue.bootstrappedqueue1"
     static member NaiveStack = "naive.stack"

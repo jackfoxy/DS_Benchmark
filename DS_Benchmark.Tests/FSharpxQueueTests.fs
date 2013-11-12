@@ -1,79 +1,75 @@
 ﻿namespace ds_benchmark
 
-open Microsoft.VisualStudio.TestTools.UnitTesting
-open FsUnit.MsTest
-open Benchmark
+open FsUnit
+open NUnit.Framework
+open ds_benchmark
 open FSharpx.Collections
 open FSharpx.Collections.Experimental
 
-[<TestClass>]
-type FSharpxCollQueue() = 
+module FSharpxCollQueue = 
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxCollQueue initData action
 
-    [<TestMethod>]
-    member x.``Queue array int Reverse`` () =
+    [<Test>]
+    let ``Queue array int Reverse`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Reverse
-        let data = result.Data:?>int[]
+        let data = result.Data:?> List<int> |> Array.ofList
         let output =  (result.Result:?>FSharpx.Collections.Queue<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-[<TestClass>]
-type FSharpxBankersQueue() = 
+module FSharpxBankersQueue = 
 
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxQueueBankers initData action
 
-    [<TestMethod>]
-    member x.``BankersQueue array int AddOne`` () =
+    [<Test>]
+    let ``BankersQueue array int AddOne`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
         let data = result.Data:?>int[]
         let output =  (result.Result:?>BankersQueue<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``BankersQueue Init array int`` () =
+    [<Test>]
+    let ``BankersQueue Init array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Init
         let data = result.Data:?>int[]
         let output =  (result.Result:?>BankersQueue<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``BankersQueue IterateSeq list string`` () =
+    [<Test>]
+    let ``BankersQueue IterateSeq list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.IterateSeq 
         let data = result.Data :?> list<string>
         let output =  result.Result :?> int
         data.Length |> should equal output
 
-[<TestClass>]
-type FSharpxBatchedQueue() = 
+module FSharpxBatchedQueue = 
 
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxQueueBatched initData action
 
-    [<TestMethod>]
-    member x.``BatchedQueue array int AddOne`` () =
+    [<Test>]
+    let ``BatchedQueue array int AddOne`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
-        let data = result.Data:?>int[]
+        let data = result.Data:?>list<int> |> Array.ofList
         let output =  (result.Result:?>BatchedQueue<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``BatchedQueue Init array int`` () =
+    [<Test>]
+    let ``BatchedQueue Init array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Init
         let data = result.Data:?>int[]
         let output =  (result.Result:?>BatchedQueue<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``BatchedQueue IterateSeq list string`` () =
+    [<Test>]
+    let ``BatchedQueue IterateSeq list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.IterateSeq 
         let data = result.Data :?> list<string>
         let output =  result.Result :?> int
         data.Length |> should equal output
 
-[<TestClass>]
-type FSharpxBootStrappedQueueTest() = 
+module FSharpxBootStrappedQueueTest = 
     
     let dsGetTime initData action typeDs typeData =
         TestUtil.dsGetTimeTest ds_benchmark.DataStructure.FSharpxQueueBootStrapped initData action typeDs typeData 
@@ -102,107 +98,105 @@ type FSharpxBootStrappedQueueTest() =
         a
 
     (*test all paths to data structure's getTime() function*)
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue array int`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Init
-        let data = result.Data:?>int[]
+        let data = result.Data:?>list<int> |> Array.ofList
         TestUtil.compArr data (bsQueueIntToArray data.Length (result.Result:?>BootstrappedQueue.BootstrappedQueue<int>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue array string`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue array string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Init
-        let data = result.Data:?>string[]
+        let data = result.Data:?> List<string> |> Array.ofList
         TestUtil.compArr data (bsQueueStringToArray data.Length (result.Result:?>BootstrappedQueue.BootstrappedQueue<string>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue list int`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue list int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListIntAsc ds_benchmark.Action.Init
         let data = List.toArray (result.Data:?>int list)
         TestUtil.compArr data (bsQueueIntToArray data.Length (result.Result:?>BootstrappedQueue.BootstrappedQueue<int>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue list string`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.Init
         let data = List.toArray (result.Data:?>string list)
         TestUtil.compArr data (bsQueueStringToArray data.Length (result.Result:?>BootstrappedQueue.BootstrappedQueue<string>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue seq int`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue seq int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.SeqIntAsc ds_benchmark.Action.Init
         let data = Seq.toArray (result.Data:?>int seq)
         TestUtil.compArr data (bsQueueIntToArray data.Length (result.Result:?>BootstrappedQueue.BootstrappedQueue<int>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue seq string`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue seq string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.SeqStringAsc ds_benchmark.Action.Init
         let data = Seq.toArray (result.Data:?>string seq)
         TestUtil.compArr data (bsQueueStringToArray data.Length (result.Result:?>BootstrappedQueue.BootstrappedQueue<string>)) -1 |> should be True
 
     (*test remaining actions*)
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue add one int`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue add one int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
-        let inputData = result.Data:?>int[]
+        let inputData = result.Data:?>list<int> |> Array.ofList
         TestUtil.compArr inputData (bsQueueIntToArray inputData.Length (result.Result:?>BootstrappedQueue.BootstrappedQueue<int>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue append int`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue append int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Append
         let data = result.Data:?>int[]
         TestUtil.compArr (Array.append data data) (bsQueueIntToArray (data.Length *2) (result.Result:?>BootstrappedQueue.BootstrappedQueue<int>)) -1 |> should be True
 
-    member x.``FSharpxBootStrappedQueue append string`` () =
+    let ``FSharpxBootStrappedQueue append string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Append
         let data = result.Data:?>string[]
         TestUtil.compArr (Array.append data data) (bsQueueStringToArray (data.Length *2) (result.Result:?>BootstrappedQueue.BootstrappedQueue<string>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue iterate int`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue iterate int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Iterate
-        (result.ResultInt = (Array.length (result.Data:?>int[]))) |> should be True
+        (result.ResultInt = (Array.length (result.Data:?>List<int> |> Array.ofList))) |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue iterate string`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue iterate string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Iterate
-        (result.ResultInt = (Array.length (result.Data:?>string[]))) |> should be True
+        (result.ResultInt = (Array.length (result.Data:?>List<string> |> Array.ofList  ))) |> should be True
     (*TO DO: beefier lookup and update unit tests*)
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue lookup`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue lookup`` () =
         dsGetTime ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.LookUpRand (TestObj.bsQueueInt.GetType()) (TestObj.arrInt.GetType()) |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxBootStrappedQueue update`` () =
+    [<Test>]
+    let ``FSharpxBootStrappedQueue update`` () =
         dsGetTime ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.UpdateRand (TestObj.bsQueueInt.GetType()) (TestObj.arrInt.GetType()) |> should be True
 
-[<TestClass>]
-type FSharpxHoodMelvilleQueue() = 
+module FSharpxHoodMelvilleQueue = 
 
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxQueueHoodMelville initData action
 
-    [<TestMethod>]
-    member x.``HoodMelvilleQueue array int AddOne`` () =
+    [<Test>]
+    let ``HoodMelvilleQueue array int AddOne`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
         let data = result.Data:?>int[]
         let output =  (result.Result:?>HoodMelvilleQueue<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``HoodMelvilleQueue Init array int`` () =
+    [<Test>]
+    let ``HoodMelvilleQueue Init array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Init
         let data = result.Data:?>int[]
         let output =  (result.Result:?>HoodMelvilleQueue<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``HoodMelvilleQueue IterateSeq list string`` () =
+    [<Test>]
+    let ``HoodMelvilleQueue IterateSeq list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.IterateSeq 
         let data = result.Data :?> list<string>
         let output =  result.Result :?> int
         data.Length |> should equal output
 
-[<TestClass>]
-type FSharpxImplicitQueueTest() = 
+module FSharpxImplicitQueueTest = 
     
     let dsGetTime initData action typeDs typeData =
         TestUtil.dsGetTimeTest ds_benchmark.DataStructure.FSharpxQueueImplicit initData action typeDs typeData 
@@ -231,101 +225,99 @@ type FSharpxImplicitQueueTest() =
         a
 
     (*test all paths to data structure's getTime() function*)
-    [<TestMethod>]
-    member x.``FSharpxImplicitQueue array int`` () =
+    [<Test>]
+    let ``FSharpxImplicitQueue array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
         let data = result.Data:?>int[]
         TestUtil.compArr data (implicitQueueIntToArray data.Length (result.Result:?>ImplicitQueue.ImplicitQueue<int>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxImplicitQueue array string`` () =
+    [<Test>]
+    let ``FSharpxImplicitQueue array string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.AddOne
         let data = result.Data:?>string[]
         TestUtil.compArr data (implicitQueueStringToArray data.Length (result.Result:?>ImplicitQueue.ImplicitQueue<string>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxImplicitQueue list int`` () =
+    [<Test>]
+    let ``FSharpxImplicitQueue list int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListIntAsc ds_benchmark.Action.AddOne
         let data = List.toArray (result.Data:?>int list)
         TestUtil.compArr data (implicitQueueIntToArray data.Length (result.Result:?>ImplicitQueue.ImplicitQueue<int>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxImplicitQueue list string`` () =
+    [<Test>]
+    let ``FSharpxImplicitQueue list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.AddOne
         let data = List.toArray (result.Data:?>string list)
         TestUtil.compArr data (implicitQueueStringToArray data.Length (result.Result:?>ImplicitQueue.ImplicitQueue<string>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxImplicitQueue seq int`` () =
+    [<Test>]
+    let ``FSharpxImplicitQueue seq int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.SeqIntAsc ds_benchmark.Action.AddOne
         let data = Seq.toArray (result.Data:?>int seq)
         TestUtil.compArr data (implicitQueueIntToArray data.Length (result.Result:?>ImplicitQueue.ImplicitQueue<int>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxImplicitQueue seq string`` () =
+    [<Test>]
+    let ``FSharpxImplicitQueue seq string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.SeqStringAsc ds_benchmark.Action.AddOne
         let data = Seq.toArray (result.Data:?>string seq)
         TestUtil.compArr data (implicitQueueStringToArray data.Length (result.Result:?>ImplicitQueue.ImplicitQueue<string>)) -1 |> should be True
 
     (*test remaining actions*)
-    [<TestMethod>]
-    member x.``FSharpxImplicitQueue append int`` () =
+    [<Test>]
+    let ``FSharpxImplicitQueue append int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Append
         let data = result.Data:?>int[]
         TestUtil.compArr (Array.append data data) (implicitQueueIntToArray (data.Length *2) (result.Result:?>ImplicitQueue.ImplicitQueue<int>)) -1 |> should be True
 
-    member x.``FSharpxImplicitQueue append string`` () =
+    let ``FSharpxImplicitQueue append string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Append
         let data = result.Data:?>string[]
         TestUtil.compArr (Array.append data data) (implicitQueueStringToArray (data.Length *2) (result.Result:?>ImplicitQueue.ImplicitQueue<string>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxImplicitQueue iterate int`` () =
+    [<Test>]
+    let ``FSharpxImplicitQueue iterate int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Iterate
         (result.ResultInt = (Array.length (result.Data:?>int[]))) |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxImplicitQueue iterate string`` () =
+    [<Test>]
+    let ``FSharpxImplicitQueue iterate string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Iterate
         (result.ResultInt = (Array.length (result.Data:?>string[]))) |> should be True
     (*TO DO: beefier lookup and update unit tests*)
-    [<TestMethod>]
-    member x.``FSharpxImplicitQueue lookup`` () =
+    [<Test>]
+    let ``FSharpxImplicitQueue lookup`` () =
         dsGetTime ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.LookUpRand (TestObj.implicitQueueInt.GetType()) (TestObj.arrInt.GetType()) |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxImplicitQueue update`` () =
+    [<Test>]
+    let ``FSharpxImplicitQueue update`` () =
         dsGetTime ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.UpdateRand (TestObj.implicitQueueInt.GetType()) (TestObj.arrInt.GetType()) |> should be True
 
-[<TestClass>]
-type FSharpxPhysicistQueue() = 
+module FSharpxPhysicistQueue = 
 
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxQueuePhysicist initData action
 
-    [<TestMethod>]
-    member x.``PhysicistQueue array int AddOne`` () =
+    [<Test>]
+    let ``PhysicistQueue array int AddOne`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
         let data = result.Data:?>int[]
         let output =  (result.Result:?>PhysicistQueue<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``PhysicistQueue Init array int`` () =
+    [<Test>]
+    let ``PhysicistQueue Init array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Init
         let data = result.Data:?>int[]
         let output =  (result.Result:?>PhysicistQueue<int>) |> Array.ofSeq
         TestUtil.compArr data output -1 |> should be True
 
-    [<TestMethod>]
-    member x.``PhysicistQueue IterateSeq list string`` () =
+    [<Test>]
+    let ``PhysicistQueue IterateSeq list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.IterateSeq 
         let data = result.Data :?> list<string>
         let output =  result.Result :?> int
         data.Length |> should equal output
 
-[<TestClass>]
-type FSharpxRtQueueTest() = 
+module FSharpxRtQueueTest = 
     
     let dsGetTime initData action typeDs typeData =
         TestUtil.dsGetTimeTest ds_benchmark.DataStructure.FSharpxQueueRealTime initData action typeDs typeData 
@@ -354,68 +346,68 @@ type FSharpxRtQueueTest() =
         a
 
     (*test all paths to data structure's getTime() function*)
-    [<TestMethod>]
-    member x.``FSharpxRtQueue array int`` () =
+    [<Test>]
+    let ``FSharpxRtQueue array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
         let data = result.Data:?>int[]
         TestUtil.compArr data (rtQueueIntToArray data.Length (result.Result:?>RealTimeQueue.RealTimeQueue<int>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxRtQueue array string`` () =
+    [<Test>]
+    let ``FSharpxRtQueue array string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.AddOne
         let data = result.Data:?>string[]
         TestUtil.compArr data (rtQueueStringToArray data.Length (result.Result:?>RealTimeQueue.RealTimeQueue<string>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxRtQueue list int`` () =
+    [<Test>]
+    let ``FSharpxRtQueue list int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListIntAsc ds_benchmark.Action.AddOne
         let data = List.toArray (result.Data:?>int list)
         TestUtil.compArr data (rtQueueIntToArray data.Length (result.Result:?>RealTimeQueue.RealTimeQueue<int>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxRtQueue list string`` () =
+    [<Test>]
+    let ``FSharpxRtQueue list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.AddOne
         let data = List.toArray (result.Data:?>string list)
         TestUtil.compArr data (rtQueueStringToArray data.Length (result.Result:?>RealTimeQueue.RealTimeQueue<string>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxRtQueue seq int`` () =
+    [<Test>]
+    let ``FSharpxRtQueue seq int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.SeqIntAsc ds_benchmark.Action.AddOne
         let data = Seq.toArray (result.Data:?>int seq)
         TestUtil.compArr data (rtQueueIntToArray data.Length (result.Result:?>RealTimeQueue.RealTimeQueue<int>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxRtQueue seq string`` () =
+    [<Test>]
+    let ``FSharpxRtQueue seq string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.SeqStringAsc ds_benchmark.Action.AddOne
         let data = Seq.toArray (result.Data:?>string seq)
         TestUtil.compArr data (rtQueueStringToArray data.Length (result.Result:?>RealTimeQueue.RealTimeQueue<string>)) -1 |> should be True
 
     (*test remaining actions*)
-    [<TestMethod>]
-    member x.``FSharpxRtQueue append int`` () =
+    [<Test>]
+    let ``FSharpxRtQueue append int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Append
         let data = result.Data:?>int[]
         TestUtil.compArr (Array.append data data) (rtQueueIntToArray (data.Length *2) (result.Result:?>RealTimeQueue.RealTimeQueue<int>)) -1 |> should be True
 
-    member x.``FSharpxRtQueue append string`` () =
+    let ``FSharpxRtQueue append string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Append
         let data = result.Data:?>string[]
         TestUtil.compArr (Array.append data data) (rtQueueStringToArray (data.Length *2) (result.Result:?>RealTimeQueue.RealTimeQueue<string>)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxRtQueue iterate int`` () =
+    [<Test>]
+    let ``FSharpxRtQueue iterate int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Iterate
         (result.ResultInt = (Array.length (result.Data:?>int[]))) |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxRtQueue iterate string`` () =
+    [<Test>]
+    let ``FSharpxRtQueue iterate string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Iterate
         (result.ResultInt = (Array.length (result.Data:?>string[]))) |> should be True
     (*TO DO: beefier lookup and update unit tests*)
-    [<TestMethod>]
-    member x.``FSharpxRtQueue lookup`` () =
+    [<Test>]
+    let ``FSharpxRtQueue lookup`` () =
         dsGetTime ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.LookUpRand (TestObj.rtQueueInt.GetType()) (TestObj.arrInt.GetType()) |> should be True
 
-    [<TestMethod>]
-    member x.``FSharpxRtQueue update`` () =
+    [<Test>]
+    let ``FSharpxRtQueue update`` () =
         dsGetTime ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.UpdateRand (TestObj.rtQueueInt.GetType()) (TestObj.arrInt.GetType()) |> should be True

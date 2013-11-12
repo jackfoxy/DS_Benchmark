@@ -2,6 +2,8 @@
 // original implementation taken from http://lepensemoi.free.fr/index.php/2010/02/18/bootstrapped-queue
 namespace NaiveDataStructures
 
+open FSharpx
+
 type NonEmptyBootstrappedQueue1<'a> = {
     LenFM : int
     F : list<'a>

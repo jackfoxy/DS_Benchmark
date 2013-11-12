@@ -548,7 +548,7 @@ module Benchmark =
             | x when x = DataStructure.FSharpxRandomAccessListSkewBinary -> 
                 FSharpxRandomAccessListSkewBinary.getTime inputArgs data
 
-            | x when x = DataStructure.FSharpxVectorPersistent -> 
+            | x when x = DataStructure.FSharpxVector -> 
                 FSharpxVectorPersistent.getTime inputArgs data
 
             | x when x = DataStructure.NaiveQueueBootStrapped1 -> 

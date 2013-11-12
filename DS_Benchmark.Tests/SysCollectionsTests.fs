@@ -1,18 +1,18 @@
 ﻿namespace ds_benchmark
 
-open Microsoft.VisualStudio.TestTools.UnitTesting
-open FsUnit.MsTest
+open FsUnit
+open NUnit.Framework
+open ds_benchmark
 open Benchmark
 open FSharpx.Collections.Experimental
 
-[<TestClass>]
-type SysCollectionsGenQueue() = 
+module SysCollectionsGenQueue = 
 
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.SysCollectionsGenQueue initData action
 
-    [<TestMethod>]
-    member x.``QAueue int DequeueToEmpty`` () =
+    [<Test>]
+    let ``QAueue int DequeueToEmpty`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.UnconsToEmpty
         let data = result.Data:?>int[]
         let output =  (result.Result:?>int)

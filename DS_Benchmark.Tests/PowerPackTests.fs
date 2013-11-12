@@ -1,11 +1,11 @@
 ﻿namespace ds_benchmark
 
-open Microsoft.VisualStudio.TestTools.UnitTesting
-open FsUnit.MsTest
+open FsUnit
+open NUnit.Framework
+open ds_benchmark
 open Benchmark
 
-[<TestClass>]
-type PowerPackHashMultiMapTest() = 
+module PowerPackHashMultiMapTest = 
     
     let dsGetTime initData action typeDs typeData =
         TestUtil.dsGetTimeTest ds_benchmark.DataStructure.PowerPackHashMultiMap initData action typeDs typeData 
@@ -29,76 +29,75 @@ type PowerPackHashMultiMapTest() =
     let hmMapString =  HashMultiMap (TestObj.zipSeqString, HashIdentity.Structural)
 
     (*test all paths to data structure's getTime() function*)
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap array int`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.NewInit
         lookUpAll (result.Result:?>HashMultiMap<int,int>) (result.Data:?>(int*int)[]) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap array string`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap array string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.NewInit
         lookUpAll (result.Result:?>HashMultiMap<string,string>) (result.Data:?>(string*string)[]) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap list int`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap list int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListIntAsc ds_benchmark.Action.NewInit
         lookUpAll (result.Result:?>HashMultiMap<int,int>) (List.toArray (result.Data:?>(int*int) list)) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap list string`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.NewInit
         lookUpAll (result.Result:?>HashMultiMap<string,string>) (List.toArray (result.Data:?>(string*string) list)) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap seq int`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap seq int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.SeqIntAsc ds_benchmark.Action.NewInit
         lookUpAll (result.Result:?>HashMultiMap<int,int>) (Seq.toArray (result.Data:?>(int*int) seq)) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap seq string`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap seq string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.SeqStringAsc ds_benchmark.Action.NewInit
         lookUpAll (result.Result:?>HashMultiMap<string,string>) (Seq.toArray (result.Data:?>(string*string) seq)) |> should be True
 
     (*test remaining actions*)
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap add one`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap add one`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
         lookUpAll (result.Result:?>HashMultiMap<int,int>) (result.Data:?>(int*int)[]) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap append int`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap append int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Append
         let a = result.Data:?>(int*int)[]
         let a2 = getAppendDataForMapArrayInt a
         lookUpAll (result.Result:?>HashMultiMap<int,int>) (Array.append a a2) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap append string`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap append string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Append
         let a = result.Data:?>(string*string)[]
         let a2 = getAppendDataForMapArrayString a
         lookUpAll (result.Result:?>HashMultiMap<string,string>) (Array.append a a2) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap iterate int`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap iterate int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Iterate
         (result.ResultInt = (Array.length (result.Data:?>(int*int)[]))) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap iterate string`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap iterate string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Iterate
         (result.ResultInt = (Array.length (result.Data:?>(string*string)[]))) |> should be True
     (*TO DO: beefier lookup and update unit tests*)
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap lookup`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap lookup`` () =
         dsGetTime ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.LookUpRand (hmMapInt.GetType()) (TestObj.zipArrInt.GetType()) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackHashMultiMap update`` () =
+    [<Test>]
+    let ``PowerPackHashMultiMap update`` () =
         dsGetTime ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.UpdateRand (hmMapInt.GetType()) (TestObj.zipArrInt.GetType()) |> should be True
 
-[<TestClass>]
-type PowerPackLazyListTest() = 
+module PowerPackLazyListTest = 
     
     let dsGetTime initData action typeDs typeData =
         TestUtil.dsGetTimeTest ds_benchmark.DataStructure.PowerPackLazyList initData action typeDs typeData 
@@ -107,67 +106,67 @@ type PowerPackLazyListTest() =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.PowerPackLazyList initData action
 
     (*test all paths to data structure's getTime() function*)
-    [<TestMethod>]
-    member x.``PowerPackLazyList array int`` () =
+    [<Test>]
+    let ``PowerPackLazyList array int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Init
         TestUtil.compArr (result.Data:?>int[]) (LazyList.toArray (result.Result:?>int LazyList)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackLazyList array string`` () =
+    [<Test>]
+    let ``PowerPackLazyList array string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Init
         TestUtil.compArr (result.Data:?>string[]) (LazyList.toArray (result.Result:?>string LazyList)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackLazyList list int`` () =
+    [<Test>]
+    let ``PowerPackLazyList list int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListIntAsc ds_benchmark.Action.Init
         TestUtil.compArr (List.toArray (result.Data:?>int list)) (LazyList.toArray (result.Result:?>int LazyList)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackLazyList list string`` () =
+    [<Test>]
+    let ``PowerPackLazyList list string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ListStringAsc ds_benchmark.Action.Init
         TestUtil.compArr (List.toArray (result.Data:?>string list)) (LazyList.toArray (result.Result:?>string LazyList)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackLazyList seq int`` () =
+    [<Test>]
+    let ``PowerPackLazyList seq int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.SeqIntAsc ds_benchmark.Action.Init
         TestUtil.compArr (Seq.toArray (result.Data:?>int seq)) (LazyList.toArray (result.Result:?>int LazyList)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackLazyList seq string`` () =
+    [<Test>]
+    let ``PowerPackLazyList seq string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.SeqStringAsc ds_benchmark.Action.Init
         TestUtil.compArr (Seq.toArray (result.Data:?>string seq)) (LazyList.toArray (result.Result:?>string LazyList)) -1 |> should be True
 
     (*test remaining actions*)
-    member x.``PowerPackLazyList add one`` () =
+    let ``PowerPackLazyList add one`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOne
         TestUtil.compArr (result.Data:?>int[]) (LazyList.toArray (result.Result:?>int LazyList)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackLazyList append int`` () =
+    [<Test>]
+    let ``PowerPackLazyList append int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Append
         let a = result.Data:?>int[]
         TestUtil.compArr (Array.append a a) (LazyList.toArray (result.Result:?>int LazyList)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackLazyList append string`` () =
+    [<Test>]
+    let ``PowerPackLazyList append string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Append
         let a = result.Data:?>string[]
         TestUtil.compArr (Array.append a a) (LazyList.toArray (result.Result:?>string LazyList)) -1 |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackLazyList iterate int`` () =
+    [<Test>]
+    let ``PowerPackLazyList iterate int`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Iterate
         (result.ResultInt = (Array.length (result.Data:?>int[]))) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackLazyList iterate string`` () =
+    [<Test>]
+    let ``PowerPackLazyList iterate string`` () =
         let result = dsGetTimeResult ds_benchmark.InitData.ArrayStringAsc ds_benchmark.Action.Iterate
         (result.ResultInt = (Array.length (result.Data:?>string[]))) |> should be True
     (*TO DO: beefier lookup and update unit tests*)
-    [<TestMethod>]
-    member x.``PowerPackLazyList lookup`` () =
+    [<Test>]
+    let ``PowerPackLazyList lookup`` () =
         dsGetTime ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.LookUpRand (TestObj.llListInt.GetType()) (TestObj.arrInt.GetType()) |> should be True
 
-    [<TestMethod>]
-    member x.``PowerPackLazyList update`` () =
+    [<Test>]
+    let ``PowerPackLazyList update`` () =
         dsGetTime ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.UpdateRand (TestObj.llListInt.GetType()) (TestObj.arrInt.GetType()) |> should be True

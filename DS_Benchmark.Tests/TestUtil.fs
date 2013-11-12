@@ -58,8 +58,8 @@ type TestObj =
         let s = Stack.EmptyStack
         s.push ""
 
-    static member persistentVectorInt = Vector.ofSeq TestObj.seqInt
-    static member persistentVectorString = Vector.ofSeq TestObj.seqString
+    static member vectorInt = Vector.ofSeq TestObj.seqInt
+    static member vectorString = Vector.ofSeq TestObj.seqString
 
     static member rtQueueInt = 
         let b = RealTimeQueue.empty

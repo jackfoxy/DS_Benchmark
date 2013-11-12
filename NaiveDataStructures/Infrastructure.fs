@@ -1,5 +1,7 @@
 ﻿namespace NaiveDataStructures
 
+open FSharpx.Collections
+
 module LazyListHelpr =
 
     let rec private revAux r acc =
