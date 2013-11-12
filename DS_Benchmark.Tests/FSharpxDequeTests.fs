@@ -11,12 +11,12 @@ module FSharpxDequeBankers =
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxDequeBankers initData action
 
-    [<Test>]
-    let ``BankersDeque array int AddOneCons`` () =
-        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOneCons
-        let data = result.Data:?>int[]
-        let output =  (result.Result:?>BankersDeque<int>) |> Array.ofSeq
-        TestUtil.compArr data output -1 |> should be True
+//    [<Test>]
+//    let ``BankersDeque array int AddOneCons`` () =
+//        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOneCons
+//        let data = result.Data:?>int[]
+//        let output =  (result.Result:?>BankersDeque<int>) |> Array.ofSeq
+//        TestUtil.compArr data output -1 |> should be True
 
     [<Test>]
     let ``BankersDeque array int AddOneConj`` () =
@@ -44,12 +44,12 @@ module FSharpxDequeBatched =
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxDequeBatched initData action
 
-    [<Test>]
-    let ``BatchedDeque array int AddOneCons`` () =
-        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOneCons
-        let data = result.Data:?>int[]
-        let output =  (result.Result:?>BatchedDeque<int>) |> Array.ofSeq
-        TestUtil.compArr data output -1 |> should be True
+//    [<Test>]
+//    let ``BatchedDeque array int AddOneCons`` () =
+//        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOneCons
+//        let data = result.Data:?>int[]
+//        let output =  (result.Result:?>BatchedDeque<int>) |> Array.ofSeq
+//        TestUtil.compArr data output -1 |> should be True
 
     [<Test>]
     let ``BatchedDeque array int AddOneConj`` () =
@@ -77,12 +77,12 @@ module FSharpxDeque =
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxDeque initData action
 
-    [<Test>]
-    let ``Deque array int AddOneCons`` () =
-        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOneCons
-        let data = result.Data:?>int[]
-        let output =  (result.Result:?>Deque<int>) |> Array.ofSeq
-        TestUtil.compArr data output -1 |> should be True
+//    [<Test>]
+//    let ``Deque array int AddOneCons`` () =
+//        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOneCons
+//        let data = result.Data:?>int[]
+//        let output =  (result.Result:?>Deque<int>) |> Array.ofSeq
+//        TestUtil.compArr data output -1 |> should be True
 
     [<Test>]
     let ``Deque array int AddOneConj`` () =
@@ -110,12 +110,12 @@ module FSharpxDequeRealTime =
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxDequeRealTime initData action
 
-    [<Test>]
-    let ``RealTimeDeque array int AddOneCons`` () =
-        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOneCons
-        let data = result.Data:?>int[]
-        let output =  (result.Result:?>RealTimeDeque<int>) |> Array.ofSeq
-        TestUtil.compArr data output -1 |> should be True
+//    [<Test>]
+//    let ``RealTimeDeque array int AddOneCons`` () =
+//        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.AddOneCons
+//        let data = result.Data:?>int[]
+//        let output =  (result.Result:?>RealTimeDeque<int>) |> Array.ofSeq
+//        TestUtil.compArr data output -1 |> should be True
 
     [<Test>]
     let ``RealTimeDeque array int AddOneConj`` () =

@@ -48,7 +48,6 @@
     <Compile Include="FSharpxQueueTests.fs" />
     <Compile Include="FSharpxRandomAccessTests.fs" />
     <Compile Include="PowerPackTests.fs" />
-    <Compile Include="NaiveDataStructuresTests.fs" />
     <Compile Include="GeneratorsTests.fs" />
     <Compile Include="SysCollectionsTests.fs" />
     <None Include="app.config" />

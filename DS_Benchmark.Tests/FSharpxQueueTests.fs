@@ -10,12 +10,12 @@ module FSharpxCollQueue =
     let dsGetTimeResult initData action =
         TestUtil.dsGetTimeTestResult ds_benchmark.DataStructure.FSharpxCollQueue initData action
 
-    [<Test>]
-    let ``Queue array int Reverse`` () =
-        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Reverse
-        let data = result.Data:?> List<int> |> Array.ofList
-        let output =  (result.Result:?>FSharpx.Collections.Queue<int>) |> Array.ofSeq
-        TestUtil.compArr data output -1 |> should be True
+//    [<Test>]
+//    let ``Queue array int Reverse`` () =
+//        let result = dsGetTimeResult ds_benchmark.InitData.ArrayIntAsc ds_benchmark.Action.Reverse
+//        let data = result.Data:?> List<int> |> Array.ofList
+//        let output =  (result.Result:?>FSharpx.Collections.Queue<int>) |> Array.ofSeq
+//        TestUtil.compArr data output -1 |> should be True
 
 module FSharpxBankersQueue = 
 

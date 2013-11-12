@@ -41,13 +41,13 @@
   <ItemGroup>
     <Compile Include="Exceptions.fs" />
     <Compile Include="Infrastructure.fs" />
-    <Compile Include="Stack.fs" />
     <Compile Include="LazyList.fsi" />
     <Compile Include="LazyList.fs" />
     <Compile Include="Queue0.fs" />
     <Compile Include="Queue1.fs" />
     <Compile Include="FlatList1.fs" />
     <None Include="packages.config" />
+    <Compile Include="Stack.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharpx.Core">
