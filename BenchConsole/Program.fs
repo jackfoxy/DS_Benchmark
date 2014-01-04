@@ -17,13 +17,13 @@ type Info =
         printfn " "
         printfn "Option 1: run a single benchmark -> console"
         printfn " "
-        printfn "input arg 1 -- DataStructure"
-        printfn "               %s" (List.fold (fun (s:string) t -> if s.Length > 0 then s + ", " + t else t ) "" Generators.allDataStructures)
+        printfn "input arg 1 -- DataStructure:"
+        List.iter (fun (s:string)-> printfn "                 %s" s) Generators.allDataStructures
         printfn " "
         printfn "input arg 2 -- size (count) of input collection"
         printfn " "
-        printfn "input arg 3 -- Initialization Data"
-        printfn "               %s" (List.fold (fun (s:string) t -> if s.Length > 0 then s + ", " + t else t ) "" Generators.allInitData)
+        printfn "input arg 3 -- Initialization Data:"
+        List.iter (fun (s:string)-> printfn "                 %s" s) Generators.allInitData
         printfn " "
         printfn "               array...     -- F# array."
         printfn "               list...      -- F# list."
@@ -39,7 +39,8 @@ type Info =
         printfn "               ...rnddup    -- The int or string data has been randomized and there are two occurrences of every value (unless you request an odd number of data elements!)."
         printfn " "
         printfn "input arg 4 -- Action"
-        printfn "               %s" (List.fold (fun (s:string) t -> if s.Length > 0 then s + ", " + t else t ) "" Generators.allActions)
+//        printfn "               %s" (List.fold (fun (s:string) t -> if s.Length > 0 then s + ", " + t else t ) "" Generators.allActions)
+        List.iter (fun (s:string)-> printfn "                 %s" s) Generators.allActions
         printfn " "
         printfn "                ...rand...     -- performs multiple random operations in timing. Defaults to 10,000."
         printfn "                ...gc...       -- attempts garbage collection every nth iteration of perform multiple timing routine. Timing suspended during GC."

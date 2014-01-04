@@ -42,6 +42,7 @@
     <None Include="packages.config" />
     <Compile Include="Infrastructure.fs" />
     <Compile Include="CoreCollections.fs" />
+    <Compile Include="ExtCore.fs" />
     <Compile Include="FSharpx.fs" />
     <Compile Include="FSharpxCollections.fs" />
     <Compile Include="FSharpxDeque.fs" />
@@ -59,16 +60,23 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="ExtCore">
+      <HintPath>..\packages\ExtCore.0.8.37\lib\net40\ExtCore.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FSharp.PowerPack">
       <HintPath>..\packages\FSPowerPack.Core.Community.3.0.0.0\Lib\Net40\FSharp.PowerPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FSharpx.Collections.Experimental">
-      <HintPath>..\packages\FSharpx.Collections.Experimental.1.8.41\lib\40\FSharpx.Collections.Experimental.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="FSharpx.Collections">
+      <HintPath>..\packages\FSharpx.Collections.Experimental.1.8.87.0\Collections.Experimental\lib\net40\FSharpx.Collections.dll</HintPath>
     </Reference>
     <Reference Include="FSharpx.Core">
       <HintPath>..\packages\FSharpx.Core.1.8.41\lib\40\FSharpx.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FSharpx.Collections.Experimental">
+      <HintPath>..\packages\FSharpx.Collections.Experimental.1.8.87.0\Collections.Experimental\lib\net40\FSharpx.Collections.Experimental.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
@@ -84,13 +92,17 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable">
-      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.0.27\lib\portable-net45+win8+wp8\System.Collections.Immutable.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.0.30\lib\portable-net45+win8+wp8\System.Collections.Immutable.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime" />
+    <Reference Include="Validation">
+      <HintPath>..\packages\Validation.2.0.3.13323\lib\portable-windows8+net40+sl5+windowsphone8+MonoAndroid+MonoTouch\Validation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NaiveDataStructures\NaiveDataStructures.fsproj">

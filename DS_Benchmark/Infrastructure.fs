@@ -127,6 +127,8 @@ type DataStructure =
     static member CoreCollectionsMap = "core.map"
     static member CoreCollectionsSet = "core.set"
 
+    static member ExtCoreIntMap = "extcore.intmap"
+
     static member FSharpxCollDeque = "fsharpx.coll.deque"
     static member FSharpxCollDList = "fsharpx.coll.dlist"
     static member FSharpxCollHeap = "fsharpx.coll.heap"
@@ -140,8 +142,6 @@ type DataStructure =
     static member FSharpxDeque = "fsharpx.deque.deque"
     static member FSharpxDequeRealTime = "fsharpx.deque.realtimedeque"
 
-    static member FSharpxDList = "fsharpx.dlist"
-
     static member FSharpxFlatList = "fsharpx.flatlist"
 
     static member FSharpxHeapBinomial = "fsharpx.heap.binomialheap"
@@ -149,6 +149,8 @@ type DataStructure =
     static member FSharpxHeapPairing = "fsharpx.heap.pairingheap"
 
     static member FSharpxIntMap = "fsharpx.intmap"
+
+    static member FSharpxPersistentHashMap = "fsharpx.persistenthashmap"
 
     static member FSharpxQueueBankers = "fsharpx.queue.bankersqueue"
     static member FSharpxQueueBatched = "fsharpx.queue.batchedqueue"
@@ -161,8 +163,6 @@ type DataStructure =
     static member FSharpxRandomAccessListAltBin = "fsharpx.rndacclst.altbinrndacclist"
     static member FSharpxRandomAccessListBinary = "fsharpx.rndacclst.binaryrandomaccesslist"
     static member FSharpxRandomAccessListSkewBinary = "fsharpx.rndacclst.skewbinaryrandomaccesslist"
-
-    static member FSharpxVector = "fsharpx.vector"
 
     static member NaiveQueueBootStrapped1 = "fsharpx.queue.bootstrappedqueue1"
     static member NaiveStack = "naive.stack"

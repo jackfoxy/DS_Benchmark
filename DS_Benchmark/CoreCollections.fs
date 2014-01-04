@@ -1043,7 +1043,7 @@ module CoreCollectionsMap =
         sw.Start()
 
         for i = 1 to times do
-            let b = m.TryFind (lookUpData.[(rnd.Next mCount)])
+            let b = Map.find (lookUpData.[(rnd.Next mCount)]) m
             ()
                     
         sw.Stop()

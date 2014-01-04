@@ -57,9 +57,11 @@
       <HintPath>..\packages\FSPowerPack.Core.Community.3.0.0.0\Lib\Net40\FSharp.PowerPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FSharpx.Collections">
+      <HintPath>..\packages\FSharpx.Collections.Experimental.1.8.87.0\Collections.Experimental\lib\net40\FSharpx.Collections.dll</HintPath>
+    </Reference>
     <Reference Include="FSharpx.Collections.Experimental">
-      <HintPath>..\packages\FSharpx.Collections.Experimental.1.8.41\lib\40\FSharpx.Collections.Experimental.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\FSharpx.Collections.Experimental.1.8.87.0\Collections.Experimental\lib\net40\FSharpx.Collections.Experimental.dll</HintPath>
     </Reference>
     <Reference Include="FSharpx.Core">
       <HintPath>..\packages\FSharpx.Core.1.8.41\lib\40\FSharpx.Core.dll</HintPath>
@@ -74,11 +76,12 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable">
-      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.0.27\lib\portable-net45+win8+wp8\System.Collections.Immutable.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.0.30\lib\portable-net45+win8+wp8\System.Collections.Immutable.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Core" />

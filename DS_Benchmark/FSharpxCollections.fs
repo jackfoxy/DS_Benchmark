@@ -190,7 +190,6 @@ module FSharpxCollDList =
         let result = Seq.fold foldFun 0 d
                     
         sw.Stop()
-        let x = new ByteString()
         
         Utility.getTimeResult result data Operator.SeqFold sw.ElapsedTicks sw.ElapsedMilliseconds
 

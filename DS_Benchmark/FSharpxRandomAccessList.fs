@@ -1,5 +1,6 @@
 ﻿namespace ds_benchmark
 
+open FSharpx.Collections
 open FSharpx.Collections.Experimental
 open Utility
 

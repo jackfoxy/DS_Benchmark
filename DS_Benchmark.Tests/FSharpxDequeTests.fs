@@ -4,6 +4,7 @@ open FsUnit
 open NUnit.Framework
 open ds_benchmark
 open Benchmark
+open FSharpx.Collections
 open FSharpx.Collections.Experimental
 
 module FSharpxDequeBankers = 

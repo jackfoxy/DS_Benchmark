@@ -494,9 +494,6 @@ module Benchmark =
             | x when x = DataStructure.FSharpxCollVector-> 
                 FSharpxCollVector.getTime inputArgs data
 
-            | x when x = DataStructure.FSharpxDList -> 
-                FSharpxDList.getTime inputArgs data
-
             | x when x = DataStructure.FSharpxDeque -> 
                 FSharpxDeque.getTimeOfSeq inputArgs data
 
@@ -547,9 +544,6 @@ module Benchmark =
 
             | x when x = DataStructure.FSharpxRandomAccessListSkewBinary -> 
                 FSharpxRandomAccessListSkewBinary.getTime inputArgs data
-
-            | x when x = DataStructure.FSharpxVector -> 
-                FSharpxVectorPersistent.getTime inputArgs data
 
             | x when x = DataStructure.NaiveQueueBootStrapped1 -> 
                 NaiveQueueBootStrapped1.getTimeOfSeq inputArgs data       
@@ -614,12 +608,20 @@ module Benchmark =
             | x when x = DataStructure.CoreCollectionsSet -> 
                 CoreCollectionsSet.getTimeOfArray inputArgs data (getAppendDataForSetArrayInt data) data.Length data
 
+            | x when x = DataStructure.ExtCoreIntMap -> 
+                let zipData = Seq.zip data data
+                ExtCoreIntMap.getTime inputArgs zipData (Seq.toArray data)
+
             | x when x = DataStructure.FSharpxCollLazyList -> 
                 FSharpxCollLazyList.getTimeOfArray inputArgs data
 
             | x when x = DataStructure.FSharpxIntMap -> 
                 let zipData = Seq.zip data data
                 FSharpxIntMap.getTime inputArgs zipData (Seq.toArray data)
+
+            | x when x = DataStructure.FSharpxPersistentHashMap -> 
+                let zipData = Array.zip data data
+                FSharpxPersistentHashMap.getTimeofArray inputArgs zipData (getAppendDataForMapArrayInt zipData) zipData.Length data
 
 //            | x when x = DataStructure.NaiveStack -> 
 //                NaiveStack.getTimeOfArray inputArgs data
@@ -653,6 +655,10 @@ module Benchmark =
             | x when x = DataStructure.FSharpxCollLazyList -> 
                 FSharpxCollLazyList.getTimeOfArray inputArgs data
 
+            | x when x = DataStructure.FSharpxPersistentHashMap -> 
+                let zipData = Array.zip data data
+                FSharpxPersistentHashMap.getTimeofArray inputArgs zipData (getAppendDataForMapArrayString zipData) zipData.Length data
+
 //            | x when x = DataStructure.NaiveStack -> 
 //                NaiveStack.getTimeOfArray inputArgs data
 
@@ -685,6 +691,10 @@ module Benchmark =
             | x when x = DataStructure.CoreCollectionsSet -> 
                 CoreCollectionsSet.getTimeOfList inputArgs data (getAppendDataForSetListInt data) data.Length (List.toArray data)
  
+            | x when x = DataStructure.ExtCoreIntMap -> 
+                let zipData = Seq.zip data data
+                ExtCoreIntMap.getTime inputArgs zipData (Seq.toArray data)
+
             | x when x = DataStructure.FSharpxCollDeque ->
                 FSharpxCollDeque.getTimeOfList inputArgs data
 
@@ -709,6 +719,10 @@ module Benchmark =
             | x when x = DataStructure.FSharpxIntMap -> 
                 let zipData = Seq.zip data data
                 FSharpxIntMap.getTime inputArgs zipData (Seq.toArray data)
+
+            | x when x = DataStructure.FSharpxPersistentHashMap -> 
+                let zipData = List.zip data data
+                FSharpxPersistentHashMap.getTimeOfList inputArgs zipData (getAppendDataForMapListInt zipData) zipData.Length (List.toArray data)
 
             | x when x = DataStructure.FSharpxQueueBatched -> 
                 FSharpxQueueBatched.getTimeOfList inputArgs data
@@ -784,6 +798,10 @@ module Benchmark =
             | x when x = DataStructure.FSharpxQueueHoodMelville -> 
                 FSharpxQueueHoodMelville.getTimeOfList inputArgs data  
 
+            | x when x = DataStructure.FSharpxPersistentHashMap -> 
+                let zipData = List.zip data data
+                FSharpxPersistentHashMap.getTimeOfList inputArgs zipData (getAppendDataForMapListString zipData) zipData.Length (List.toArray data)
+
             | x when x = DataStructure.FSharpxQueuePhysicist -> 
                 FSharpxQueuePhysicist.getTimeOfList inputArgs data
 
@@ -817,9 +835,17 @@ module Benchmark =
             | x when x = DataStructure.CoreCollectionsSet -> 
                 CoreCollectionsSet.getTimeOfSeq inputArgs data (getAppendDataForSetSeqInt data) (Seq.length data) (Seq.toArray data)
 
+            | x when x = DataStructure.ExtCoreIntMap -> 
+                let zipData = Seq.zip data data
+                ExtCoreIntMap.getTime inputArgs zipData (Seq.toArray data)
+
             | x when x = DataStructure.FSharpxIntMap -> 
                 let zipData = Seq.zip data data
                 FSharpxIntMap.getTime inputArgs zipData (Seq.toArray data)
+
+            | x when x = DataStructure.FSharpxPersistentHashMap -> 
+                let zipData = Seq.zip data data
+                FSharpxPersistentHashMap.getTimeOfSeq inputArgs zipData (getAppendDataForMapSeqInt zipData) (Seq.length zipData) (Seq.toArray data)
 
             | x when x = DataStructure.PowerPackHashMultiMap -> 
                 let zipData = Seq.zip data data
@@ -838,6 +864,10 @@ module Benchmark =
 
             | x when x = DataStructure.CoreCollectionsSet -> 
                     CoreCollectionsSet.getTimeOfSeq inputArgs data (getAppendDataForSetSeqString data) (Seq.length data) (Seq.toArray data)
+
+            | x when x = DataStructure.FSharpxPersistentHashMap -> 
+                let zipData = Seq.zip data data
+                FSharpxPersistentHashMap.getTimeOfSeq inputArgs zipData (getAppendDataForMapSeqString zipData) (Seq.length zipData) (Seq.toArray data)
 
             | x when x = DataStructure.PowerPackHashMultiMap -> 
                 let zipData = Seq.zip data data

@@ -8,7 +8,7 @@
     <ProjectGuid>5b6130c8-af0c-4df5-8c99-bb19eea2b062</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Console1</RootNamespace>
-    <AssemblyName>Console1</AssemblyName>
+    <AssemblyName>BenchConsole</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Name>BenchConsole</Name>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
